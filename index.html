@@ -151,9 +151,9 @@
                     <div class="flex items-center gap-2 mt-1">
                         <div class="relative flex-1 max-w-[260px] h-2 rounded-full bg-[#E3ECE5] overflow-hidden">
                             <div class="absolute top-0 bottom-0 left-[80%] w-[2px] bg-[#E9A825] z-10"></div>
-                            <div id="miniBarFill" class="h-full rounded-full bg-gradient-to-r from-[#52B788] to-[#95D5B2] transition-all duration-500" style="width:76%"></div>
+                            <div id="miniBarFill" class="h-full rounded-full bg-gradient-to-r from-[#52B788] to-[#95D5B2] transition-all duration-500" style="width:68%"></div>
                         </div>
-                        <span id="miniPct" class="num text-xs font-extrabold">76%</span>
+                        <span id="miniPct" class="num text-xs font-extrabold">68%</span>
                     </div>
                 </div>
                 <nav class="flex items-center gap-1 bg-[#EEF5EF] p-1 rounded-xl">
@@ -170,7 +170,7 @@
         <!-- =========================================================
              HEADER: Brand & Navigation (Clean, fits any width with zero overflow)
              ========================================================= -->
-        <header id="mainHeader" class="card rounded-[26px] p-3 sm:px-5 sm:py-3.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-4 shadow-xs border border-[#2D6A4F]/15 overflow-hidden">
+        <header id="mainHeader" class="card rounded-[26px] p-2.5 sm:p-3.5 md:px-5 md:py-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 md:gap-4 shadow-xs border border-[#2D6A4F]/15 overflow-hidden">
             <div class="flex items-center justify-between gap-3 min-w-0">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#74C69D] to-[#2D6A4F] flex items-center justify-center shadow-xs flex-shrink-0">
@@ -178,7 +178,7 @@
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5">
-                            <h1 class="text-lg font-black tracking-tight leading-none text-[#172B1E]">WattPet</h1>
+                            <h1 class="text-base sm:text-lg font-black tracking-tight leading-none text-[#172B1E]">WattPet</h1>
                             <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-[#D8F3DC] text-[#2D6A4F] border border-[#2D6A4F]/20 flex-shrink-0">ACTIVE</span>
                         </div>
                         <p class="text-[11px] font-semibold text-[#526B5A] truncate mt-0.5">Eco battery companion</p>
@@ -186,15 +186,15 @@
                 </div>
             </div>
 
-            <!-- Navigation Tabs with Pixel Art Icons (Full-width segmented tabs on compact screens, inline pill bar on desktop) -->
-            <nav class="grid grid-cols-3 gap-1 bg-[#EAF2EC] p-1 rounded-2xl border border-[#2D6A4F]/10 w-full sm:w-auto sm:flex sm:items-center sm:gap-1.5 flex-shrink-0">
-                <button onclick="switchPage('sanctuary')" data-nav="sanctuary" class="main-nav px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap transition-all duration-200">
+            <!-- Navigation Tabs: Full-width equal 3-column tabs on compact screens (< md), sleek inline pill bar on desktop (md+). Guaranteed 0 overflow! -->
+            <nav class="grid grid-cols-3 gap-1 bg-[#EAF2EC] p-1 rounded-2xl border border-[#2D6A4F]/10 w-full md:w-auto md:flex md:items-center md:gap-1.5 max-w-full">
+                <button onclick="switchPage('sanctuary')" data-nav="sanctuary" class="main-nav flex-1 md:flex-initial px-2 py-2 sm:px-3 md:px-3.5 md:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
                     <canvas data-px="leaf" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Sanctuary</span>
                 </button>
-                <button onclick="switchPage('rewards')" data-nav="rewards" class="main-nav px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap transition-all duration-200">
+                <button onclick="switchPage('rewards')" data-nav="rewards" class="main-nav flex-1 md:flex-initial px-2 py-2 sm:px-3 md:px-3.5 md:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
                     <canvas data-px="gift" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Rewards</span>
                 </button>
-                <button onclick="switchPage('settings')" data-nav="settings" class="main-nav px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap transition-all duration-200">
+                <button onclick="switchPage('settings')" data-nav="settings" class="main-nav flex-1 md:flex-initial px-2 py-2 sm:px-3 md:px-3.5 md:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
                     <canvas data-px="gear" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Settings</span>
                 </button>
             </nav>
@@ -209,14 +209,14 @@
             <section class="lg:col-span-12 card rounded-[22px] p-2.5 sm:p-3 border border-[#2D6A4F]/15 shadow-xs bg-gradient-to-r from-[#F5FAF6] via-[#FFFDF7] to-[#F4FAF2]">
                 <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-4">
 
-                    <!-- Left: Sleek Mini Battery Health Gauge + 3-Zone Bar -->
+                    <!-- Left: Sleek Mini Battery Health Gauge + Interactive 3-Zone Slider -->
                     <div class="flex items-center gap-3 flex-1 min-w-0 pr-0 md:pr-3 border-b md:border-b-0 md:border-r border-[#2D6A4F]/10 pb-2 md:pb-0">
-                        <!-- Mini Radial SVG Ring (Compact 46px) -->
-                        <div class="relative w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center">
+                        <!-- Mini Radial SVG Ring (Clickable to toggle Charging / On Battery) -->
+                        <button type="button" onclick="toggleCharging()" class="relative w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center cursor-pointer group focus:outline-none" title="Click to toggle Charging / On Battery">
                             <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 48 48">
                                 <circle cx="24" cy="24" r="19" stroke="#DFEDE3" stroke-width="4.5" fill="transparent" />
                                 <circle id="ringArc" cx="24" cy="24" r="19" stroke="url(#ringGrad)" stroke-width="4.5"
-                                        stroke-dasharray="119.4" stroke-dashoffset="30" stroke-linecap="round" fill="transparent"
+                                        stroke-dasharray="119.4" stroke-dashoffset="38" stroke-linecap="round" fill="transparent"
                                         class="transition-all duration-700" />
                                 <defs>
                                     <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -226,36 +226,41 @@
                                 </defs>
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center leading-tight">
-                                <span id="ringPct" class="text-xs font-black num text-[#172B1E]">84%</span>
-                                <span id="ringCharge" class="text-[7.5px] font-bold text-[#526B5A] leading-none">On batt</span>
+                                <span id="ringPct" class="text-xs font-black num text-[#172B1E]">68%</span>
+                                <span id="ringCharge" class="text-[7.5px] font-bold text-[#526B5A] leading-none group-hover:underline">On batt</span>
                             </div>
-                        </div>
+                        </button>
 
-                        <!-- Battery Info & Slim 3-Zone Bar -->
+                        <!-- Battery Info & Interactive 3-Zone Bar (Click or drag anywhere to set exact % on iPad) -->
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between gap-1 leading-none mb-1">
                                 <div class="flex items-center gap-1.5 min-w-0">
                                     <span class="text-[10px] font-extrabold uppercase tracking-wide text-[#526B5A]">Battery</span>
                                     <span id="battTitle" class="text-xs font-black text-[#2D6A4F] truncate">Healthy zone</span>
                                 </div>
-                                <span id="battStatusBadge" class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-white/90 border border-[#2D6A4F]/15 text-[#2D6A4F]">Healthy</span>
+                                <p id="battSub" class="hidden">Optimal 20%–80% lifespan protection active</p>
+                                <div class="flex items-center gap-1">
+                                    <button type="button" onclick="adjustBattery(-1)" class="w-4 h-4 rounded bg-[#EAF2EC] hover:bg-[#D8F3DC] border border-[#2D6A4F]/15 text-[10px] font-black flex items-center justify-center leading-none text-[#2D6A4F]" title="Lower 1%">−</button>
+                                    <button type="button" onclick="adjustBattery(1)" class="w-4 h-4 rounded bg-[#EAF2EC] hover:bg-[#D8F3DC] border border-[#2D6A4F]/15 text-[10px] font-black flex items-center justify-center leading-none text-[#2D6A4F]" title="Increase 1%">+</button>
+                                    <span id="battStatusBadge" onclick="openBatteryCalibrationPrompt()" class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-white/90 border border-[#2D6A4F]/15 text-[#2D6A4F] cursor-pointer" title="Click to calibrate device battery">Healthy</span>
+                                </div>
                             </div>
 
-                            <!-- Slim 3-Zone Bar (4px height) with Needle Indicator -->
-                            <div class="relative mt-1.5 mb-1">
-                                <div class="relative h-1.5 rounded-full overflow-hidden flex bg-gray-200">
+                            <!-- Interactive 3-Zone Bar (Click or drag to calibrate battery level instantly) -->
+                            <div id="zoneBarContainer" onclick="onZoneBarClick(event)" class="relative mt-1.5 mb-1 cursor-pointer select-none py-1 group" title="Tap anywhere along this bar to match your device battery!">
+                                <div class="relative h-2 rounded-full overflow-hidden flex bg-gray-200 shadow-inner">
                                     <div class="w-[20%] bg-[#F4ACB7]" title="Low (< 20%)"></div>
                                     <div class="w-[60%] bg-[#74C69D]" title="Healthy (20-80%)"></div>
                                     <div class="w-[20%] bg-[#F2CC8F]" title="Unplug (> 80%)"></div>
                                 </div>
                                 <div class="relative h-0">
-                                    <div id="zoneMarker" class="absolute -top-[7px] w-1.5 h-3 rounded-full bg-[#172B1E] ring-1 ring-white shadow transition-all duration-700" style="left: calc(84% - 3px)"></div>
+                                    <div id="zoneMarker" class="absolute -top-[7px] w-2 h-4 rounded-full bg-[#172B1E] ring-2 ring-white shadow transition-all duration-300" style="left: calc(68% - 4px)"></div>
                                 </div>
                             </div>
                             <div class="flex justify-between text-[8px] font-extrabold text-[#526B5A] px-0.5 leading-none">
-                                <span>Low</span>
-                                <span class="text-[#2D6A4F]">20–80%</span>
-                                <span>Unplug</span>
+                                <span>Low (&lt;20%)</span>
+                                <span class="text-[#2D6A4F]">20–80% Healthy</span>
+                                <span>Unplug (&gt;80%)</span>
                             </div>
                         </div>
                     </div>
@@ -480,6 +485,65 @@
                     </div>
                 </section>
 
+                <!-- Dedicated Battery Calibration & Hardware Sync Card (Handles iPadOS WebKit Privacy & Live Hardware Auto-Sync) -->
+                <section class="card rounded-[28px] p-5 border border-[#2D6A4F]/15 shadow-xs">
+                    <div class="flex items-center justify-between gap-3 pb-3 border-b border-[#2D6A4F]/10">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-9 h-9 rounded-xl bg-[#D8F3DC] border border-[#2D6A4F]/15 flex items-center justify-center flex-shrink-0">
+                                <canvas data-px="plug" width="28" height="28" class="pixel w-4 h-4"></canvas>
+                            </span>
+                            <div>
+                                <h2 class="text-sm sm:text-base font-extrabold text-[#172B1E]">Battery Sync &amp; Calibration</h2>
+                                <p id="battSyncDesc" class="text-[11px] text-[#526B5A] mt-0.5">Device battery synchronization &amp; privacy calibration.</p>
+                            </div>
+                        </div>
+                        <span id="battSourceBadge" class="text-[9px] font-black px-2 py-0.5 rounded-full bg-[#EAF6EC] text-[#2D6A4F] border border-[#2D6A4F]/20 flex-shrink-0">
+                            📱 iPad Sync
+                        </span>
+                    </div>
+
+                    <!-- Battery Percentage Stepper & Slider -->
+                    <div class="mt-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-[#172B1E]">Current battery level</span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="adjustBattery(-1)" class="w-6 h-6 rounded-lg bg-[#EAF2EC] hover:bg-[#D8F3DC] border border-[#2D6A4F]/15 text-xs font-black flex items-center justify-center leading-none text-[#2D6A4F]">−</button>
+                                <span id="settingsBattVal" class="text-sm font-black num text-[#2D6A4F] min-w-[3rem] text-center">68%</span>
+                                <button type="button" onclick="adjustBattery(1)" class="w-6 h-6 rounded-lg bg-[#EAF2EC] hover:bg-[#D8F3DC] border border-[#2D6A4F]/15 text-xs font-black flex items-center justify-center leading-none text-[#2D6A4F]">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Range Slider -->
+                        <input type="range" min="1" max="100" id="settingsBattSlider" value="68"
+                               oninput="onSettingsSliderChange(this.value)"
+                               class="w-full accent-[#2D6A4F] cursor-pointer" />
+
+                        <!-- Preset Quick Match Buttons -->
+                        <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                            <span class="text-[10px] font-bold text-[#526B5A]">Quick match:</span>
+                            <button type="button" onclick="setBatteryLevel(20)" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-[#FCE7EA] text-[#C94A29] hover:bg-[#F8D0D6]">20% Low</button>
+                            <button type="button" onclick="setBatteryLevel(50)" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-[#EAF2EC] text-[#2D6A4F] hover:bg-[#D8F3DC]">50% Mid</button>
+                            <button type="button" onclick="setBatteryLevel(68)" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-[#D8F3DC] text-[#1B4332] ring-1 ring-[#2D6A4F]/30 hover:bg-[#B7E4C7]">68% iPad</button>
+                            <button type="button" onclick="setBatteryLevel(80)" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-[#FEF3C7] text-[#92400E] hover:bg-[#FDE68A]">80% Unplug</button>
+                            <button type="button" onclick="setBatteryLevel(100)" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-[#EAF2EC] text-[#2D6A4F] hover:bg-[#D8F3DC]">100% Full</button>
+                        </div>
+
+                        <!-- Charging Toggle Switch -->
+                        <div class="flex items-center justify-between pt-2 border-t border-[#2D6A4F]/10">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-[#172B1E]">Connected to charger</span>
+                                <span id="settingsChargeLabel" class="text-[10px] font-semibold text-[#526B5A]">(On battery)</span>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="settingsChargeToggle" onchange="toggleCharging()"><span></span></label>
+                        </div>
+
+                        <!-- Educational Note for iPad / iOS -->
+                        <div class="p-2.5 rounded-xl bg-[#F0F7F2] border border-[#2D6A4F]/10 text-[11px] text-[#3F5446] leading-relaxed">
+                            💡 <b>Why does iPadOS require manual sync?</b> Apple blocks web browsers from reading device battery status to protect your privacy and prevent cross-site fingerprinting. Setting your percentage here matches your iPad exactly and enables accurate health warnings!
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Device + Auto-Detected Specs + Particular Model & Series Lookup -->
                 <section class="card rounded-[28px] p-5">
                     <div class="flex items-center justify-between gap-2">
@@ -585,7 +649,7 @@
            ============================================================ */
         const state = {
             page: 'sanctuary',
-            battery: 76,
+            battery: (function() { const s = localStorage.getItem('wattpet_batt'); if (s) return Math.min(100, Math.max(1, parseInt(s, 10))); return 68; })(),
             charging: false,
             liveBattery: false,
             period: 30,
@@ -1484,7 +1548,7 @@
                 if (el) el.classList.toggle('hidden', p !== page);
             });
             document.querySelectorAll('.main-nav').forEach(b => {
-                b.className = 'main-nav px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap transition-all duration-200 ' +
+                b.className = 'main-nav flex-1 md:flex-initial px-2 py-2 sm:px-3 md:px-3.5 md:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ' +
                     (b.dataset.nav === page ? 'bg-[#2D6A4F] text-white shadow-sm' : 'text-[#526B5A] hover:text-[#172B1E] hover:bg-white/60');
             });
             document.querySelectorAll('.mini-nav').forEach(b => {
@@ -2166,6 +2230,101 @@
         /* ============================================================
            BATTERY (Merged into Top Banner + Sticky Bar)
            ============================================================ */
+        function updateCalibrationUI() {
+            const val = document.getElementById('settingsBattVal');
+            if (val) val.textContent = state.battery + '%';
+            const slider = document.getElementById('settingsBattSlider');
+            if (slider) slider.value = state.battery;
+            const chk = document.getElementById('settingsChargeToggle');
+            if (chk) chk.checked = state.charging;
+            const chkLbl = document.getElementById('settingsChargeLabel');
+            if (chkLbl) chkLbl.textContent = state.charging ? '(Charging ⚡)' : '(On battery 🔋)';
+            const srcBadge = document.getElementById('battSourceBadge');
+            if (srcBadge) {
+                if (state.liveBattery) {
+                    srcBadge.textContent = '🟢 Live Auto-Sync';
+                    srcBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-[#D8F3DC] text-[#2D6A4F] border border-[#2D6A4F]/20 flex-shrink-0';
+                } else {
+                    srcBadge.textContent = '📱 iPad / iOS Sync';
+                    srcBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-[#EAF6EC] text-[#2D6A4F] border border-[#2D6A4F]/20 flex-shrink-0';
+                }
+            }
+        }
+
+        function setBatteryLevel(lvl, isCharging) {
+            const clamped = Math.min(100, Math.max(1, Math.round(lvl)));
+            const wasBelow = !(state.charging && state.battery >= 80);
+            state.battery = clamped;
+            if (typeof isCharging === 'boolean') {
+                state.charging = isCharging;
+            }
+            try {
+                localStorage.setItem('wattpet_batt', state.battery);
+                localStorage.setItem('wattpet_charging', state.charging ? 'true' : 'false');
+            } catch (e) {}
+            renderBattery();
+            updateCalibrationUI();
+            recalc();
+            if (wasBelow && state.charging && state.battery >= 80 && document.getElementById('opt80') && document.getElementById('opt80').checked) {
+                say(`Meow! ${state.battery}% — time to unplug 🔌`);
+                triggerDeviceNotification(false);
+            }
+        }
+
+        function adjustBattery(delta) {
+            setBatteryLevel(state.battery + delta);
+        }
+
+        function toggleCharging() {
+            setBatteryLevel(state.battery, !state.charging);
+            say(state.charging ? 'Plugged in! Charging gently ⚡' : 'Unplugged! Running on battery 🌿');
+        }
+
+        function onSettingsSliderChange(val) {
+            setBatteryLevel(parseInt(val, 10));
+        }
+
+        function onZoneBarClick(e) {
+            const bar = document.getElementById('zoneBarContainer');
+            if (!bar) return;
+            const rect = bar.getBoundingClientRect();
+            const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+            const pct = Math.round((x / rect.width) * 100);
+            setBatteryLevel(pct);
+            say(`Battery calibrated to ${state.battery}%! 🐾`);
+        }
+
+        function openBatteryCalibrationPrompt() {
+            const cur = state.battery;
+            const input = prompt('Enter your device battery percentage (1–100):', cur);
+            if (input !== null) {
+                const num = parseInt(input, 10);
+                if (!isNaN(num) && num >= 1 && num <= 100) {
+                    setBatteryLevel(num);
+                    say(`Battery calibrated to ${num}%! 🐾`);
+                }
+            }
+        }
+
+        let simBatteryTimer = null;
+        function setupSimulatedBattery() {
+            if (simBatteryTimer) clearInterval(simBatteryTimer);
+            // Every 120 seconds, simulate real battery change if tab is open
+            simBatteryTimer = setInterval(() => {
+                if (document.hidden) return;
+                if (state.liveBattery) return; // Native hardware sync takes precedence
+                if (state.charging) {
+                    if (state.battery < 100) {
+                        setBatteryLevel(state.battery + 1, true);
+                    }
+                } else {
+                    if (state.battery > 5) {
+                        setBatteryLevel(state.battery - 1, false);
+                    }
+                }
+            }, 120000);
+        }
+
         function renderBattery() {
             const lvl = state.battery;
             const ch = state.charging;
@@ -2182,7 +2341,7 @@
                 mood = 'Mochi is sleeping… 💤'; moodDot = 'bg-[#F4ACB7]'; ringA = '#F4ACB7'; ringB = '#E07A5F'; mini = 'Sleeping (low)';
             } else {
                 title = ch ? 'Charging gently' : 'Healthy zone';
-                badgeText = ch ? 'Charging' : 'Healthy';
+                badgeText = ch ? 'Charging' : (state.liveBattery ? 'Healthy' : `${lvl}% · iPad Sync`);
                 subText = ch ? 'Charging inside the safe 20%–80% zone' : 'Optimal 20%–80% lifespan protection active';
                 mood = 'Mochi is content'; moodDot = 'bg-[#95D5B2]'; ringA = '#74C69D'; ringB = '#2D6A4F'; mini = ch ? 'Charging' : 'Healthy zone';
             }
@@ -2190,7 +2349,7 @@
             const ringPct = document.getElementById('ringPct');
             if (ringPct) ringPct.textContent = lvl + '%';
             const ringCharge = document.getElementById('ringCharge');
-            if (ringCharge) ringCharge.textContent = ch ? 'Charging' : 'On battery';
+            if (ringCharge) ringCharge.textContent = ch ? 'Charging ⚡' : 'On battery';
             const battTitle = document.getElementById('battTitle');
             if (battTitle) {
                 battTitle.textContent = title;
@@ -2204,7 +2363,7 @@
                 badge.style.color = ringB;
             }
             const marker = document.getElementById('zoneMarker');
-            if (marker) marker.style.left = `calc(${lvl}% - 3px)`;
+            if (marker) marker.style.left = `calc(${lvl}% - 4px)`;
 
             const ringArc = document.getElementById('ringArc');
             if (ringArc) {
@@ -2236,23 +2395,52 @@
 
         function initBattery() {
             renderBattery();
-            if (!('getBattery' in navigator)) return;
-            navigator.getBattery().then(b => {
-                const sync = () => {
-                    const wasBelow = !(state.charging && state.battery >= 80);
-                    state.battery = Math.round(b.level * 100);
-                    state.charging = b.charging;
-                    state.liveBattery = true;
-                    renderBattery();
-                    if (wasBelow && state.charging && state.battery >= 80 && document.getElementById('opt80').checked) {
-                        say(`Meow! ${state.battery}% — time to unplug 🔌`);
-                        triggerDeviceNotification(false);
-                    }
+            updateCalibrationUI();
+
+            // Set up touch support on 3-zone bar for mobile/iPad
+            const bar = document.getElementById('zoneBarContainer');
+            if (bar) {
+                const handleTouch = (e) => {
+                    if (!e.touches || !e.touches[0]) return;
+                    const rect = bar.getBoundingClientRect();
+                    const x = Math.max(0, Math.min(rect.width, e.touches[0].clientX - rect.left));
+                    const pct = Math.round((x / rect.width) * 100);
+                    setBatteryLevel(pct);
                 };
-                sync();
-                b.addEventListener('levelchange', sync);
-                b.addEventListener('chargingchange', sync);
-            }).catch(() => {});
+                bar.addEventListener('touchmove', handleTouch, { passive: true });
+                bar.addEventListener('touchstart', handleTouch, { passive: true });
+            }
+
+            // Check if browser supports Battery Status API (Chrome, Edge, Opera, Samsung Internet)
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(b => {
+                    const sync = () => {
+                        const wasBelow = !(state.charging && state.battery >= 80);
+                        state.battery = Math.round(b.level * 100);
+                        state.charging = b.charging;
+                        state.liveBattery = true;
+                        localStorage.setItem('wattpet_batt', state.battery);
+                        localStorage.setItem('wattpet_charging', state.charging ? 'true' : 'false');
+                        renderBattery();
+                        updateCalibrationUI();
+                        if (wasBelow && state.charging && state.battery >= 80 && document.getElementById('opt80') && document.getElementById('opt80').checked) {
+                            say(`Meow! ${state.battery}% — time to unplug 🔌`);
+                            triggerDeviceNotification(false);
+                        }
+                    };
+                    sync();
+                    b.addEventListener('levelchange', sync);
+                    b.addEventListener('chargingchange', sync);
+                }).catch(() => {
+                    state.liveBattery = false;
+                    setupSimulatedBattery();
+                });
+            } else {
+                // Apple iPadOS / iOS Safari privacy mode:
+                // Apple disables navigator.getBattery across iOS WebKit to prevent tracking.
+                state.liveBattery = false;
+                setupSimulatedBattery();
+            }
         }
 
         /* ============================================================
