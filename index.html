@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>WattPet — Cozy Battery Companion</title>
+
+    <!-- Tailwind (falls back to a mirror if the main CDN is blocked) -->
+    <script src="https://cdn.tailwindcss.com"
+            onerror="var s=document.createElement('script');s.src='https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js';document.head.appendChild(s);"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html, body {
+            margin: 0;
+            min-height: 100dvh;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #172B1E;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 8% 10%, rgba(149, 213, 178, 0.55) 0%, transparent 40%),
+                radial-gradient(circle at 92% 8%, rgba(250, 214, 165, 0.50) 0%, transparent 40%),
+                radial-gradient(circle at 80% 95%, rgba(183, 228, 199, 0.55) 0%, transparent 45%),
+                radial-gradient(circle at 10% 90%, rgba(255, 229, 217, 0.45) 0%, transparent 40%),
+                linear-gradient(160deg, #F3F8F0 0%, #E5F2E7 50%, #F8F3E8 100%);
+            background-attachment: fixed;
+        }
+
+        .num { font-variant-numeric: tabular-nums; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(45, 106, 79, 0.10);
+            box-shadow: 0 14px 34px -14px rgba(23, 43, 30, 0.14), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.40);
+        }
+
+        .glass-dark {
+            background: rgba(14, 32, 21, 0.52);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.20);
+        }
+
+        .pixel {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* Toggle switch */
+        .switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; display: inline-block; }
+        .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .switch span { position: absolute; inset: 0; background: #CFDDD3; border-radius: 999px; transition: background .25s; cursor: pointer; }
+        .switch span::before {
+            content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
+            background: #fff; border-radius: 50%; transition: transform .25s cubic-bezier(.22,1,.36,1);
+            box-shadow: 0 2px 6px rgba(0,0,0,.18);
+        }
+        .switch input:checked + span { background: #2D6A4F; }
+        .switch input:checked + span::before { transform: translateX(18px); }
+
+        /* Floating caption bubbles around the cat */
+        .cap {
+            position: absolute;
+            max-width: 200px;
+            background: #FFFDF8;
+            color: #172B1E;
+            border: 2px solid #52B788;
+            border-radius: 16px;
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.35;
+            box-shadow: 0 12px 26px -10px rgba(16, 35, 23, 0.45);
+            animation: capFloat 3.6s cubic-bezier(.22, 1, .36, 1) forwards;
+            pointer-events: none;
+        }
+        .cap::after {
+            content: ''; position: absolute; width: 10px; height: 10px;
+            background: #FFFDF8; border: 2px solid #52B788; transform: rotate(45deg);
+        }
+        .cap.t-bottom::after { bottom: -7px; left: calc(50% - 5px); border-top: none; border-left: none; }
+        .cap.t-top::after    { top: -7px;    left: calc(50% - 5px); border-bottom: none; border-right: none; }
+        .cap.t-left::after   { left: -7px;   top: calc(50% - 5px);  border-top: none; border-right: none; }
+        .cap.t-right::after  { right: -7px;  top: calc(50% - 5px);  border-bottom: none; border-left: none; }
+
+        @keyframes capFloat {
+            0%   { opacity: 0; transform: translateY(8px) scale(.9); }
+            12%  { opacity: 1; transform: translateY(0) scale(1); }
+            75%  { opacity: 1; transform: translateY(-10px) scale(1); }
+            100% { opacity: 0; transform: translateY(-22px) scale(.97); }
+        }
+
+        /* Sticky mini banner */
+        #stickyBar { transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .35s; }
+        #stickyBar.hidden-bar { transform: translateY(-120%); opacity: 0; pointer-events: none; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; }
+    </style>
+</head>
+
+<body>
+
+    <!-- Real Device-Style Floating Notification Banner -->
+    <div id="deviceNotificationBanner" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-[9999] w-[92%] max-w-md bg-[#183123]/95 backdrop-blur-2xl text-white rounded-[22px] p-3.5 shadow-2xl border border-white/20 transition-all duration-300 transform -translate-y-6 opacity-0">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-[#2D6A4F] border border-white/20 flex items-center justify-center flex-shrink-0 shadow-md">
+                <canvas id="notifCatCanvas" width="48" height="44" class="pixel w-[28px] h-[25px]"></canvas>
+            </div>
+            <div class="flex-1 min-w-0 pr-1">
+                <div class="flex items-center justify-between text-[10px] font-bold text-[#A7D7B5]">
+                    <span class="uppercase tracking-wider">WattPet · Device Notification</span>
+                    <span id="notifTime">now</span>
+                </div>
+                <h4 id="notifTitle" class="text-xs sm:text-sm font-black text-white mt-0.5 leading-snug">Healthy Zone Reminder</h4>
+                <p id="notifBody" class="text-[11px] sm:text-xs text-white/85 mt-0.5 leading-snug">Meow! Battery reaches 80% — time to unplug &amp; safeguard battery lifespan! 🔌</p>
+            </div>
+            <button onclick="dismissNotificationBanner()" class="text-white/60 hover:text-white p-1 rounded-lg text-xs leading-none">✕</button>
+        </div>
+    </div>
+
+    <!-- =============================================================
+         STICKY MINI BANNER (appears when you scroll down)
+         ============================================================= -->
+    <div id="stickyBar" class="hidden-bar fixed top-0 inset-x-0 z-50">
+        <div class="max-w-6xl mx-auto px-3 sm:px-5 lg:px-8 pt-2">
+            <div class="card rounded-2xl px-3 py-2 flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#D8F3DC] to-[#FFF1D6] flex items-center justify-center flex-shrink-0 border border-[#52B788]/25">
+                    <canvas id="miniCatCanvas" width="60" height="52" class="pixel w-[38px] h-[33px]"></canvas>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="font-extrabold">Mochi</span>
+                        <span id="miniStatus" class="font-semibold text-[#2D6A4F] truncate">Healthy zone</span>
+                    </div>
+                    <div class="flex items-center gap-2 mt-1">
+                        <div class="relative flex-1 max-w-[260px] h-2 rounded-full bg-[#E3ECE5] overflow-hidden">
+                            <div class="absolute top-0 bottom-0 left-[80%] w-[2px] bg-[#E9A825] z-10"></div>
+                            <div id="miniBarFill" class="h-full rounded-full bg-gradient-to-r from-[#52B788] to-[#95D5B2] transition-all duration-500" style="width:76%"></div>
+                        </div>
+                        <span id="miniPct" class="num text-xs font-extrabold">76%</span>
+                    </div>
+                </div>
+                <nav class="flex items-center gap-1 bg-[#EEF5EF] p-1 rounded-xl">
+                    <button onclick="switchPage('sanctuary', true)" data-nav="sanctuary" class="mini-nav w-9 h-9 rounded-lg flex items-center justify-center" title="Sanctuary"><canvas data-px="leaf" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
+                    <button onclick="switchPage('rewards', true)" data-nav="rewards" class="mini-nav w-9 h-9 rounded-lg flex items-center justify-center" title="Rewards"><canvas data-px="gift" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
+                    <button onclick="switchPage('settings', true)" data-nav="settings" class="mini-nav w-9 h-9 rounded-lg flex items-center justify-center" title="Settings"><canvas data-px="gear" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full max-w-6xl mx-auto px-3 sm:px-5 lg:px-8 py-3 sm:py-5 flex flex-col gap-4">
+
+        <!-- =========================================================
+             HEADER: Brand & Navigation (Clean, fits any width with zero overflow)
+             ========================================================= -->
+        <header id="mainHeader" class="card rounded-[26px] p-3 sm:px-5 sm:py-3.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-4 shadow-xs border border-[#2D6A4F]/15 overflow-hidden">
+            <div class="flex items-center justify-between gap-3 min-w-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#74C69D] to-[#2D6A4F] flex items-center justify-center shadow-xs flex-shrink-0">
+                        <canvas id="logoCatCanvas" width="60" height="52" class="pixel w-[32px] h-[28px]"></canvas>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <h1 class="text-lg font-black tracking-tight leading-none text-[#172B1E]">WattPet</h1>
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-[#D8F3DC] text-[#2D6A4F] border border-[#2D6A4F]/20 flex-shrink-0">ACTIVE</span>
+                        </div>
+                        <p class="text-[11px] font-semibold text-[#526B5A] truncate mt-0.5">Eco battery companion</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs with Pixel Art Icons (Full-width segmented tabs on compact screens, inline pill bar on desktop) -->
+            <nav class="grid grid-cols-3 gap-1 bg-[#EAF2EC] p-1 rounded-2xl border border-[#2D6A4F]/10 w-full sm:w-auto sm:flex sm:items-center sm:gap-1.5 flex-shrink-0">
+                <button onclick="switchPage('sanctuary')" data-nav="sanctuary" class="main-nav px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap transition-all duration-200">
+                    <canvas data-px="leaf" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Sanctuary</span>
+                </button>
+                <button onclick="switchPage('rewards')" data-nav="rewards" class="main-nav px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap transition-all duration-200">
+                    <canvas data-px="gift" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Rewards</span>
+                </button>
+                <button onclick="switchPage('settings')" data-nav="settings" class="main-nav px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap transition-all duration-200">
+                    <canvas data-px="gear" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Settings</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- =========================================================
+             PAGE 1: SANCTUARY
+             ========================================================= -->
+        <main id="page-sanctuary" class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
+
+            <!-- Compact, Sleek Battery Health & Eco Impact Banner (Only shows on Sanctuary column!) -->
+            <section class="lg:col-span-12 card rounded-[22px] p-2.5 sm:p-3 border border-[#2D6A4F]/15 shadow-xs bg-gradient-to-r from-[#F5FAF6] via-[#FFFDF7] to-[#F4FAF2]">
+                <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-4">
+
+                    <!-- Left: Sleek Mini Battery Health Gauge + 3-Zone Bar -->
+                    <div class="flex items-center gap-3 flex-1 min-w-0 pr-0 md:pr-3 border-b md:border-b-0 md:border-r border-[#2D6A4F]/10 pb-2 md:pb-0">
+                        <!-- Mini Radial SVG Ring (Compact 46px) -->
+                        <div class="relative w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center">
+                            <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 48 48">
+                                <circle cx="24" cy="24" r="19" stroke="#DFEDE3" stroke-width="4.5" fill="transparent" />
+                                <circle id="ringArc" cx="24" cy="24" r="19" stroke="url(#ringGrad)" stroke-width="4.5"
+                                        stroke-dasharray="119.4" stroke-dashoffset="30" stroke-linecap="round" fill="transparent"
+                                        class="transition-all duration-700" />
+                                <defs>
+                                    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop id="ringStopA" offset="0%" stop-color="#74C69D" />
+                                        <stop id="ringStopB" offset="100%" stop-color="#2D6A4F" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center leading-tight">
+                                <span id="ringPct" class="text-xs font-black num text-[#172B1E]">84%</span>
+                                <span id="ringCharge" class="text-[7.5px] font-bold text-[#526B5A] leading-none">On batt</span>
+                            </div>
+                        </div>
+
+                        <!-- Battery Info & Slim 3-Zone Bar -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-1 leading-none mb-1">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wide text-[#526B5A]">Battery</span>
+                                    <span id="battTitle" class="text-xs font-black text-[#2D6A4F] truncate">Healthy zone</span>
+                                </div>
+                                <span id="battStatusBadge" class="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-white/90 border border-[#2D6A4F]/15 text-[#2D6A4F]">Healthy</span>
+                            </div>
+
+                            <!-- Slim 3-Zone Bar (4px height) with Needle Indicator -->
+                            <div class="relative mt-1.5 mb-1">
+                                <div class="relative h-1.5 rounded-full overflow-hidden flex bg-gray-200">
+                                    <div class="w-[20%] bg-[#F4ACB7]" title="Low (< 20%)"></div>
+                                    <div class="w-[60%] bg-[#74C69D]" title="Healthy (20-80%)"></div>
+                                    <div class="w-[20%] bg-[#F2CC8F]" title="Unplug (> 80%)"></div>
+                                </div>
+                                <div class="relative h-0">
+                                    <div id="zoneMarker" class="absolute -top-[7px] w-1.5 h-3 rounded-full bg-[#172B1E] ring-1 ring-white shadow transition-all duration-700" style="left: calc(84% - 3px)"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-[8px] font-extrabold text-[#526B5A] px-0.5 leading-none">
+                                <span>Low</span>
+                                <span class="text-[#2D6A4F]">20–80%</span>
+                                <span>Unplug</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Sleek Inline Eco & Wallet Metrics (CO2 | Money | Kopi + 30d/1y) -->
+                    <div class="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-4 flex-shrink-0">
+                        <!-- CO2 -->
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-[#D8F3DC] border border-[#2D6A4F]/15 flex items-center justify-center flex-shrink-0">
+                                <canvas data-px="leaf" width="20" height="20" class="pixel w-3.5 h-3.5"></canvas>
+                            </div>
+                            <div class="leading-tight">
+                                <span class="text-[9px] font-bold text-[#526B5A] uppercase block">CO₂ saved</span>
+                                <span class="text-xs sm:text-sm font-black num text-[#172B1E]"><span id="impCo2">143</span><span id="impCo2Unit" class="text-[10px] ml-0.5 font-bold text-[#526B5A]">g</span></span>
+                            </div>
+                        </div>
+
+                        <div class="w-px h-6 bg-[#2D6A4F]/10 hidden sm:block"></div>
+
+                        <!-- Money Saved -->
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-[#FFE8D6] border border-[#E07A5F]/20 flex items-center justify-center flex-shrink-0">
+                                <canvas data-px="coin" width="20" height="20" class="pixel w-3.5 h-3.5"></canvas>
+                            </div>
+                            <div class="leading-tight">
+                                <span class="text-[9px] font-bold text-[#526B5A] uppercase block">Money saved</span>
+                                <span class="text-xs sm:text-sm font-black num text-[#172B1E]"><span class="text-[10px] mr-0.5 text-[#526B5A]">RM</span><span id="impRm">5.28</span></span>
+                            </div>
+                        </div>
+
+                        <div class="w-px h-6 bg-[#2D6A4F]/10 hidden sm:block"></div>
+
+                        <!-- Kopi Worth (Whole Number!) -->
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-[#EDE0D4] border border-[#7F5539]/20 flex items-center justify-center flex-shrink-0">
+                                <canvas data-px="kopi" width="20" height="20" class="pixel w-3.5 h-3.5"></canvas>
+                            </div>
+                            <div class="leading-tight">
+                                <span class="text-[9px] font-bold text-[#526B5A] uppercase block">Kopi worth</span>
+                                <span class="text-xs sm:text-sm font-black num text-[#7F5539]"><span id="impKopi">2</span><span class="text-[10px] ml-0.5 font-bold text-[#526B5A]">cups</span></span>
+                            </div>
+                        </div>
+
+                        <!-- 30d / 1y Period Toggle -->
+                        <div class="flex items-center bg-[#EAF2EC] p-0.5 rounded-lg text-[9px] font-black border border-[#2D6A4F]/10 ml-1">
+                            <button onclick="setPeriod(30)" id="per30" class="px-2 py-0.5 rounded transition font-black">30d</button>
+                            <button onclick="setPeriod(365)" id="per365" class="px-2 py-0.5 rounded transition font-black">1y</button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Living scene + pixel cat -->
+            <section id="heroStage" class="lg:col-span-12 relative rounded-[32px] overflow-hidden min-h-[460px] sm:min-h-[520px] shadow-lg border-2 border-white/80 bg-[#2D6A4F] flex flex-col justify-between">
+
+                <canvas id="sceneFallback" class="absolute inset-0 w-full h-full"></canvas>
+                <video id="sceneVideo" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" autoplay muted loop playsinline preload="auto"></video>
+                <canvas id="sceneOverlay" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+                <div class="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/45 pointer-events-none"></div>
+
+                <!-- Caption bubbles layer (z-20 so dropdown menu is always visible above) -->
+                <div id="captionLayer" class="absolute inset-0 z-20 pointer-events-none"></div>
+
+                <!-- Top row (z-40 so dropdown menu is always visible above cat & captions) -->
+                <div class="relative z-40 p-4 sm:p-5 flex items-start justify-between gap-2">
+                    <div id="moodBadge" class="glass-dark px-3.5 py-1.5 rounded-full flex items-center gap-2 text-xs font-bold text-white">
+                        <span id="moodDot" class="w-2 h-2 rounded-full bg-[#95D5B2]"></span>
+                        <span id="moodText">Mochi is content</span>
+                    </div>
+
+                    <!-- Polished Scenery Picker with Floating Popover & Pixel Icons -->
+                    <div class="relative ml-auto">
+                        <button onclick="toggleScenePicker(event)" class="glass-dark hover:bg-black/60 text-white px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 transition shadow-md border border-white/25">
+                            <canvas id="sceneIconCanvas" data-px="flower" width="28" height="28" class="pixel w-4 h-4"></canvas>
+                            <span id="sceneName" class="hidden sm:inline font-bold">Sunny Meadow</span>
+                            <svg class="w-3.5 h-3.5 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        <div id="scenePicker" class="hidden absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white/98 backdrop-blur-2xl rounded-2xl p-2 space-y-1 z-[100] shadow-[0_16px_40px_rgba(0,0,0,0.35)] border border-[#2D6A4F]/20"></div>
+                        <input id="customVideoInput" type="file" accept="video/*" class="hidden" onchange="useCustomVideo(event)" />
+                    </div>
+                </div>
+
+                <!-- Cat -->
+                <div id="catStageWrap" class="relative z-10 flex flex-col items-center justify-center">
+                    <canvas id="catCanvas" width="224" height="196" class="pixel w-[200px] h-[175px] sm:w-[240px] sm:h-[210px]"></canvas>
+                    <div id="catShadow" class="w-36 h-4 rounded-[50%] bg-black/35 blur-[6px] -mt-4 transition-transform duration-150"></div>
+                    <div class="mt-3 glass-dark px-4 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-2">
+                        <canvas data-px="paw" width="14" height="14" class="pixel w-4 h-4"></canvas><span>Mochi · tap the cat to pet</span>
+                    </div>
+                </div>
+
+                <!-- Bottom row: pixel outfits -->
+                <div id="catBottomBar" class="relative z-20 p-4 sm:p-5 flex items-end justify-between gap-2">
+                    <div class="glass-dark rounded-full p-1 flex items-center gap-1" id="outfitBar">
+                        <button onclick="setOutfit('none')"   data-outfit="none"   class="outfit-btn w-9 h-9 rounded-full flex items-center justify-center transition" title="No outfit"><canvas data-px="cat" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
+                        <button onclick="setOutfit('sprout')" data-outfit="sprout" class="outfit-btn w-9 h-9 rounded-full flex items-center justify-center transition" title="Leaf sprout"><canvas data-px="sprout" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
+                        <button onclick="setOutfit('flower')" data-outfit="flower" class="outfit-btn w-9 h-9 rounded-full flex items-center justify-center transition" title="Flower crown"><canvas data-px="flower" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
+                        <button onclick="setOutfit('hat')"    data-outfit="hat"    class="outfit-btn w-9 h-9 rounded-full flex items-center justify-center transition" title="Straw hat"><canvas data-px="hat" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Next reward progress strip -->
+            <section class="lg:col-span-12 card rounded-[28px] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3 flex-1 min-w-[220px]">
+                    <span class="w-11 h-11 rounded-2xl bg-[#D8F3DC] flex items-center justify-center flex-shrink-0">
+                        <canvas data-px="tree" width="14" height="14" class="pixel w-6 h-6"></canvas>
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                            <p class="text-[11px] font-bold uppercase tracking-wide text-[#526B5A]">Next reward</p>
+                            <p id="nextRewardText" class="text-[11px] font-extrabold text-[#2D6A4F] num">300 / 500 leaves</p>
+                        </div>
+                        <p id="nextRewardName" class="text-sm font-extrabold truncate mt-0.5">Plant a rainforest sapling</p>
+                        <div class="h-2 rounded-full bg-[#E5EFE7] mt-1.5 overflow-hidden">
+                            <div id="nextRewardBar" class="h-full rounded-full bg-gradient-to-r from-[#52B788] to-[#E9A825] transition-all duration-700" style="width:60%"></div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="switchPage('rewards')" class="px-4 py-2.5 rounded-2xl bg-[#EAF6EC] hover:bg-[#D8F3DC] text-xs font-extrabold text-[#1B4332] transition">View rewards →</button>
+            </section>
+        </main>
+
+        <!-- =========================================================
+             PAGE 2: REWARDS
+             ========================================================= -->
+        <main id="page-rewards" class="hidden flex flex-col gap-4">
+            <section class="rounded-[28px] p-5 sm:p-6 bg-gradient-to-br from-[#1B4332] via-[#2D6A4F] to-[#52B788] text-white flex flex-wrap items-center justify-between gap-4 shadow-lg">
+                <div>
+                    <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#B7E4C7]">Rewards</p>
+                    <h2 class="text-xl sm:text-2xl font-extrabold mt-1">Good battery habits, real perks</h2>
+                    <p class="text-xs text-white/85 mt-1 flex items-center gap-1.5 flex-wrap">Earn leaves <canvas data-px="leaf" width="14" height="14" class="pixel w-4 h-4 inline-block"></canvas> by petting Mochi, staying in the healthy zone and switching off sockets.</p>
+                </div>
+                <div class="glass px-5 py-3 rounded-2xl text-center">
+                    <p class="text-[10px] uppercase font-extrabold text-[#D8F3DC]">Your leaves</p>
+                    <p class="num text-2xl font-extrabold text-[#FDE68A] flex items-center justify-center gap-1.5"><span id="rewardsPoints">300</span> <canvas data-px="leaf" width="14" height="14" class="pixel w-5 h-5"></canvas></p>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="rewardGrid"></div>
+            <div id="rewardToast" class="hidden card rounded-2xl p-4 text-center text-xs font-extrabold text-[#1B4332]"></div>
+        </main>
+
+        <!-- =========================================================
+             PAGE 3: SETTINGS
+             ========================================================= -->
+        <main id="page-settings" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+
+            <div class="flex flex-col gap-4">
+                <!-- Merged Card: Run in background + Notifications + Show Mochi toggle -->
+                <section class="card rounded-[28px] p-5">
+                    <div class="flex items-center justify-between gap-3 pb-4 border-b border-[#2D6A4F]/10">
+                        <div>
+                            <h2 class="text-base font-extrabold">Run in background &amp; care</h2>
+                            <p class="text-xs text-[#526B5A] mt-0.5">WattPet watches your battery quietly — pick what Mochi helps you with.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="optBg" checked onchange="recalc()"><span></span></label>
+                    </div>
+
+                    <div class="divide-y divide-[#2D6A4F]/10">
+                        <div class="flex items-center justify-between gap-3 py-3">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-2xl bg-[#D8F3DC] border border-[#2D6A4F]/15 flex items-center justify-center shadow-xs flex-shrink-0">
+                                    <canvas data-px="bell" width="28" height="28" class="pixel w-5 h-5"></canvas>
+                                </span>
+                                <div>
+                                    <p class="text-sm font-bold">80% charge reminder</p>
+                                    <p class="text-[11px] text-[#526B5A]">Nudge me to unplug at 80%</p>
+                                </div>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="opt80" checked onchange="onToggle80()"><span></span></label>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 py-3">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-2xl bg-[#FDE8C8] border border-[#F4A261]/25 flex items-center justify-center shadow-xs flex-shrink-0">
+                                    <canvas data-px="plug" width="28" height="28" class="pixel w-5 h-5"></canvas>
+                                </span>
+                                <div>
+                                    <p class="text-sm font-bold">Wall switch reminder</p>
+                                    <p class="text-[11px] text-[#526B5A]">Remind me to switch off the socket</p>
+                                </div>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="optWall" checked onchange="recalc()"><span></span></label>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 py-3">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-2xl bg-[#E2ECF9] border border-[#457B9D]/20 flex items-center justify-center shadow-xs flex-shrink-0">
+                                    <canvas data-px="zzz" width="28" height="28" class="pixel w-5 h-5"></canvas>
+                                </span>
+                                <div>
+                                    <p class="text-sm font-bold">Rest idle tabs</p>
+                                    <p class="text-[11px] text-[#526B5A]">Pause tabs you haven't used in a while</p>
+                                </div>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="optTab" checked onchange="recalc()"><span></span></label>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 pt-3">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-2xl bg-[#FFE5D9] border border-[#E07A5F]/20 flex items-center justify-center shadow-xs flex-shrink-0">
+                                    <canvas data-px="cat" width="28" height="28" class="pixel w-5 h-5"></canvas>
+                                </span>
+                                <div>
+                                    <p class="text-sm font-bold">Show Mochi on screen</p>
+                                    <p class="text-[11px] text-[#526B5A]">Turn off to let the background scenery play alone</p>
+                                </div>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="optShowCat" checked onchange="toggleCatVisibility()"><span></span></label>
+                        </div>
+                    </div>
+
+                    <!-- Real Device Notification Trigger & Permission Status -->
+                    <div class="mt-4 pt-3.5 border-t border-[#2D6A4F]/10">
+                        <button onclick="triggerDeviceNotification(true)" class="w-full py-2.5 px-3 rounded-2xl bg-[#2D6A4F] hover:bg-[#1B4332] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition shadow-sm">
+                            <canvas data-px="bell" width="28" height="28" class="pixel w-4 h-4"></canvas>
+                            <span>🔔 Send test notification to this device</span>
+                        </button>
+                        <div class="mt-2.5 flex items-center justify-between text-[11px] text-[#526B5A]">
+                            <span class="font-medium">Device notification permission:</span>
+                            <span id="notifStatusText" class="font-extrabold text-[#2D6A4F]">Checking…</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Device + Auto-Detected Specs + Particular Model & Series Lookup -->
+                <section class="card rounded-[28px] p-5">
+                    <div class="flex items-center justify-between gap-2">
+                        <div>
+                            <h2 class="text-base font-extrabold">My device</h2>
+                            <p class="text-xs text-[#526B5A] mt-0.5">Auto-detected from your device settings &amp; hardware specs, or enter your exact model.</p>
+                        </div>
+                        <button onclick="autoDetectDeviceSpecs(true)" class="px-2.5 py-1.5 rounded-xl bg-[#EAF6EC] hover:bg-[#D8F3DC] text-[11px] font-extrabold text-[#2D6A4F] transition flex-shrink-0">Auto-detect</button>
+                    </div>
+
+                    <div id="detectedSpecBox" class="mt-3 p-2.5 rounded-2xl bg-[#F2F8F3] border border-[#2D6A4F]/10 text-[11px] text-[#3F5446] flex items-center gap-2">
+                        <canvas id="detectedDevIcon" data-px="laptop" width="14" height="14" class="pixel w-4 h-4 flex-shrink-0"></canvas>
+                        <span id="detectedSpecText" class="truncate font-semibold">Detecting device hardware specifications…</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 mt-3">
+                        <button onclick="setDevice('phone')"  data-dev="phone"  class="dev-btn py-3 rounded-2xl text-xs font-bold transition flex flex-col items-center gap-1"><canvas data-px="phone" width="14" height="14" class="pixel w-5 h-5"></canvas><span>Phone</span></button>
+                        <button onclick="setDevice('tablet')" data-dev="tablet" class="dev-btn py-3 rounded-2xl text-xs font-bold transition flex flex-col items-center gap-1"><canvas data-px="tablet" width="14" height="14" class="pixel w-5 h-5"></canvas><span>Tablet</span></button>
+                        <button onclick="setDevice('laptop')" data-dev="laptop" class="dev-btn py-3 rounded-2xl text-xs font-bold transition flex flex-col items-center gap-1"><canvas data-px="laptop" width="14" height="14" class="pixel w-5 h-5"></canvas><span>Laptop / PC</span></button>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-[#2D6A4F]/10">
+                        <label for="modelInput" class="block text-xs font-bold text-[#172B1E]">Device model &amp; series</label>
+                        <div class="flex gap-2 mt-1.5">
+                            <input id="modelInput" list="modelSuggestions" type="text"
+                                   placeholder="e.g. iPhone 15 Pro, Galaxy S24, MacBook Air M3..."
+                                   oninput="lookupModel(this.value)"
+                                   class="flex-1 min-w-0 rounded-xl bg-white border border-[#2D6A4F]/20 px-3 py-2 text-xs font-bold text-[#172B1E] placeholder:font-normal placeholder:text-[#526B5A]/70 focus:outline-none focus:ring-2 focus:ring-[#52B788]" />
+                            <datalist id="modelSuggestions"></datalist>
+                        </div>
+                        <p id="modelMatchedInfo" class="text-[11px] font-bold text-[#2D6A4F] mt-2">
+                            Matched: Standard Phone · 15 Wh · RM 380 replacement
+                        </p>
+                    </div>
+                </section>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <!-- Export -->
+                <section class="card rounded-[28px] p-5">
+                    <h2 class="text-base font-extrabold">Export my data</h2>
+                    <p class="text-xs text-[#526B5A] mt-0.5">Download or copy your savings summary.</p>
+                    <div class="grid grid-cols-2 gap-2 mt-3">
+                        <button onclick="exportCSV()" class="py-3 rounded-2xl bg-[#2D6A4F] hover:bg-[#1B4332] text-white text-xs font-extrabold transition flex items-center justify-center gap-2"><canvas data-px="download" width="14" height="14" class="pixel w-4 h-4"></canvas><span>Download CSV</span></button>
+                        <button onclick="copySummary()" class="py-3 rounded-2xl bg-[#EAF6EC] hover:bg-[#D8F3DC] text-[#1B4332] border border-[#52B788]/40 text-xs font-extrabold transition flex items-center justify-center gap-2"><canvas data-px="copy" width="14" height="14" class="pixel w-4 h-4"></canvas><span>Copy summary</span></button>
+                    </div>
+                    <p id="exportToast" class="hidden text-xs font-bold text-[#2D6A4F] mt-2"></p>
+                </section>
+
+                <!-- Simple explanation -->
+                <section id="numbersCard" class="card rounded-[28px] p-5">
+                    <h2 class="text-base font-extrabold">Where the numbers come from</h2>
+
+                    <div class="mt-3 space-y-2">
+                        <div class="flex items-start gap-3 p-3 rounded-2xl bg-[#FFF6E8]">
+                            <canvas data-px="coin" width="14" height="14" class="pixel w-5 h-5 flex-shrink-0 mt-0.5"></canvas>
+                            <p class="text-xs text-[#3F5446] leading-relaxed"><b>Money saved</b> = the battery replacement you put off + electricity you didn't waste.</p>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-2xl bg-[#EAF6EC]">
+                            <canvas data-px="leaf" width="14" height="14" class="pixel w-5 h-5 flex-shrink-0 mt-0.5"></canvas>
+                            <p class="text-xs text-[#3F5446] leading-relaxed"><b>CO₂ prevented</b> = electricity not wasted × Malaysia's grid emissions + the battery you didn't need to make yet.</p>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-2xl bg-[#F3ECE6]">
+                            <canvas data-px="kopi" width="14" height="14" class="pixel w-5 h-5 flex-shrink-0 mt-0.5"></canvas>
+                            <p class="text-xs text-[#3F5446] leading-relaxed"><b>Kopi worth</b> = money saved ÷ RM 2.50 (a kopi at a kopitiam, rounded to whole cups).</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 rounded-2xl border border-[#2D6A4F]/10 overflow-hidden text-xs">
+                        <div class="flex justify-between px-3 py-2 bg-white/70"><span class="text-[#526B5A]">Selected model</span><b id="asmModel">Standard Phone</b></div>
+                        <div class="flex justify-between px-3 py-2"><span class="text-[#526B5A]">Battery replacement</span><b id="asmBatt" class="num">RM 380</b></div>
+                        <div class="flex justify-between px-3 py-2 bg-white/70"><span class="text-[#526B5A]">Battery capacity</span><b id="asmWh" class="num">15 Wh</b></div>
+                        <div class="flex justify-between px-3 py-2"><span class="text-[#526B5A]">Battery life with 80% habit</span><b>2 → 3 years</b></div>
+                        <div class="flex justify-between px-3 py-2 bg-white/70"><span class="text-[#526B5A]">Electricity price</span><b class="num">RM 0.4443 / kWh</b></div>
+                        <div class="flex justify-between px-3 py-2"><span class="text-[#526B5A]">Grid emissions</span><b class="num">0.758 kg CO₂ / kWh</b></div>
+                        <div class="flex justify-between px-3 py-2 bg-white/70"><span class="text-[#526B5A]">Making a battery</span><b class="num">~85 kg CO₂ per kWh</b></div>
+                    </div>
+
+                    <details class="mt-3 text-[11px] text-[#526B5A]">
+                        <summary class="cursor-pointer font-bold text-[#2D6A4F]">Sources</summary>
+                        <ul class="list-disc pl-4 mt-2 space-y-1 leading-relaxed">
+                            <li>Official Malaysia battery service pricing: Apple Authorised Service Providers (Machines / Switch: RM 429–549 iPhone, RM 589–699 iPad, RM 749–929 MacBook) &amp; Samsung Malaysia Authorised Service Centres (RM 220–420).</li>
+                            <li>TNB domestic tariff from 1 July 2025: 27.03 + 4.55 + 12.85 sen/kWh (energy, capacity, network).</li>
+                            <li>Suruhanjaya Tenaga — Peninsular Malaysia grid emission factor.</li>
+                            <li>Battery University, BU-808: lower charge limits extend lithium-ion cycle life.</li>
+                            <li>IVL Swedish Environmental Research Institute (2019): 61–106 kg CO₂e per kWh of battery made.</li>
+                        </ul>
+                    </details>
+                </section>
+            </div>
+        </main>
+
+        <footer class="text-center text-[11px] text-[#526B5A] pb-2 flex items-center justify-center gap-1.5">
+            <span>WattPet · made with</span>
+            <canvas data-px="leaf" width="14" height="14" class="pixel w-3.5 h-3.5 inline-block"></canvas>
+            <span>for healthier batteries</span>
+        </footer>
+    </div>
+
+    <script>
+        /* ============================================================
+           STATE
+           ============================================================ */
+        const state = {
+            page: 'sanctuary',
+            battery: 76,
+            charging: false,
+            liveBattery: false,
+            period: 30,
+            device: 'phone',
+            modelName: 'Standard Phone',
+            customSpec: null,
+            detectedHwSummary: '',
+            showCat: true,
+            leaves: 300,
+            outfit: 'sprout',
+            boop: 0,
+            jump: 0,
+            t: 0
+        };
+
+        /* ============================================================
+           PIXEL ART ICON ENGINE (14x14 crisp sprites across UI)
+           ============================================================ */
+        const PX_PAL = {
+            '.': null,
+            'K': '#1F2421', // dark outline
+            'W': '#FFFDF7', // warm white
+            'G': '#2D6A4F', // deep forest green
+            'M': '#52B788', // mid leaf green
+            'L': '#95D5B2', // light mint green
+            'B': '#B7E4C7', // pale mint highlight
+            'Y': '#FBBF24', // gold / yellow
+            'A': '#F59E0B', // amber
+            'O': '#F49738', // ginger orange
+            'D': '#C9631A', // dark orange / brown
+            'C': '#8B5A2B', // coffee / wood brown
+            'E': '#5C3A21', // dark espresso
+            'R': '#E04F5F', // berry red
+            'P': '#FF758F', // pink petal
+            'S': '#FFB3C6', // soft pink
+            'U': '#60A5FA', // sky blue
+            'N': '#2563EB', // deep blue
+            'V': '#A855F7', // purple
+            'I': '#C084FC', // lavender
+            'H': '#94A3B8', // cool slate grey
+            'Z': '#CBD5E1'  // light silver
+        };
+
+        const PIXEL_SPRITES = {
+            leaf: [
+                ".......GGGG...",
+                ".....GGMMMMG..",
+                "....GMMLLLLMG.",
+                "...GMLLBBBBMG.",
+                "..GMLLBGGGBMG.",
+                "..GMLBGMMMBMG.",
+                "..GMBGMMLLMG..",
+                "..GMGMMLLMG...",
+                "...GGMLLMG....",
+                "...GGMMGG.....",
+                "..GG.GGG......",
+                ".GG...........",
+                "GG............",
+                ".............."
+            ],
+            sprout: [
+                "..............",
+                "..GGGG..GGGG..",
+                ".GMMLLGGLLMMG.",
+                ".GMLBBBBBBMLG.",
+                "..GMMMMGGMMG..",
+                "...GGGGGGGG...",
+                "......GG......",
+                "......GG......",
+                "......GG......",
+                "......GG......",
+                "....GGGGGG....",
+                "...CCCCCCCC...",
+                "..............",
+                ".............."
+            ],
+            gift: [
+                "....KK..KK....",
+                "...KYYKKYYK...",
+                "...KYYYYYYK...",
+                ".KKKKKKKKKKKK.",
+                ".KRRRRYYRRRRK.",
+                ".KRRRRYYRRRRK.",
+                ".KKKKKKKKKKKK.",
+                "..KRRRYYRRRK..",
+                "..KYYYYYYYYK..",
+                "..KRRRYYRRRK..",
+                "..KRRRYYRRRK..",
+                "..KRRRYYRRRK..",
+                "..KKKKKKKKKK..",
+                ".............."
+            ],
+            gear: [
+                ".....KKKK.....",
+                "....KZZZZK....",
+                "..KKKZZZZKKK..",
+                ".KZZZKKKKZZZK.",
+                ".KZZKWWWWKZZK.",
+                "KZZKWKKKKWKZZK",
+                "KZZKWK..KWKZZK",
+                "KZZKWK..KWKZZK",
+                "KZZKWKKKKWKZZK",
+                ".KZZKWWWWKZZK.",
+                ".KZZZKKKKZZZK.",
+                "..KKKZZZZKKK..",
+                "....KZZZZK....",
+                ".....KKKK....."
+            ],
+            coin: [
+                "....KKKKKK....",
+                "..KKYYYYYYKK..",
+                ".KYYWWWWYYYYK.",
+                ".KYWYYYYAAYYK.",
+                "KYYWYKKYYAAYYK",
+                "KYYYYKKYYAAYYK",
+                "KYYYYKKYYAAYYK",
+                "KYYYYKKYYAAYYK",
+                "KYYYYKKYYAAYYK",
+                "KYYYYAAYYAAYYK",
+                ".KYYYYAAAAYYK.",
+                ".KYYYYAAAAYYK.",
+                "..KKYYYYYYKK..",
+                "....KKKKKK...."
+            ],
+            kopi: [
+                "....Z...Z.....",
+                "...Z...Z..Z...",
+                "....Z...Z.....",
+                ".KKKKKKKKKK...",
+                ".KWWWWWWWWKKK.",
+                ".KCCCCCCCCK.K.",
+                ".KCCEEECCCK.K.",
+                ".KCCCCCCCCKKK.",
+                "..KCCCCCCK....",
+                "..KCCCCCCK....",
+                "...KKKKKK.....",
+                ".KKKKKKKKKK...",
+                "..KKKKKKKK....",
+                ".............."
+            ],
+            flower: [
+                ".....KKKK.....",
+                "....KSSSSK....",
+                "..KKKSSSSKKK..",
+                ".KSSSKKKKSSSK.",
+                "KSSSSKYYKSSSSK",
+                "KSSPPKYYKPPSSK",
+                ".KKKKKYYKKKKK.",
+                "KSSPPKYYKPPSSK",
+                "KSSSSKYYKSSSSK",
+                ".KSSSKKKKSSSK.",
+                "..KKKSSSSKKK..",
+                "....KSSSSK....",
+                ".....KKKK.....",
+                ".............."
+            ],
+            paw: [
+                "..KK..KK..KK..",
+                ".KPPKKPPKKPPK.",
+                ".KPPKKPPKKPPK.",
+                "..KK..KK..KK..",
+                "KK..........KK",
+                "KPK..KKKK..KPK",
+                "KPK.KPPPPK.KPK",
+                ".KKKPPPPPPKKK.",
+                "..KPPPPPPPPK..",
+                "..KPPPPPPPPK..",
+                "..KPPPPPPPPK..",
+                "...KPPPPPPK...",
+                "....KKKKKK....",
+                ".............."
+            ],
+            cat: [
+                ".KK........KK.",
+                ".KOK......KOK.",
+                ".KOPKKKKKKPOK.",
+                "KOOOOODDOOOOOK",
+                "KOOOKOOKOOKOOK",
+                "KOOPOOOOOOPOOK",
+                "KOOOOWWWWOOOOK",
+                ".KOOOWKWWOOOK.",
+                "..KRRRRRRRRK..",
+                "..KOOOWWWOOOK.",
+                "..KOOOWWWOOOK.",
+                "..KKKKKKKKKK..",
+                "..............",
+                ".............."
+            ],
+            hat: [
+                "..............",
+                "....KKKKKK....",
+                "...KYYYYYYK...",
+                "..KYYYYYYYYK..",
+                "..KYYYYYYYYK..",
+                "..KRRRRRRRRK..",
+                "KKKKKKKKKKKKKK",
+                "KYYYYYYYYYYYYK",
+                ".KKKKKKKKKKKK.",
+                "..............",
+                "..............",
+                "..............",
+                "..............",
+                ".............."
+            ],
+            tree: [
+                "....GGGGGG....",
+                "..GGMMMMMMGG..",
+                ".GMMLLLLLLMMG.",
+                ".GMLBBBBBBMLG.",
+                "GGMLLLLLLLLMMG",
+                "GMMLLLLMMMMMMG",
+                "GGMMMMMMMMMMGG",
+                ".GGGGGGGGGGGG.",
+                ".....CCCC.....",
+                ".....CCCC.....",
+                ".....CCCC.....",
+                "...CCCCCCCC...",
+                "..............",
+                ".............."
+            ],
+            bell: [
+                "......KK......",
+                ".....KYYK.....",
+                "....KYYYYK....",
+                "...KYYYYYYK...",
+                "...KYYYYYYK...",
+                "..KYYYYYYYYK..",
+                "..KYYYYYYYYK..",
+                "..KYYYYYYYYK..",
+                ".KYYYYYYYYYYK.",
+                ".KKKKKKKKKKKK.",
+                ".....KAAK.....",
+                ".....KKKK.....",
+                "..............",
+                ".............."
+            ],
+            plug: [
+                "...KK....KK...",
+                "...KK....KK...",
+                "...KK....KK...",
+                ".KKKKKKKKKKKK.",
+                ".KHHHHHHHHHHK.",
+                ".KHHHHHHHHHHK.",
+                "..KHHHHHHHHK..",
+                "...KHHHHHHK...",
+                "....KKKKKK....",
+                ".....KKKK.....",
+                ".....KKKK.....",
+                "......KK......",
+                "......KK......",
+                ".............."
+            ],
+            zzz: [
+                ".NNNNNNN......",
+                ".....NN.......",
+                "....NN........",
+                "...NN..UUUUUU.",
+                "..NN......UU..",
+                ".NNNNNNN.UU...",
+                "........UU....",
+                ".......UUUUUU.",
+                "..UUUUU.......",
+                ".....UU.......",
+                "....UU........",
+                "...UUUUU......",
+                "..............",
+                ".............."
+            ],
+            phone: [
+                "...KKKKKKKK...",
+                "..KHHHHHHHHK..",
+                "..KUUUUUUUUK..",
+                "..KUUUUUUUUK..",
+                "..KUUUUUUUUK..",
+                "..KUUUUUUUUK..",
+                "..KUUUUUUUUK..",
+                "..KUUUUUUUUK..",
+                "..KUUUUUUUUK..",
+                "..KUUUUUUUUK..",
+                "..KHHHHHHHHK..",
+                "..KHHHWWHHHK..",
+                "...KKKKKKKK...",
+                ".............."
+            ],
+            tablet: [
+                ".KKKKKKKKKKKK.",
+                "KHHHHHHHHHHHHK",
+                "KHUUUUUUUUUUHK",
+                "KHUUUUUUUUUUHK",
+                "KHUUUUUUUUUUHK",
+                "KHUUUUUUUUUUHK",
+                "KHUUUUUUUUUUHK",
+                "KHUUUUUUUUUUHK",
+                "KHUUUUUUUUUUHK",
+                "KHUUUUUUUUUUHK",
+                "KHHHHHHHHHHHHK",
+                "KHHHHHWWHHHHHK",
+                ".KKKKKKKKKKKK.",
+                ".............."
+            ],
+            laptop: [
+                "..KKKKKKKKKK..",
+                ".KHHHHHHHHHHK.",
+                ".KHUUUUUUUUHK.",
+                ".KHUUUUUUUUHK.",
+                ".KHUUUUUUUUHK.",
+                ".KHUUUUUUUUHK.",
+                ".KHUUUUUUUUHK.",
+                ".KHHHHHHHHHHK.",
+                ".KKKKKKKKKKKK.",
+                "KKKKKKKKKKKKKK",
+                "KZZZZZZZZZZZZK",
+                ".KKKKKKKKKKKK.",
+                "..............",
+                ".............."
+            ],
+            download: [
+                ".....KKKK.....",
+                ".....KGGK.....",
+                ".....KGGK.....",
+                ".....KGGK.....",
+                "...KKKGGKKK...",
+                "..KGGGGGGGGK..",
+                "...KGGGGGGK...",
+                "....KGGGGK....",
+                ".....KGGK.....",
+                ".KK........KK.",
+                ".KGGGGGGGGGGK.",
+                ".KKKKKKKKKKKK.",
+                "..............",
+                ".............."
+            ],
+            copy: [
+                ".KKKKKKKK.....",
+                ".KWWWWWWK.....",
+                ".KWKKKKWKKKKK.",
+                ".KWK..KWWWWWWK",
+                ".KWKKKKWKKKKWK",
+                ".KWWWWKWK..KWK",
+                ".KKKKKKWKKKKWK",
+                "......KWWWWWWK",
+                "......KWKKKKWK",
+                "......KWWWWWWK",
+                "......KKKKKKKK",
+                "..............",
+                "..............",
+                ".............."
+            ],
+            galaxy: [
+                "......YY......",
+                "...II....VV...",
+                "..I..VVVV..I..",
+                ".V..VWWWWV..V.",
+                "...VWYYYYWV...",
+                ".I.VWYWWYWV.I.",
+                "Y..VWWWWWWV..Y",
+                ".I.VWYYYYWV.I.",
+                "...VWWWWWWV...",
+                ".V..VVVVVV..V.",
+                "..I........I..",
+                "...VV....II...",
+                "......YY......",
+                ".............."
+            ],
+            rain: [
+                "....KKKKKK....",
+                "..KKZZZZZZKK..",
+                ".KZZZZZZZZZZK.",
+                "KZZZZZZZZZZZZK",
+                "KZZZZZZZZZZZZK",
+                ".KKKKKKKKKKKK.",
+                "..UU..UU..UU..",
+                ".UU..UU..UU...",
+                "..............",
+                "...UU..UU..UU.",
+                "..UU..UU..UU..",
+                "..............",
+                "..............",
+                ".............."
+            ],
+            moon: [
+                ".....KKKK.....",
+                "...KKYYYYKK...",
+                "..KYYYYYK.....",
+                ".KYYYYYK....Y.",
+                ".KYYYYK...YYY.",
+                ".KYYYYK....Y..",
+                ".KYYYYK.......",
+                ".KYYYYYK......",
+                "..KYYYYYKK....",
+                "...KKYYYYYKK..",
+                ".....KKKKKK...",
+                "..............",
+                "..............",
+                ".............."
+            ],
+            video: [
+                ".KKKKKKKKKKKK.",
+                ".KWWKKWWKKWWK.",
+                ".KKKKKKKKKKKK.",
+                ".KHHHHHHHHHHK.",
+                ".KHHHWWWHHHHK.",
+                ".KHHWWWWHHHHK.",
+                ".KHHWWWWWHHHK.",
+                ".KHHWWWWHHHHK.",
+                ".KHHHWWWHHHHK.",
+                ".KHHHHHHHHHHK.",
+                ".KKKKKKKKKKKK.",
+                "..............",
+                "..............",
+                ".............."
+            ],
+            plus: [
+                ".....KKKK.....",
+                ".....KGGK.....",
+                ".....KGGK.....",
+                ".....KGGK.....",
+                ".KKKKKGGKKKKK.",
+                ".KGGGGGGGGGGK.",
+                ".KGGGGGGGGGGK.",
+                ".KKKKKGGKKKKK.",
+                ".....KGGK.....",
+                ".....KGGK.....",
+                ".....KGGK.....",
+                ".....KKKK.....",
+                "..............",
+                ".............."
+            ],
+            wrench: [
+                ".......KKKK...",
+                "......KZZZZK..",
+                ".....KZZKKZZK.",
+                ".....KZZK.KZK.",
+                ".....KZZK..KK.",
+                "....KZZZK.....",
+                "...KZZZK......",
+                "..KZZZK.......",
+                ".KZZZK........",
+                "KZZZKKKK......",
+                "KZZKZZZK......",
+                ".KKKKKK.......",
+                "..............",
+                ".............."
+            ]
+        };
+
+        function drawPixelIcon(canvas, name) {
+            if (!canvas) return;
+            const grid = PIXEL_SPRITES[name] || PIXEL_SPRITES.leaf;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+            const targetW = canvas.width && canvas.width >= 14 ? canvas.width : 28;
+            const targetH = canvas.height && canvas.height >= 14 ? canvas.height : 28;
+            if (canvas.width !== targetW) canvas.width = targetW;
+            if (canvas.height !== targetH) canvas.height = targetH;
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, targetW, targetH);
+            const rows = grid.length;
+            const cols = grid[0].length;
+            const scaleX = targetW / cols;
+            const scaleY = targetH / rows;
+            for (let r = 0; r < rows; r++) {
+                const row = grid[r];
+                for (let c = 0; c < cols; c++) {
+                    const col = PX_PAL[row[c]];
+                    if (col) {
+                        ctx.fillStyle = col;
+                        ctx.fillRect(Math.floor(c * scaleX), Math.floor(r * scaleY), Math.ceil(scaleX), Math.ceil(scaleY));
+                    }
+                }
+            }
+        }
+
+        function renderAllPixelIcons(root = document) {
+            root.querySelectorAll('canvas[data-px]').forEach(c => {
+                drawPixelIcon(c, c.dataset.px);
+            });
+        }
+
+        function drawTopBatteryPixelIcon(lvl, ch) {
+            const c = document.getElementById('topBattCanvas');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            ctx.clearRect(0, 0, 18, 18);
+
+            // Pixel battery casing (horizontal 14x9 with positive terminal nub)
+            ctx.fillStyle = '#1F2421';
+            ctx.fillRect(1, 4, 13, 1);
+            ctx.fillRect(1, 13, 13, 1);
+            ctx.fillRect(1, 4, 1, 10);
+            ctx.fillRect(13, 4, 1, 10);
+            ctx.fillRect(14, 7, 2, 4); // terminal nub
+
+            // Inner background
+            ctx.fillStyle = '#FFFDF7';
+            ctx.fillRect(2, 5, 11, 8);
+
+            // Fill color based on health zone
+            const fillCol = (ch && lvl >= 80) ? '#E9A825' : (lvl < 20 ? '#E04F5F' : '#2D6A4F');
+            const hiCol   = (ch && lvl >= 80) ? '#FBBF24' : (lvl < 20 ? '#FF758F' : '#52B788');
+            const fillW = Math.max(1, Math.min(9, Math.round((lvl / 100) * 9)));
+
+            ctx.fillStyle = fillCol;
+            ctx.fillRect(3, 6, fillW, 6);
+            ctx.fillStyle = hiCol;
+            ctx.fillRect(3, 6, fillW, 2);
+
+            // Pixel lightning bolt if charging
+            if (ch) {
+                ctx.fillStyle = '#1F2421';
+                ctx.fillRect(7, 4, 4, 10);
+                ctx.fillStyle = '#FBBF24';
+                ctx.fillRect(8, 5, 2, 2);
+                ctx.fillRect(7, 7, 3, 2);
+                ctx.fillRect(8, 9, 2, 2);
+                ctx.fillRect(7, 11, 2, 2);
+            }
+        }
+
+        /* ============================================================
+           REALISTIC MATH + LATEST MODEL & SERIES DATABASE (MY RM)
+           ============================================================ */
+        const TARIFF = 0.4443;   // RM per kWh (TNB, from 1 Jul 2025)
+        const GRID = 0.758;      // kg CO2 per kWh (Peninsular grid)
+        const LCA = 85;          // kg CO2e per kWh of battery capacity
+        const KOPI = 2.50;       // RM per kopi
+        const DEVICES = {
+            //           capacity  replacement  charger idle  80% top-off  idle tabs   (Wh per day)
+            phone:  { name: 'Standard Phone',  wh: 15, cost: 380, standby: 4, topoff: 1, tabs: 0.5 },
+            tablet: { name: 'Standard Tablet', wh: 30, cost: 520, standby: 4, topoff: 2, tabs: 1 },
+            laptop: { name: 'Standard Laptop', wh: 60, cost: 600, standby: 8, topoff: 4, tabs: 15 }
+        };
+
+        // Verified 2025/2026 device models & series (Official MY battery replacement RM + Wh capacity)
+        const MODEL_DB = [
+            // Apple iPhone Series (Machines / Switch Malaysia official out-of-warranty service)
+            { name: 'iPhone 16 Pro Max', cat: 'phone', wh: 18.1, cost: 549, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPhone 16 Pro',     cat: 'phone', wh: 13.9, cost: 549, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPhone 16 / 16 Plus', cat: 'phone', wh: 15.8, cost: 479, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPhone 15 Pro Max', cat: 'phone', wh: 17.1, cost: 479, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPhone 15 / 15 Pro',cat: 'phone', wh: 13.0, cost: 479, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPhone 14 Pro Max', cat: 'phone', wh: 16.7, cost: 479, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPhone 14 / 14 Pro',cat: 'phone', wh: 12.7, cost: 479, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPhone 13 / 13 Pro',cat: 'phone', wh: 12.4, cost: 429, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPhone 12 / 11 Series', cat: 'phone', wh: 11.4, cost: 429, src: 'Apple MY (Machines/Switch)' },
+            // Samsung Galaxy Series (Samsung Malaysia Authorised Service)
+            { name: 'Samsung Galaxy S24 Ultra', cat: 'phone', wh: 19.4, cost: 420, src: 'Samsung MY Service' },
+            { name: 'Samsung Galaxy S24 / S24+', cat: 'phone', wh: 16.8, cost: 360, src: 'Samsung MY Service' },
+            { name: 'Samsung Galaxy S23 / S23 Ultra', cat: 'phone', wh: 17.5, cost: 340, src: 'Samsung MY Service' },
+            { name: 'Samsung Galaxy A55 / A35 / A-Series', cat: 'phone', wh: 19.3, cost: 240, src: 'Samsung MY Service' },
+            // Other Android Series
+            { name: 'Xiaomi 14 / Redmi Note 13 Pro', cat: 'phone', wh: 19.3, cost: 210, src: 'Xiaomi MY Official' },
+            { name: 'OPPO Reno 11 / Find X7',        cat: 'phone', wh: 18.9, cost: 230, src: 'OPPO MY Service' },
+            { name: 'Vivo V30 / X100 Series',        cat: 'phone', wh: 19.4, cost: 230, src: 'Vivo MY Service' },
+            { name: 'Google Pixel 8 / Pixel 9 Pro',  cat: 'phone', wh: 18.2, cost: 410, src: 'Authorised MY Partner' },
+            // Tablets & iPads
+            { name: 'iPad Pro 11" / 13" (M2 / M4)',  cat: 'tablet', wh: 36.5, cost: 699, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPad Air (M1 / M2)',            cat: 'tablet', wh: 28.9, cost: 589, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPad 10th Gen / iPad 9th Gen',  cat: 'tablet', wh: 28.6, cost: 549, src: 'Apple MY (Machines/Switch)' },
+            { name: 'iPad mini (6th / 7th Gen)',     cat: 'tablet', wh: 19.3, cost: 549, src: 'Apple MY (Machines/Switch)' },
+            { name: 'Samsung Galaxy Tab S9 / S8',    cat: 'tablet', wh: 32.5, cost: 460, src: 'Samsung MY Service' },
+            { name: 'Xiaomi Pad 6',                  cat: 'tablet', wh: 33.6, cost: 290, src: 'Xiaomi MY Official' },
+            // Laptops / PCs
+            { name: 'MacBook Air 13" / 15" (M1 / M2 / M3)', cat: 'laptop', wh: 55.0, cost: 749, src: 'Apple MY (Machines/Switch)' },
+            { name: 'MacBook Pro 14" / 16" (M1–M4)',        cat: 'laptop', wh: 78.0, cost: 929, src: 'Apple MY (Machines/Switch)' },
+            { name: 'ASUS Zenbook / Vivobook Series',       cat: 'laptop', wh: 63.0, cost: 460, src: 'ASUS MY Service' },
+            { name: 'ASUS ROG / TUF Gaming Laptop',         cat: 'laptop', wh: 76.0, cost: 580, src: 'ASUS MY Service' },
+            { name: 'Lenovo IdeaPad / Yoga / ThinkPad',     cat: 'laptop', wh: 57.0, cost: 480, src: 'Lenovo MY Service' },
+            { name: 'HP Pavilion / Envy / Spectre',         cat: 'laptop', wh: 55.0, cost: 470, src: 'HP MY Service' },
+            { name: 'Dell Inspiron / XPS Series',           cat: 'laptop', wh: 60.0, cost: 520, src: 'Dell MY Service' },
+            { name: 'Acer Swift / Aspire / Nitro',          cat: 'laptop', wh: 54.0, cost: 430, src: 'Acer MY Service' }
+        ];
+
+        function populateSuggestions() {
+            const dl = document.getElementById('modelSuggestions');
+            dl.innerHTML = MODEL_DB.map(m => `<option value="${m.name}">${m.src} · RM ${m.cost}</option>`).join('');
+        }
+
+        function updateDeviceButtonsUI(activeDev) {
+            document.querySelectorAll('.dev-btn').forEach(b => {
+                b.className = 'dev-btn py-3 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-1.5 ' + (b.dataset.dev === activeDev
+                    ? 'bg-[#2D6A4F] text-white shadow-sm'
+                    : 'bg-white text-[#526B5A] border border-[#2D6A4F]/15 hover:bg-[#EAF6EC]');
+            });
+        }
+
+        function lookupModel(raw) {
+            const q = (raw || '').trim();
+            if (!q) {
+                state.customSpec = null;
+                const d = DEVICES[state.device];
+                state.modelName = d.name;
+                document.getElementById('modelMatchedInfo').textContent = `Matched: ${d.name} · ${d.wh} Wh · RM ${d.cost} replacement`;
+                recalc();
+                return;
+            }
+
+            const ql = q.toLowerCase();
+            // 1. Check direct or partial match in MODEL_DB
+            let match = MODEL_DB.find(m => m.name.toLowerCase() === ql) ||
+                        MODEL_DB.find(m => m.name.toLowerCase().includes(ql) || ql.includes(m.name.toLowerCase().split(' (')[0]));
+
+            // 2. Smart heuristic parser if the user types any specific series/model not verbatim in the list
+            if (!match) {
+                if (/iphone/.test(ql)) {
+                    const isProMax = /pro\s*max|plus/.test(ql);
+                    const is16 = /16/.test(ql);
+                    const is1415 = /14|15/.test(ql);
+                    match = {
+                        name: q, cat: 'phone',
+                        wh: isProMax ? 17.2 : 13.0,
+                        cost: is16 ? 549 : (is1415 ? 479 : 429),
+                        src: 'Apple MY Official Tier'
+                    };
+                } else if (/ipad/.test(ql)) {
+                    const isPro = /pro/.test(ql);
+                    match = { name: q, cat: 'tablet', wh: isPro ? 36.5 : 28.9, cost: isPro ? 699 : 589, src: 'Apple MY Official Tier' };
+                } else if (/macbook/.test(ql)) {
+                    const isPro = /pro/.test(ql);
+                    match = { name: q, cat: 'laptop', wh: isPro ? 78.0 : 55.0, cost: isPro ? 929 : 749, src: 'Apple MY Official Tier' };
+                } else if (/galaxy\s*tab|matepad|pad/.test(ql)) {
+                    match = { name: q, cat: 'tablet', wh: 32.0, cost: 420, src: 'MY Authorised Tablet Avg' };
+                } else if (/s2[12345]|ultra|fold|flip/.test(ql)) {
+                    match = { name: q, cat: 'phone', wh: 18.0, cost: 380, src: 'Samsung MY Flagship Tier' };
+                } else if (/rog|tuf|legion|omen|predator|alienware|gaming/.test(ql)) {
+                    match = { name: q, cat: 'laptop', wh: 76.0, cost: 580, src: 'MY Gaming Laptop Service' };
+                } else if (/thinkpad|zenbook|xps|spectre|surface|mac|laptop|notebook|ideapad|vivobook|pavilion|inspiron|swift|aspire/.test(ql)) {
+                    match = { name: q, cat: 'laptop', wh: 58.0, cost: 480, src: 'MY Authorised Laptop Service' };
+                } else {
+                    const base = DEVICES[state.device];
+                    match = { name: q, cat: state.device, wh: base.wh, cost: base.cost, src: 'Estimated MY Service' };
+                }
+            }
+
+            state.device = match.cat;
+            state.modelName = match.name;
+            const base = DEVICES[match.cat];
+            state.customSpec = {
+                wh: match.wh,
+                cost: match.cost,
+                standby: base.standby,
+                topoff: base.topoff,
+                tabs: base.tabs
+            };
+
+            updateDeviceButtonsUI(state.device);
+            document.getElementById('modelMatchedInfo').textContent =
+                `Matched: ${match.name} · ${match.wh} Wh · RM ${match.cost} (${match.src})`;
+            recalc();
+        }
+
+        function getActiveDeviceSpec() {
+            return state.customSpec || DEVICES[state.device];
+        }
+
+        function computeImpact(days) {
+            const d = getActiveDeviceSpec();
+            const bg = document.getElementById('optBg').checked;
+            const o80 = document.getElementById('opt80').checked;
+            const oWall = document.getElementById('optWall').checked;
+            const oTab = document.getElementById('optTab').checked;
+            if (!bg) return { rm: 0, co2: 0, kopi: 0 };
+
+            // Battery lasts 3 years instead of 2  ->  yearly saving = cost/2 - cost/3 = cost/6
+            const wearPerYear = o80 ? d.cost / 6 : 0;
+            const batteryCo2PerYear = o80 ? (d.wh / 1000) * LCA / 6 : 0;
+            const whPerDay = (o80 ? d.topoff : 0) + (oWall ? d.standby : 0) + (oTab ? d.tabs : 0);
+            const kwh = whPerDay / 1000 * days;
+
+            const rm = wearPerYear * days / 365 + kwh * TARIFF;
+            const co2 = kwh * GRID + batteryCo2PerYear * days / 365;
+            return { rm, co2, kopi: rm / KOPI };
+        }
+
+        function animateNumber(el, to, decimals) {
+            const from = parseFloat(el.dataset.v || '0');
+            const start = performance.now();
+            const dur = 700;
+            el.dataset.v = to;
+            function step(now) {
+                const p = Math.min(1, (now - start) / dur);
+                const e = 1 - Math.pow(1 - p, 3);
+                el.textContent = (from + (to - from) * e).toFixed(decimals);
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function recalc() {
+            const r = computeImpact(state.period);
+            const co2El = document.getElementById('impCo2');
+            if (r.co2 < 1) {
+                document.getElementById('impCo2Unit').textContent = 'g';
+                animateNumber(co2El, r.co2 * 1000, 0);
+            } else {
+                document.getElementById('impCo2Unit').textContent = 'kg';
+                animateNumber(co2El, r.co2, 2);
+            }
+            animateNumber(document.getElementById('impRm'), r.rm, 2);
+            // Whole numbers for Kopi worth
+            animateNumber(document.getElementById('impKopi'), Math.round(r.kopi), 0);
+
+            const d = getActiveDeviceSpec();
+            document.getElementById('asmModel').textContent = state.modelName;
+            document.getElementById('asmBatt').textContent = 'RM ' + d.cost;
+            document.getElementById('asmWh').textContent = d.wh + ' Wh';
+        }
+
+        function setPeriod(days) {
+            state.period = days;
+            const b30 = document.getElementById('per30');
+            const b365 = document.getElementById('per365');
+            if (b30) b30.className = 'px-2 py-0.5 rounded transition font-black ' + (days === 30 ? 'bg-[#2D6A4F] text-white shadow-xs' : 'text-[#526B5A] hover:bg-white font-bold');
+            if (b365) b365.className = 'px-2 py-0.5 rounded transition font-black ' + (days === 365 ? 'bg-[#2D6A4F] text-white shadow-xs' : 'text-[#526B5A] hover:bg-white font-bold');
+            const badge = document.getElementById('periodBadge');
+            if (badge) badge.textContent = `Active: ${days === 30 ? '30 days' : '1 year'} projection`;
+            recalc();
+        }
+
+        function setDevice(dev) {
+            state.device = dev;
+            state.customSpec = null;
+            state.modelName = DEVICES[dev].name;
+            const inp = document.getElementById('modelInput');
+            if (inp) inp.value = '';
+            updateDeviceButtonsUI(dev);
+            const d = DEVICES[dev];
+            const info = document.getElementById('modelMatchedInfo');
+            if (info) info.textContent = `Matched: ${d.name} · ${d.wh} Wh · RM ${d.cost} replacement`;
+            const iconCanvas = document.getElementById('detectedDevIcon');
+            if (iconCanvas) {
+                iconCanvas.dataset.px = dev;
+                drawPixelIcon(iconCanvas, dev);
+            }
+            recalc();
+        }
+
+        function toggleCatVisibility() {
+            state.showCat = document.getElementById('optShowCat').checked;
+            document.getElementById('catStageWrap').classList.toggle('invisible', !state.showCat);
+            document.getElementById('catBottomBar').classList.toggle('invisible', !state.showCat);
+            document.getElementById('moodBadge').classList.toggle('invisible', !state.showCat);
+            const layer = document.getElementById('captionLayer');
+            if (!state.showCat && layer) layer.innerHTML = '';
+        }
+
+        /* ============================================================
+           AUTOMATIC HARDWARE & DEVICE SPECIFICATION DETECTION
+           ============================================================ */
+        function getWebGLRenderer() {
+            try {
+                const c = document.createElement('canvas');
+                const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+                if (!gl) return '';
+                const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                const raw = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+                return (raw || '').replace(/ANGLE \(([^,]+),\s*([^,(]+).*?\)/i, '$2').trim();
+            } catch (e) {
+                return '';
+            }
+        }
+
+        async function autoDetectDeviceSpecs(announce = false) {
+            const ua = navigator.userAgent || '';
+            const cores = navigator.hardwareConcurrency || 4;
+            const ram = navigator.deviceMemory || null;
+            const sw = Math.max(window.screen.width || 0, window.screen.height || 0);
+            const sh = Math.min(window.screen.width || 0, window.screen.height || 0);
+            const dpr = Math.round((window.devicePixelRatio || 1) * 100) / 100;
+            const touch = navigator.maxTouchPoints || 0;
+            const gpu = getWebGLRenderer();
+
+            let uaModel = '';
+            let uaPlatform = navigator.platform || '';
+            if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+                try {
+                    const hints = await navigator.userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion']);
+                    if (hints.model) uaModel = hints.model;
+                    if (hints.platform) uaPlatform = hints.platform;
+                } catch (e) {}
+            }
+
+            // Determine device form factor + matched series from real hardware specs
+            let cat = 'laptop';
+            let matchedModel = 'Lenovo IdeaPad / Yoga / ThinkPad';
+            let osLabel = 'Desktop OS';
+
+            const isIPad = /iPad/i.test(ua) || (/Macintosh/i.test(ua) && touch > 1);
+            const isIPhone = /iPhone|iPod/i.test(ua);
+            const isAndroid = /Android/i.test(ua);
+            const isMac = /Macintosh|Mac OS X/i.test(ua) && !isIPad;
+            const isWin = /Win/i.test(uaPlatform) || /Windows/i.test(ua);
+
+            if (isIPhone) {
+                cat = 'phone';
+                osLabel = 'iOS';
+                if (sw >= 926 && dpr >= 3) matchedModel = 'iPhone 16 Pro Max';
+                else if (sw >= 852 && dpr >= 3) matchedModel = 'iPhone 16 Pro';
+                else if (sw >= 844) matchedModel = 'iPhone 15 / 15 Pro';
+                else matchedModel = 'iPhone 13 / 13 Pro';
+            } else if (isIPad) {
+                cat = 'tablet';
+                osLabel = 'iPadOS';
+                if (sw >= 1194 || /M2|M4/i.test(gpu)) matchedModel = 'iPad Pro 11" / 13" (M2 / M4)';
+                else if (sw >= 1180) matchedModel = 'iPad Air (M1 / M2)';
+                else matchedModel = 'iPad 10th Gen / iPad 9th Gen';
+            } else if (isAndroid) {
+                osLabel = 'Android';
+                const isTab = !/Mobile/i.test(ua) || sh >= 600;
+                cat = isTab ? 'tablet' : 'phone';
+                const token = (uaModel + ' ' + ua).toLowerCase();
+                if (isTab) {
+                    matchedModel = /xiaomi|pad/i.test(token) ? 'Xiaomi Pad 6' : 'Samsung Galaxy Tab S9 / S8';
+                } else if (/s928|s24 ultra/i.test(token)) {
+                    matchedModel = 'Samsung Galaxy S24 Ultra';
+                } else if (/s92[16]|s24/i.test(token)) {
+                    matchedModel = 'Samsung Galaxy S24 / S24+';
+                } else if (/s91|s23/i.test(token)) {
+                    matchedModel = 'Samsung Galaxy S23 / S23 Ultra';
+                } else if (/sm-a|galaxy a/i.test(token)) {
+                    matchedModel = 'Samsung Galaxy A55 / A35 / A-Series';
+                } else if (/pixel/i.test(token)) {
+                    matchedModel = 'Google Pixel 8 / Pixel 9 Pro';
+                } else if (/xiaomi|redmi|poco/i.test(token)) {
+                    matchedModel = 'Xiaomi 14 / Redmi Note 13 Pro';
+                } else if (/oppo|cph/i.test(token)) {
+                    matchedModel = 'OPPO Reno 11 / Find X7';
+                } else if (/vivo/i.test(token)) {
+                    matchedModel = 'Vivo V30 / X100 Series';
+                } else {
+                    matchedModel = dpr >= 3 ? 'Samsung Galaxy S24 / S24+' : 'Samsung Galaxy A55 / A35 / A-Series';
+                }
+            } else if (isMac) {
+                cat = 'laptop';
+                osLabel = 'macOS';
+                if (/Pro|Max|Ultra/i.test(gpu) || cores >= 10 || sw >= 1512) {
+                    matchedModel = 'MacBook Pro 14" / 16" (M1–M4)';
+                } else {
+                    matchedModel = 'MacBook Air 13" / 15" (M1 / M2 / M3)';
+                }
+            } else {
+                cat = (window.innerWidth < 640 && touch > 0) ? 'phone' : 'laptop';
+                osLabel = isWin ? 'Windows' : 'Linux';
+                const g = (gpu + ' ' + uaModel).toLowerCase();
+                if (/rtx|gtx|radeon rx|rog|tuf|legion|nitro|omen/i.test(g) || cores >= 14) {
+                    matchedModel = 'ASUS ROG / TUF Gaming Laptop';
+                } else if (/asus|zenbook|vivobook/i.test(g)) {
+                    matchedModel = 'ASUS Zenbook / Vivobook Series';
+                } else if (/hp|pavilion|envy|spectre/i.test(g)) {
+                    matchedModel = 'HP Pavilion / Envy / Spectre';
+                } else if (/dell|xps|inspiron/i.test(g)) {
+                    matchedModel = 'Dell Inspiron / XPS Series';
+                } else if (/acer|swift|aspire/i.test(g)) {
+                    matchedModel = 'Acer Swift / Aspire / Nitro';
+                } else {
+                    matchedModel = 'Lenovo IdeaPad / Yoga / ThinkPad';
+                }
+            }
+
+            // Build concise hardware specification string
+            const parts = [
+                osLabel,
+                `${cores}-core CPU`,
+                ram ? `${ram}GB RAM` : null,
+                `${sw}×${sh} @${dpr}x`,
+                touch > 0 ? `${touch}-pt touch` : null,
+                gpu ? gpu.slice(0, 32) : null
+            ].filter(Boolean);
+
+            state.detectedHwSummary = parts.join(' · ');
+            const specEl = document.getElementById('detectedSpecText');
+            if (specEl) specEl.textContent = `${state.detectedHwSummary} → ${matchedModel}`;
+
+            const iconCanvas = document.getElementById('detectedDevIcon');
+            if (iconCanvas) {
+                iconCanvas.dataset.px = cat;
+                drawPixelIcon(iconCanvas, cat);
+            }
+
+            const inp = document.getElementById('modelInput');
+            if (inp) inp.value = matchedModel;
+            lookupModel(matchedModel);
+
+            if (announce) {
+                say(`Detected ${matchedModel}! 🐾`);
+            }
+        }
+
+        /* ============================================================
+           NAVIGATION + STICKY BANNER
+           ============================================================ */
+        function switchPage(page, scrollTop) {
+            state.page = page;
+            ['sanctuary', 'rewards', 'settings'].forEach(p => {
+                const el = document.getElementById('page-' + p);
+                if (el) el.classList.toggle('hidden', p !== page);
+            });
+            document.querySelectorAll('.main-nav').forEach(b => {
+                b.className = 'main-nav px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap transition-all duration-200 ' +
+                    (b.dataset.nav === page ? 'bg-[#2D6A4F] text-white shadow-sm' : 'text-[#526B5A] hover:text-[#172B1E] hover:bg-white/60');
+            });
+            document.querySelectorAll('.mini-nav').forEach(b => {
+                b.className = 'mini-nav w-9 h-9 rounded-lg text-sm flex items-center justify-center transition ' + (b.dataset.nav === page ? 'bg-[#2D6A4F] shadow-sm' : 'hover:bg-white');
+            });
+            const curPageEl = document.getElementById('page-' + page);
+            if (curPageEl) renderAllPixelIcons(curPageEl);
+            if (scrollTop) window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function initStickyBar() {
+            const bar = document.getElementById('stickyBar');
+            const header = document.getElementById('mainHeader');
+            const io = new IntersectionObserver(entries => {
+                bar.classList.toggle('hidden-bar', entries[0].isIntersecting);
+            }, { threshold: 0 });
+            io.observe(header);
+        }
+
+        /* ============================================================
+           PIXEL CAT (ginger tabby, moves according to battery health)
+           ============================================================ */
+        const PAL = {
+            K: '#1F2421', O: '#F49738', D: '#C9631A', W: '#FFFDF7', P: '#F7A1B5',
+            E: '#1A2A20', H: '#FFFFFF', R: '#E04F5F', Y: '#FBBF24'
+        };
+
+        // 24 x 22 sitting cat, front view
+        const CAT = [
+            "..KK................KK..",
+            "..KOK..............KOK..",
+            "..KOPK............KPOK..",
+            "..KOPPK..........KPPOK..",
+            "..KOPPOKKKKKKKKKKOPPOK..",
+            ".KOOOOOOODODDODOOOOOOOK.",
+            ".KOOOOOOOOODDOOOOOOOOOK.",
+            "KOOOOHEOOOOOOOOOOHEOOOOK",
+            "KOOOOEEOOOOOOOOOOEEOOOOK",
+            "KOOPPOOOOOOPPOOOOOOPPOOK",
+            ".KOOOOOWWWWKKWWWWOOOOOK.",
+            ".KOOOOWWWWKWWKWWWWOOOOK.",
+            "..KOOOOWWWWWWWWWWOOOOK..",
+            "...KRRRRRRRRRRRRRRRRK...",
+            "..KOOOOWWWWYYWWWWOOOOK..",
+            ".KDOOOOWWWWWWWWWWOOOODK.",
+            ".KOOOOOWWWWWWWWWWOOOOOK.",
+            ".KDOOOOWWWWWWWWWWOOOODK.",
+            ".KOOOOOWWWWWWWWWWOOOOOK.",
+            ".KOOOOKWWWWKKWWWWKOOOOK.",
+            ".KKKKKWWWWK..KWWWWKKKKK.",
+            "......KKKKK..KKKKK......"
+        ];
+
+        function drawCat(ctx, px, ox, oy, t, opts) {
+            const boop = opts.boop || 0;
+            const jump = opts.jump || 0;
+            const sleepy = !!opts.sleepy;
+            const alert  = !!opts.alert;
+
+            // Movement pace adapts to battery state + rare 1/100 jump arc in 20-80% zone
+            const speed = sleepy ? 0.025 : (alert ? 0.11 : 0.06);
+            const jumpArc = jump > 0 ? Math.round(Math.sin((1 - jump / 38) * Math.PI) * 5.2) : 0;
+            const bob = jump > 0
+                ? -jumpArc
+                : (boop > 0
+                    ? -1 - (Math.floor(t / 4) % 2)
+                    : Math.round(Math.sin(t * speed) * (sleepy ? 0.45 : 0.6)));
+            const y0 = oy + bob * px;
+
+            // Eyes stay closed when sleeping (red low-battery zone)
+            const blink = sleepy || boop > 0 || (t % 170 > 162);
+            const earTwitch = !sleepy && ((t % (alert ? 120 : 260)) < 10);
+            const knead = sleepy ? -1 : (Math.floor(t / (alert ? 14 : 22)) % 2);
+            const rect = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(ox + x * px, y0 + y * px, w * px, h * px); };
+
+            // Tail (curled still when sleepy, faster when alert or jumping)
+            const s = sleepy ? 0.2 : Math.sin(t * (jump > 0 ? 0.24 : (alert ? 0.16 : 0.09)));
+            const tail = [
+                [21, 18], [22, 17], [23, 16],
+                [23 + (s > 0.2 ? 1 : 0), 15],
+                [23 + Math.round(s * 1.2), 14],
+                [23 + Math.round(s * 1.7), 13],
+                [23 + Math.round(s * 2), 12]
+            ];
+            tail.forEach(([x, y]) => rect(x - 1, y - 1, 3, 3, PAL.K));
+            tail.forEach(([x, y], i) => rect(x, y, 1, 1, i >= 5 ? PAL.W : (i % 2 ? PAL.D : PAL.O)));
+
+            // Body
+            for (let r = 0; r < CAT.length; r++) {
+                for (let c = 0; c < 24; c++) {
+                    let ch = CAT[r][c];
+                    if (ch === '.') continue;
+                    if (blink && (r === 7 || r === 8) && (ch === 'E' || ch === 'H')) ch = r === 8 ? 'K' : 'O';
+                    let y = r;
+                    if (jump > 6 && r >= 20) y -= 1;
+                    else if (knead >= 0 && r >= 20 && ((c < 12 && knead === 0) || (c >= 12 && knead === 1))) y -= 1;
+                    if (earTwitch && r <= 3 && c < 8) y += 1;
+                    rect(c, y, 1, 1, PAL[ch]);
+                }
+            }
+
+            // Whiskers
+            if (opts.whiskers !== false) {
+                const wb = sleepy ? 1 : (Math.floor(t / 40) % 2);
+                rect(-2, 9 + wb, 2, 1, PAL.K); rect(-2, 11, 2, 1, PAL.K);
+                rect(24, 9 + wb, 2, 1, PAL.K); rect(24, 11, 2, 1, PAL.K);
+            }
+
+            // Outfit
+            const sway = sleepy ? 0 : Math.round(Math.sin(t * 0.07));
+            if (opts.outfit === 'sprout') {
+                rect(12, 2, 1, 3, '#2D6A4F');
+                rect(10 + sway, 1, 2, 1, '#74C69D'); rect(9 + sway, 0, 2, 1, '#95D5B2');
+                rect(13 + sway, 0, 2, 1, '#74C69D'); rect(14 + sway, -1, 2, 1, '#B7E4C7');
+            } else if (opts.outfit === 'flower') {
+                [[7, 3, '#FFB3C6'], [12, 2, '#FF758F'], [17, 3, '#FFB3C6']].forEach(([x, y, col]) => {
+                    rect(x, y - 1, 1, 1, col); rect(x - 1, y, 3, 1, col); rect(x, y + 1, 1, 1, col);
+                    rect(x, y, 1, 1, '#FBBF24');
+                });
+            } else if (opts.outfit === 'hat') {
+                rect(7, -1, 10, 5, PAL.K);
+                rect(8, 0, 8, 4, '#F2CC8F');
+                rect(8, 3, 8, 1, '#E04F5F');
+                rect(2, 4, 20, 1, PAL.K);
+                rect(3, 4, 18, 1, '#E9C46A');
+            }
+
+            // Floating pixel "Zzz" when sleeping in low battery red zone
+            if (sleepy && opts.showZzz) {
+                const zPhase = (t % 90) / 90;
+                const zx = ox + 20 * px + Math.round(Math.sin(t * 0.06) * 4);
+                const zy = y0 + Math.round((3 - zPhase * 5) * px);
+                ctx.save();
+                ctx.globalAlpha = Math.sin(zPhase * Math.PI);
+                ctx.fillStyle = '#FFFDF7';
+                ctx.font = `900 ${Math.max(10, px * 2)}px "Plus Jakarta Sans", sans-serif`;
+                ctx.fillText('zZz', zx, zy);
+                ctx.restore();
+            }
+        }
+
+        const catCanvas = document.getElementById('catCanvas');
+        const cctx = catCanvas.getContext('2d', { willReadFrequently: true });
+        const miniCtx = document.getElementById('miniCatCanvas').getContext('2d');
+        const logoCtx = document.getElementById('logoCatCanvas').getContext('2d');
+        let hearts = [];
+
+        function renderCats() {
+            const isLow = state.battery < 20;
+            const isHighAlert = state.charging && state.battery >= 80;
+
+            cctx.clearRect(0, 0, 224, 196);
+            drawCat(cctx, 7, 28, 28, state.t, {
+                boop: state.boop,
+                jump: state.jump,
+                outfit: state.outfit,
+                sleepy: isLow,
+                alert: isHighAlert,
+                showZzz: true
+            });
+
+            const shadowEl = document.getElementById('catShadow');
+            if (shadowEl) {
+                const s = state.jump > 0 ? (1 - Math.sin((1 - state.jump / 38) * Math.PI) * 0.35).toFixed(2) : '1';
+                shadowEl.style.transform = `scale(${s})`;
+            }
+
+            hearts.forEach(h => {
+                h.y -= h.vy; h.life--;
+                cctx.globalAlpha = Math.min(1, h.life / 20);
+                cctx.fillStyle = h.c;
+                const x = Math.round(h.x), y = Math.round(h.y);
+                cctx.fillRect(x + 3, y, 4, 4); cctx.fillRect(x + 11, y, 4, 4);
+                cctx.fillRect(x, y + 4, 18, 4); cctx.fillRect(x + 3, y + 8, 12, 4); cctx.fillRect(x + 7, y + 12, 4, 4);
+                cctx.globalAlpha = 1;
+            });
+            hearts = hearts.filter(h => h.life > 0);
+
+            miniCtx.clearRect(0, 0, 60, 52);
+            drawCat(miniCtx, 2, 6, 7, state.t, { boop: state.boop, jump: state.jump, outfit: state.outfit, sleepy: isLow, alert: isHighAlert });
+            logoCtx.clearRect(0, 0, 60, 52);
+            drawCat(logoCtx, 2, 6, 7, state.t, { outfit: 'none', whiskers: true, sleepy: isLow });
+        }
+
+        // Petting only counts when the click lands on the cat itself
+        function hitCat(e) {
+            if (!state.showCat) return false;
+            const r = catCanvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - r.left) * catCanvas.width / r.width);
+            const y = Math.floor((e.clientY - r.top) * catCanvas.height / r.height);
+            const d = cctx.getImageData(Math.max(0, x - 2), Math.max(0, y - 2), 5, 5).data;
+            for (let i = 3; i < d.length; i += 4) if (d[i] > 0) return true;
+            return false;
+        }
+
+        catCanvas.addEventListener('pointerdown', e => { if (hitCat(e)) petMochi(); });
+        catCanvas.addEventListener('pointermove', e => { catCanvas.style.cursor = hitCat(e) ? 'pointer' : 'default'; });
+
+        const PET_LINES = [
+            "Purrr~ that's the spot 🐾",
+            "Mrrp! Unplug me at 80%, okay? 🔋",
+            "Nya~ cool batteries last longer 🌿",
+            "*happy kneading* 💚",
+            "Thanks for flipping the wall switch! 🔌",
+            "Meow! We saved a little CO₂ today ✨",
+            "Prrr… so cozy here 🌼"
+        ];
+        const SLEEPY_LINES = [
+            "Zzz… battery is low, napping… 💤",
+            "*sleepy purr*… resting my paws… 🌙",
+            "Mmm… saving energy while low… zZz 🐾",
+            "*soft snore*… wake me at 20%… 💤"
+        ];
+        const ALERT_LINES = [
+            "Meow! Over 80% — time to unplug! 🔌",
+            "Mrrp! My battery is full enough ⚡",
+            "Nya~ unplugging now saves battery life! 🌿"
+        ];
+        let petLine = 0;
+
+        function getActiveLines(idle) {
+            if (state.battery < 20) return SLEEPY_LINES;
+            if (state.charging && state.battery >= 80) return ALERT_LINES;
+            return idle ? IDLE_LINES : PET_LINES;
+        }
+
+        function triggerCatJump() {
+            state.jump = 38;
+            say("✨ Wheee! Rare happy jump! 🐾");
+            for (let i = 0; i < 5; i++) {
+                hearts.push({
+                    x: 45 + i * 28 + Math.random() * 8,
+                    y: 22 + (i % 2) * 10,
+                    vy: 0.8 + Math.random() * 0.5,
+                    life: 52,
+                    c: i % 2 ? '#FBBF24' : '#95D5B2'
+                });
+            }
+        }
+
+        function petMochi() {
+            state.boop = state.battery < 20 ? 14 : 34;
+            addLeaves(5);
+            // Rare ~1/100 interaction where Mochi jumps when within the 20-80% healthy zone
+            if (state.battery >= 20 && state.battery <= 80 && Math.random() < 0.01) {
+                triggerCatJump();
+                return;
+            }
+            const pool = getActiveLines(false);
+            say(pool[petLine++ % pool.length]);
+            for (let i = 0; i < 3; i++) {
+                hearts.push({ x: 60 + i * 38 + Math.random() * 10, y: 30 + (i % 2) * 12, vy: 0.6 + Math.random() * 0.4, life: 45, c: i % 2 ? '#95D5B2' : '#FF758F' });
+            }
+        }
+
+        function setOutfit(o) {
+            state.outfit = o;
+            document.querySelectorAll('.outfit-btn').forEach(b => {
+                b.className = 'outfit-btn w-9 h-9 rounded-full text-sm flex items-center justify-center transition ' + (b.dataset.outfit === o ? 'bg-white/90 ring-2 ring-[#95D5B2]' : 'hover:bg-white/20');
+            });
+            const lines = { none: 'Au naturel 😺', sprout: 'My lucky sprout! 🌱', flower: 'Do I look pretty? 🌸', hat: 'Ready for the sun 👒' };
+            say(lines[o]);
+        }
+
+        /* ============================================================
+           CAPTION BUBBLES (float at different spots around the cat)
+           ============================================================ */
+        const SLOTS = [
+            { a: -90, tail: 't-bottom' }, { a: -35, tail: 't-bottom' }, { a: -145, tail: 't-bottom' },
+            { a: 0, tail: 't-left' }, { a: 180, tail: 't-right' },
+            { a: 35, tail: 't-left' }, { a: 145, tail: 't-right' }
+        ];
+        let lastSlot = -1;
+        const busySlots = new Set();
+
+        function say(text) {
+            if (!state.showCat) return;
+            const layer = document.getElementById('captionLayer');
+            const hero = document.getElementById('heroStage');
+            if (!layer || state.page !== 'sanctuary') return;
+            const hr = hero.getBoundingClientRect();
+            const cr = catCanvas.getBoundingClientRect();
+            const cx = cr.left - hr.left + cr.width / 2;
+            const cy = cr.top - hr.top + cr.height / 2;
+
+            let options = SLOTS.map((s, i) => i).filter(i => i !== lastSlot && !busySlots.has(i));
+            if (!options.length) options = SLOTS.map((s, i) => i);
+            const idx = options[Math.floor(Math.random() * options.length)];
+            lastSlot = idx;
+            busySlots.add(idx);
+            const slot = SLOTS[idx];
+
+            const rad = slot.a * Math.PI / 180;
+            const x = cx + Math.cos(rad) * (cr.width * 0.5 + 6);
+            const y = cy + Math.sin(rad) * (cr.height * 0.5 + 4);
+
+            const b = document.createElement('div');
+            b.className = 'cap ' + slot.tail;
+            b.textContent = text;
+            b.style.visibility = 'hidden';
+            layer.appendChild(b);
+            const w = b.offsetWidth, h = b.offsetHeight;
+
+            let left, top;
+            if (slot.tail === 't-bottom') { left = x - w / 2; top = y - h - 6; }
+            else if (slot.tail === 't-left') { left = x + 8; top = y - h / 2; }
+            else { left = x - w - 8; top = y - h / 2; }
+
+            left = Math.max(10, Math.min(hr.width - w - 10, left));
+            top = Math.max(56, Math.min(hr.height - h - 70, top));
+            b.style.left = left + 'px';
+            b.style.top = top + 'px';
+            b.style.visibility = 'visible';
+
+            setTimeout(() => { b.remove(); busySlots.delete(idx); }, 3600);
+        }
+
+        /* ============================================================
+           SCENERY — real nature & space videos with live scene overlays
+           ============================================================ */
+        const SCENES = [
+            { id: 'meadow', name: 'Sunny Meadow', icon: '🌼', pxIcon: 'flower', theme: 'meadow',
+              src: ['videos/meadow.mp4', 'https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4', 'https://assets.mixkit.co/videos/1173/1173-720.mp4'] },
+            { id: 'stream', name: 'Forest Stream', icon: '🌿', pxIcon: 'leaf', theme: 'forest',
+              src: ['videos/stream.mp4', 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4', 'https://assets.mixkit.co/videos/529/529-720.mp4'] },
+            { id: 'galaxy', name: 'Milky Way', icon: '🌌', pxIcon: 'galaxy', theme: 'galaxy',
+              src: ['videos/galaxy.mp4', 'https://assets.mixkit.co/videos/19636/19636-720.mp4', 'https://assets.mixkit.co/videos/46101/46101-720.mp4', 'https://assets.mixkit.co/videos/1610/1610-720.mp4', 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4'] },
+            { id: 'rain', name: 'Rainy Leaves', icon: '🌧️', pxIcon: 'rain', theme: 'rain',
+              src: ['videos/rain.mp4', 'https://assets.mixkit.co/videos/preview/mixkit-rain-falling-on-the-water-of-a-lake-seen-up-18312-large.mp4', 'https://assets.mixkit.co/videos/18312/18312-720.mp4'] },
+            { id: 'night', name: 'Firefly Night', icon: '🌙', pxIcon: 'moon', theme: 'night',
+              src: ['videos/night.mp4', 'https://assets.mixkit.co/videos/50869/50869-720.mp4', 'https://assets.mixkit.co/videos/529/529-720.mp4'] }
+        ];
+        let sceneIdx = 0;
+        let sceneToken = 0;
+        let videoReady = false;
+        let fallbackTheme = 'meadow';
+
+        function loadScene(i) {
+            sceneIdx = i;
+            const sc = SCENES[i];
+            const video = document.getElementById('sceneVideo');
+            const token = ++sceneToken;
+            fallbackTheme = sc.theme;
+            videoReady = false;
+            video.style.opacity = 0;
+            // Apply moonlit night forest color grade when Firefly Night uses forest footage
+            video.style.filter = sc.theme === 'night'
+                ? 'brightness(0.38) contrast(1.18) saturate(0.78) hue-rotate(185deg)'
+                : (sc.theme === 'galaxy' ? 'brightness(0.88) contrast(1.15) saturate(1.25)' : 'none');
+            const scCanvas = document.getElementById('sceneIconCanvas');
+            if (scCanvas) {
+                scCanvas.dataset.px = sc.pxIcon;
+                drawPixelIcon(scCanvas, sc.pxIcon);
+            }
+            document.getElementById('sceneName').textContent = sc.name;
+
+            let k = 0;
+            const tryNext = () => {
+                if (token !== sceneToken) return;
+                if (k >= sc.src.length) { video.removeAttribute('src'); return; }
+                video.src = sc.src[k++];
+                video.play().catch(() => {});
+            };
+            video.onerror = tryNext;
+            video.oncanplay = () => {
+                if (token !== sceneToken) return;
+                videoReady = true;
+                video.style.opacity = 1;
+            };
+            tryNext();
+            buildScenePicker();
+        }
+
+        function useCustomVideo(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const video = document.getElementById('sceneVideo');
+            sceneToken++;
+            fallbackTheme = 'custom';
+            video.style.filter = 'none';
+            video.onerror = null;
+            video.oncanplay = () => { videoReady = true; video.style.opacity = 1; };
+            video.src = URL.createObjectURL(file);
+            video.play().catch(() => {});
+            const scCanvas = document.getElementById('sceneIconCanvas');
+            if (scCanvas) {
+                scCanvas.dataset.px = 'video';
+                drawPixelIcon(scCanvas, 'video');
+            }
+            document.getElementById('sceneName').textContent = 'My video';
+            closeScenePicker();
+            say('Ooh, a new view! 🎬');
+        }
+
+        function buildScenePicker() {
+            const p = document.getElementById('scenePicker');
+            if (!p) return;
+            p.innerHTML = `
+                <div class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#526B5A]">Live Sanctuary Scenery</div>
+                ${SCENES.map((s, i) => `
+                <button onclick="pickScene(${i})" class="w-full flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-left text-xs font-bold transition ${i === sceneIdx ? 'bg-[#2D6A4F] text-white shadow-xs' : 'hover:bg-[#EAF6EC] text-[#172B1E]'}">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${i === sceneIdx ? 'bg-white/20' : 'bg-[#EAF6EC]'}">
+                            <canvas data-px="${s.pxIcon}" width="28" height="28" class="pixel w-4 h-4"></canvas>
+                        </span>
+                        <span class="truncate">${s.name}</span>
+                    </div>
+                    ${i === sceneIdx ? '<span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-white/20">Active</span>' : ''}
+                </button>`).join('')}
+                <div class="h-px bg-[#2D6A4F]/10 my-1"></div>
+                <button onclick="document.getElementById('customVideoInput').click()" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-xs font-bold hover:bg-[#FFF6E8] text-[#172B1E]">
+                    <span class="w-7 h-7 rounded-lg bg-[#FFEEDD] flex items-center justify-center flex-shrink-0">
+                        <canvas data-px="plus" width="28" height="28" class="pixel w-4 h-4"></canvas>
+                    </span>
+                    <span>Use my own video</span>
+                </button>`;
+            renderAllPixelIcons(p);
+        }
+
+        function pickScene(i) {
+            loadScene(i);
+            closeScenePicker();
+            say(`Welcome to ${SCENES[i].name} ${SCENES[i].icon}`);
+        }
+
+        function toggleScenePicker(e) {
+            e.stopPropagation();
+            const p = document.getElementById('scenePicker');
+            if (!p) return;
+            p.classList.toggle('hidden');
+        }
+        function closeScenePicker() {
+            const p = document.getElementById('scenePicker');
+            if (p) p.classList.add('hidden');
+        }
+        document.addEventListener('click', e => {
+            const p = document.getElementById('scenePicker');
+            if (p && !p.contains(e.target)) closeScenePicker();
+        });
+
+        /* Animated fallback & live atmospheric overlay scene */
+        const THEMES = {
+            meadow: { sky: ['#7FB7E0', '#CFE8F1', '#FBE7C0'], sun: 'rgba(255,244,200,0.95)', hills: ['#8DBF7A', '#5FA35A', '#3E7D3E'], p: 'seeds' },
+            forest: { sky: ['#5E8C6A', '#A8C9A0', '#E4EFD6'], sun: 'rgba(255,250,215,0.75)', hills: ['#4F7F57', '#35663F', '#1F4A2B'], p: 'motes' },
+            galaxy: { sky: ['#050513', '#120C2E', '#231650'], sun: 'rgba(180,140,255,0.45)', hills: ['#11152C', '#0B0F22', '#060814'], p: 'cosmos' },
+            rain:   { sky: ['#6F8A92', '#9FB4B5', '#CAD6D0'], sun: 'rgba(230,240,240,0.35)', hills: ['#5D8068', '#456B52', '#2E523B'], p: 'rain' },
+            night:  { sky: ['#081523', '#10253A', '#1B3B3A'], sun: 'rgba(240,248,255,0.55)', hills: ['#18342B', '#10261F', '#091813'], p: 'fireflies' }
+        };
+        const fb = document.getElementById('sceneFallback');
+        const fctx = fb.getContext('2d');
+        const ov = document.getElementById('sceneOverlay');
+        const octx = ov.getContext('2d');
+        const parts = Array.from({ length: 42 }, () => ({ x: Math.random(), y: Math.random(), s: 1.5 + Math.random() * 2.5, v: 0.3 + Math.random() * 0.6, ph: Math.random() * 6.28 }));
+        const galaxyStars = Array.from({ length: 120 }, (_, i) => ({
+            arm: i % 3,
+            r: Math.pow(Math.random(), 0.72),
+            spread: (Math.random() - 0.5) * 0.42,
+            size: 0.8 + Math.random() * 2.1,
+            col: ['#FFFDF7', '#E0AAFF', '#90E0EF', '#FFD166', '#C77DFF'][i % 5]
+        }));
+        const clouds = [{ x: 0.1, y: 0.12, w: 0.22, v: 0.00012 }, { x: 0.55, y: 0.2, w: 0.28, v: 0.00008 }, { x: 0.85, y: 0.08, w: 0.18, v: 0.00015 }];
+
+        function drawGalaxyBandAndSpiral(ctx, W, H, t, isOverlay) {
+            ctx.save();
+            // 1. Diagonal Milky Way nebula ribbon slowly drifting across space
+            ctx.translate(W * 0.5, H * 0.38);
+            ctx.rotate(-0.38 + Math.sin(t * 0.0015) * 0.04);
+            const band = ctx.createLinearGradient(0, -H * 0.28, 0, H * 0.28);
+            band.addColorStop(0, 'rgba(90, 24, 154, 0)');
+            band.addColorStop(0.3, isOverlay ? 'rgba(123, 44, 191, 0.24)' : 'rgba(123, 44, 191, 0.42)');
+            band.addColorStop(0.5, isOverlay ? 'rgba(224, 170, 255, 0.34)' : 'rgba(224, 170, 255, 0.55)');
+            band.addColorStop(0.7, isOverlay ? 'rgba(72, 202, 228, 0.22)' : 'rgba(72, 202, 228, 0.38)');
+            band.addColorStop(1, 'rgba(90, 24, 154, 0)');
+            ctx.fillStyle = band;
+            ctx.fillRect(-W, -H * 0.28, W * 2, H * 0.56);
+            ctx.restore();
+
+            // 2. Rotating spiral galaxy in the upper-right sky
+            const gx = W * 0.72 + Math.sin(t * 0.003) * 14;
+            const gy = H * 0.25 + Math.cos(t * 0.0025) * 8;
+            const maxR = Math.min(W, H) * 0.22;
+
+            ctx.save();
+            ctx.translate(gx, gy);
+            ctx.scale(1, 0.58); // tilted galactic disc perspective
+            const rot = t * 0.008;
+
+            // Core glow
+            const core = ctx.createRadialGradient(0, 0, 1, 0, 0, maxR * 0.9);
+            core.addColorStop(0, 'rgba(255, 250, 230, 0.92)');
+            core.addColorStop(0.22, 'rgba(240, 180, 255, 0.55)');
+            core.addColorStop(0.55, 'rgba(114, 9, 183, 0.22)');
+            core.addColorStop(1, 'rgba(15, 10, 40, 0)');
+            ctx.fillStyle = core;
+            ctx.beginPath();
+            ctx.arc(0, 0, maxR * 0.9, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Rotating spiral arms of stars
+            galaxyStars.forEach(st => {
+                const dist = st.r * maxR;
+                const angle = rot + (st.arm * Math.PI * 2 / 3) + st.r * 4.2 + st.spread;
+                const sx = Math.cos(angle) * dist;
+                const sy = Math.sin(angle) * dist;
+                const tw = 0.55 + 0.45 * Math.sin(t * 0.05 + st.r * 10);
+                ctx.globalAlpha = tw * (1 - st.r * 0.4);
+                ctx.fillStyle = st.col;
+                ctx.beginPath();
+                ctx.arc(sx, sy, st.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.restore();
+
+            // 3. Occasional shooting star across the Milky Way
+            const shootCycle = t % 240;
+            if (shootCycle < 28) {
+                const p = shootCycle / 28;
+                const sx = W * (0.82 - p * 0.55);
+                const sy = H * (0.12 + p * 0.28);
+                const grad = ctx.createLinearGradient(sx, sy, sx + 48, sy - 24);
+                grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+                grad.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(sx + 48, sy - 24);
+                ctx.stroke();
+            }
+        }
+
+        function drawFirefliesOverlay(ctx, W, H, t) {
+            // Soft crescent moon glow in upper sky
+            const mx = W * 0.78, my = H * 0.18;
+            const mg = ctx.createRadialGradient(mx, my, 2, mx, my, 52);
+            mg.addColorStop(0, 'rgba(254, 249, 195, 0.42)');
+            mg.addColorStop(1, 'rgba(254, 249, 195, 0)');
+            ctx.fillStyle = mg;
+            ctx.beginPath(); ctx.arc(mx, my, 52, 0, Math.PI * 2); ctx.fill();
+
+            ctx.fillStyle = 'rgba(254, 249, 210, 0.88)';
+            ctx.beginPath(); ctx.arc(mx, my, 13, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#0D2130';
+            ctx.beginPath(); ctx.arc(mx - 5, my - 3, 11, 0, Math.PI * 2); ctx.fill();
+
+            // Warm pulsing fireflies with glowing halos drifting across the night forest
+            parts.forEach(p => {
+                p.x += Math.cos(t * 0.018 + p.ph) * 0.0007;
+                p.y += Math.sin(t * 0.022 + p.ph) * 0.0007;
+                if (p.x < 0.02) p.x = 0.98;
+                if (p.x > 0.98) p.x = 0.02;
+                if (p.y < 0.08) p.y = 0.92;
+                if (p.y > 0.94) p.y = 0.12;
+
+                const x = p.x * W, y = p.y * H;
+                const pulse = 0.25 + 0.75 * Math.pow(0.5 + 0.5 * Math.sin(t * 0.06 + p.ph), 2);
+                const rad = p.s * 4.8;
+                const glow = ctx.createRadialGradient(x, y, 0.5, x, y, rad);
+                glow.addColorStop(0, `rgba(254, 249, 195, ${pulse})`);
+                glow.addColorStop(0.35, `rgba(190, 242, 100, ${pulse * 0.65})`);
+                glow.addColorStop(1, 'rgba(163, 230, 53, 0)');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(x, y, rad, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function drawScene(ctx, W, H, theme, t) {
+            const th = THEMES[theme] || THEMES.meadow;
+            const g = ctx.createLinearGradient(0, 0, 0, H * 0.75);
+            g.addColorStop(0, th.sky[0]); g.addColorStop(0.55, th.sky[1]); g.addColorStop(1, th.sky[2]);
+            ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+            const sx = W * 0.74, sy = H * 0.2;
+            const sg = ctx.createRadialGradient(sx, sy, 4, sx, sy, H * 0.35);
+            sg.addColorStop(0, th.sun); sg.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
+
+            if (theme === 'night' || theme === 'galaxy') {
+                for (let i = 0; i < 75; i++) {
+                    const a = 0.3 + 0.6 * Math.abs(Math.sin(t * 0.025 + i));
+                    ctx.fillStyle = `rgba(255,255,255,${a})`;
+                    const driftX = theme === 'galaxy' ? (t * 0.15) : 0;
+                    ctx.fillRect((i * 97 + driftX) % W, (i * 53) % (H * 0.62), i % 4 === 0 ? 2.2 : 1.4, i % 4 === 0 ? 2.2 : 1.4);
+                }
+                if (theme === 'galaxy') {
+                    drawGalaxyBandAndSpiral(ctx, W, H, t, false);
+                }
+            } else {
+                clouds.forEach(c => {
+                    const x = ((c.x + t * c.v * 16) % 1.3 - 0.15) * W;
+                    ctx.fillStyle = theme === 'rain' ? 'rgba(235,240,240,0.55)' : 'rgba(255,255,255,0.75)';
+                    const w = c.w * W, y = c.y * H;
+                    ctx.beginPath();
+                    ctx.ellipse(x, y, w * 0.5, w * 0.13, 0, 0, Math.PI * 2);
+                    ctx.ellipse(x - w * 0.18, y - w * 0.06, w * 0.2, w * 0.11, 0, 0, Math.PI * 2);
+                    ctx.ellipse(x + w * 0.12, y - w * 0.08, w * 0.24, w * 0.13, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+
+            th.hills.forEach((col, i) => {
+                ctx.beginPath(); ctx.moveTo(0, H);
+                const base = H * (0.55 + i * 0.12), amp = H * (0.05 - i * 0.008);
+                for (let x = 0; x <= W; x += 12) {
+                    ctx.lineTo(x, base + Math.sin(x * 0.006 + i * 2 + t * 0.002 * (i + 1)) * amp + Math.sin(x * 0.017 + i) * amp * 0.3);
+                }
+                ctx.lineTo(W, H); ctx.fillStyle = col; ctx.fill();
+            });
+
+            // Swaying grass
+            ctx.lineCap = 'round';
+            for (let i = 0; i < 70; i++) {
+                const x = (i / 70) * W + (i % 3) * 3;
+                const hgt = 18 + (i * 7) % 22;
+                const sw = Math.sin(t * 0.04 + i * 0.6) * 6;
+                ctx.strokeStyle = (theme === 'night' || theme === 'galaxy')
+                    ? 'rgba(45,85,75,0.75)'
+                    : `rgba(${50 + (i % 4) * 12},${110 + (i % 5) * 10},${55},0.9)`;
+                ctx.lineWidth = 2.2;
+                ctx.beginPath(); ctx.moveTo(x, H); ctx.quadraticCurveTo(x + sw * 0.4, H - hgt * 0.5, x + sw, H - hgt); ctx.stroke();
+            }
+            if (theme === 'meadow') {
+                for (let i = 0; i < 26; i++) {
+                    const x = ((i * 137) % W), y = H - 10 - (i * 13) % 26 + Math.sin(t * 0.04 + i) * 2;
+                    ctx.fillStyle = i % 2 ? '#FFE066' : '#FFFFFF';
+                    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+
+            if (theme === 'night') {
+                drawFirefliesOverlay(ctx, W, H, t);
+                return;
+            }
+
+            parts.forEach(p => {
+                let x = p.x * W, y = p.y * H;
+                if (th.p === 'rain') {
+                    p.y += 0.018 * p.v; p.x -= 0.002;
+                    if (p.y > 1) { p.y = -0.05; p.x = Math.random(); }
+                    if (p.x < 0) p.x = 1;
+                    ctx.strokeStyle = 'rgba(230,245,255,0.6)'; ctx.lineWidth = 1.3;
+                    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 3, y + 12); ctx.stroke();
+                } else {
+                    p.x += 0.0007 * p.v; p.y -= 0.0004 * p.v + Math.sin(t * 0.03 + p.ph) * 0.0002;
+                    if (p.x > 1.05) p.x = -0.05;
+                    if (p.y < -0.05) p.y = 1.05;
+                    ctx.fillStyle = th.p === 'motes' ? 'rgba(255,250,210,0.7)' : 'rgba(255,253,230,0.85)';
+                    ctx.beginPath(); ctx.arc(x, y, p.s * 0.8, 0, Math.PI * 2); ctx.fill();
+                }
+            });
+        }
+
+        function renderFallback() {
+            const w = fb.clientWidth, h = fb.clientHeight;
+            if (!videoReady) {
+                if (fb.width !== w || fb.height !== h) { fb.width = w; fb.height = h; }
+                drawScene(fctx, w, h, fallbackTheme, state.t);
+            }
+            if (ov.width !== w || ov.height !== h) { ov.width = w; ov.height = h; }
+            octx.clearRect(0, 0, w, h);
+            if (videoReady) {
+                if (fallbackTheme === 'galaxy') {
+                    drawGalaxyBandAndSpiral(octx, w, h, state.t, true);
+                } else if (fallbackTheme === 'night') {
+                    drawFirefliesOverlay(octx, w, h, state.t);
+                }
+            }
+        }
+
+        function sceneImage(theme, w = 640, h = 400) {
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            drawScene(c.getContext('2d'), w, h, theme, 120);
+            return c.toDataURL('image/jpeg', 0.88);
+        }
+
+        /* ============================================================
+           BATTERY (Merged into Top Banner + Sticky Bar)
+           ============================================================ */
+        function renderBattery() {
+            const lvl = state.battery;
+            const ch = state.charging;
+            let title, mood, moodDot, ringA, ringB, mini, badgeText, subText;
+            if (ch && lvl >= 80) {
+                title = 'Time to unplug';
+                badgeText = 'Over 80%';
+                subText = 'Unplug now to avoid top-off wear';
+                mood = 'Mochi says: unplug me! 🔌'; moodDot = 'bg-[#F2CC8F]'; ringA = '#F2CC8F'; ringB = '#E9A825'; mini = 'Unplug now';
+            } else if (lvl < 20) {
+                title = 'Running low';
+                badgeText = 'Low Battery';
+                subText = 'Plug in soon to prevent deep discharge';
+                mood = 'Mochi is sleeping… 💤'; moodDot = 'bg-[#F4ACB7]'; ringA = '#F4ACB7'; ringB = '#E07A5F'; mini = 'Sleeping (low)';
+            } else {
+                title = ch ? 'Charging gently' : 'Healthy zone';
+                badgeText = ch ? 'Charging' : 'Healthy';
+                subText = ch ? 'Charging inside the safe 20%–80% zone' : 'Optimal 20%–80% lifespan protection active';
+                mood = 'Mochi is content'; moodDot = 'bg-[#95D5B2]'; ringA = '#74C69D'; ringB = '#2D6A4F'; mini = ch ? 'Charging' : 'Healthy zone';
+            }
+
+            const ringPct = document.getElementById('ringPct');
+            if (ringPct) ringPct.textContent = lvl + '%';
+            const ringCharge = document.getElementById('ringCharge');
+            if (ringCharge) ringCharge.textContent = ch ? 'Charging' : 'On battery';
+            const battTitle = document.getElementById('battTitle');
+            if (battTitle) {
+                battTitle.textContent = title;
+                battTitle.style.color = ringB;
+            }
+            const battSub = document.getElementById('battSub');
+            if (battSub) battSub.textContent = subText;
+            const badge = document.getElementById('battStatusBadge');
+            if (badge) {
+                badge.textContent = badgeText;
+                badge.style.color = ringB;
+            }
+            const marker = document.getElementById('zoneMarker');
+            if (marker) marker.style.left = `calc(${lvl}% - 3px)`;
+
+            const ringArc = document.getElementById('ringArc');
+            if (ringArc) {
+                const circ = 119.4;
+                const offset = circ - (circ * lvl / 100);
+                ringArc.style.strokeDashoffset = offset;
+            }
+            const stopA = document.getElementById('ringStopA');
+            const stopB = document.getElementById('ringStopB');
+            if (stopA) stopA.setAttribute('stop-color', ringA);
+            if (stopB) stopB.setAttribute('stop-color', ringB);
+
+            drawTopBatteryPixelIcon(lvl, ch);
+            const moodText = document.getElementById('moodText');
+            if (moodText) moodText.textContent = mood;
+            const moodDotEl = document.getElementById('moodDot');
+            if (moodDotEl) moodDotEl.className = 'w-2 h-2 rounded-full ' + moodDot;
+
+            const miniPct = document.getElementById('miniPct');
+            if (miniPct) miniPct.textContent = lvl + '%';
+            const miniStatus = document.getElementById('miniStatus');
+            if (miniStatus) {
+                miniStatus.textContent = mini;
+                miniStatus.style.color = ringB;
+            }
+            const miniBarFill = document.getElementById('miniBarFill');
+            if (miniBarFill) miniBarFill.style.width = lvl + '%';
+        }
+
+        function initBattery() {
+            renderBattery();
+            if (!('getBattery' in navigator)) return;
+            navigator.getBattery().then(b => {
+                const sync = () => {
+                    const wasBelow = !(state.charging && state.battery >= 80);
+                    state.battery = Math.round(b.level * 100);
+                    state.charging = b.charging;
+                    state.liveBattery = true;
+                    renderBattery();
+                    if (wasBelow && state.charging && state.battery >= 80 && document.getElementById('opt80').checked) {
+                        say(`Meow! ${state.battery}% — time to unplug 🔌`);
+                        triggerDeviceNotification(false);
+                    }
+                };
+                sync();
+                b.addEventListener('levelchange', sync);
+                b.addEventListener('chargingchange', sync);
+            }).catch(() => {});
+        }
+
+        /* ============================================================
+           DEVICE NOTIFICATIONS (Real System / OS Notifications + Live Sound & Banner)
+           ============================================================ */
+        let notifTimeout = null;
+
+        function getCatNotificationIcon() {
+            try {
+                const c = document.createElement('canvas');
+                c.width = 64; c.height = 64;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#2D6A4F';
+                ctx.beginPath();
+                ctx.arc(32, 32, 30, 0, Math.PI * 2);
+                ctx.fill();
+                drawCat(ctx, 2, 8, 10, 0, {});
+                return c.toDataURL('image/png');
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function playNotificationChime() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, now); // D5
+                osc.frequency.setValueAtTime(880, now + 0.12); // A5
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.linearRampToValueAtTime(0.18, now + 0.04);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.45);
+            } catch (e) {}
+        }
+
+        function showDeviceNotificationBanner(title, body) {
+            const banner = document.getElementById('deviceNotificationBanner');
+            if (!banner) return;
+            const tEl = document.getElementById('notifTitle');
+            if (tEl) tEl.textContent = title;
+            const bEl = document.getElementById('notifBody');
+            if (bEl) bEl.textContent = body;
+            const timeEl = document.getElementById('notifTime');
+            if (timeEl) timeEl.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const nc = document.getElementById('notifCatCanvas');
+            if (nc) {
+                const nctx = nc.getContext('2d');
+                nctx.clearRect(0, 0, 48, 44);
+                drawCat(nctx, 1.8, 2, 2, 0, {});
+            }
+
+            banner.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                banner.classList.remove('-translate-y-6', 'opacity-0');
+                banner.classList.add('translate-y-0', 'opacity-100');
+            });
+
+            if (notifTimeout) clearTimeout(notifTimeout);
+            notifTimeout = setTimeout(dismissNotificationBanner, 7000);
+        }
+
+        function dismissNotificationBanner() {
+            const banner = document.getElementById('deviceNotificationBanner');
+            if (!banner) return;
+            banner.classList.remove('translate-y-0', 'opacity-100');
+            banner.classList.add('-translate-y-6', 'opacity-0');
+            setTimeout(() => { banner.classList.add('hidden'); }, 300);
+        }
+
+        function updateNotificationStatusBadge() {
+            const el = document.getElementById('notifStatusText');
+            if (!el) return;
+            if (!('Notification' in window)) {
+                el.textContent = 'In-app banner active 🔔';
+                el.className = 'font-bold text-[#A87441]';
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                el.textContent = 'Allowed 🟢';
+                el.className = 'font-bold text-[#2D6A4F]';
+            } else if (Notification.permission === 'denied') {
+                el.textContent = 'Blocked in browser settings 🔴';
+                el.className = 'font-bold text-[#C94A29]';
+            } else {
+                el.textContent = 'Ready (click button to enable) 🔔';
+                el.className = 'font-bold text-[#526B5A]';
+            }
+        }
+
+        function triggerDeviceNotification(isManual = false) {
+            playNotificationChime();
+            const title = 'WattPet 🐾 · Healthy Zone Reminder';
+            const body = 'Meow! Battery reaches 80% — time to unplug & safeguard battery lifespan! 🔌';
+            const iconUrl = getCatNotificationIcon();
+
+            // 1. Show realistic top-of-screen device banner
+            showDeviceNotificationBanner(title, body);
+
+            // 2. Dispatch real OS / browser notification
+            if ('Notification' in window) {
+                if (Notification.permission === 'granted') {
+                    try {
+                        const notif = new Notification(title, {
+                            body: body,
+                            icon: iconUrl,
+                            badge: iconUrl,
+                            tag: 'wattpet-nudge',
+                            renotify: true
+                        });
+                        notif.onclick = () => {
+                            window.focus();
+                            notif.close();
+                        };
+                    } catch (e) {
+                        console.warn('Native notification suppressed:', e);
+                    }
+                    updateNotificationStatusBadge();
+                } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        updateNotificationStatusBadge();
+                        if (permission === 'granted') {
+                            try {
+                                new Notification(title, {
+                                    body: body,
+                                    icon: iconUrl,
+                                    badge: iconUrl,
+                                    tag: 'wattpet-nudge',
+                                    renotify: true
+                                });
+                            } catch (e) {}
+                        }
+                    });
+                } else {
+                    updateNotificationStatusBadge();
+                }
+            }
+            if (isManual) {
+                say('Ding! Test notification sent to your device 🔔');
+            }
+        }
+
+        function onToggle80() {
+            recalc();
+            const opt = document.getElementById('opt80');
+            if (opt && opt.checked) {
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission().then(updateNotificationStatusBadge);
+                }
+                triggerDeviceNotification(false);
+            }
+        }
+
+        /* ============================================================
+           LEAVES + REWARDS (Real visual photos + Pixel art badges)
+           ============================================================ */
+        const REWARDS = [
+            { id: 'kopi', title: 'RM 3 off your kopi', desc: 'Bring a reusable cup to a partner café.', cost: 300, code: 'WATTPET-KOPI3', tagLabel: 'Café', pxIcon: 'kopi', theme: 'meadow',
+              img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=700&q=80' },
+            { id: 'tree', title: 'Plant a rainforest sapling', desc: 'A native tree planted with local conservation partners.', cost: 500, code: 'WATTPET-TREE1', tagLabel: 'Nature', pxIcon: 'tree', theme: 'forest',
+              img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=700&q=80' },
+            { id: 'repair', title: 'RM 15 device care voucher', desc: 'Port cleaning and battery check to keep your device going.', cost: 650, code: 'WATTPET-CARE15', tagLabel: 'Repair', pxIcon: 'wrench', theme: 'galaxy',
+              img: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=700&q=80' }
+        ];
+
+        function buildRewards() {
+            const grid = document.getElementById('rewardGrid');
+            grid.innerHTML = REWARDS.map(r => `
+                <article class="card rounded-[28px] overflow-hidden flex flex-col">
+                    <div class="relative h-44 overflow-hidden">
+                        <img src="${r.img}" alt="${r.title}" data-theme="${r.theme}" class="reward-img w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                        <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur text-white text-[11px] font-bold flex items-center gap-1.5"><canvas data-px="${r.pxIcon}" width="14" height="14" class="pixel w-3.5 h-3.5"></canvas><span>${r.tagLabel}</span></span>
+                        <span class="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#FDE68A] text-[#6B4411] text-[11px] font-extrabold flex items-center gap-1"><span>${r.cost}</span><canvas data-px="leaf" width="14" height="14" class="pixel w-3.5 h-3.5"></canvas></span>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col">
+                        <h3 class="text-base font-extrabold">${r.title}</h3>
+                        <p class="text-xs text-[#526B5A] mt-1 flex-1">${r.desc}</p>
+                        <div class="h-1.5 rounded-full bg-[#E5EFE7] mt-4 overflow-hidden"><div class="reward-prog h-full rounded-full bg-gradient-to-r from-[#52B788] to-[#E9A825]" data-cost="${r.cost}"></div></div>
+                        <button onclick="redeem('${r.id}')" class="mt-3 w-full py-3 rounded-2xl bg-[#2D6A4F] hover:bg-[#1B4332] text-white text-xs font-extrabold transition">Redeem</button>
+                    </div>
+                </article>`).join('');
+            renderAllPixelIcons(grid);
+            document.querySelectorAll('.reward-img').forEach(img => {
+                img.addEventListener('error', () => { img.src = sceneImage(img.dataset.theme); }, { once: true });
+            });
+        }
+
+        function addLeaves(n) {
+            state.leaves += n;
+            updateLeaves();
+        }
+
+        function updateLeaves() {
+            document.getElementById('rewardsPoints').textContent = state.leaves;
+            document.querySelectorAll('.reward-prog').forEach(el => {
+                el.style.width = Math.min(100, state.leaves / +el.dataset.cost * 100) + '%';
+            });
+            const next = REWARDS.find(r => r.cost > state.leaves) || REWARDS[REWARDS.length - 1];
+            document.getElementById('nextRewardName').textContent = next.title;
+            document.getElementById('nextRewardBar').style.width = Math.min(100, state.leaves / next.cost * 100) + '%';
+            document.getElementById('nextRewardText').textContent = `${Math.min(state.leaves, next.cost)} / ${next.cost}`;
+        }
+
+        function redeem(id) {
+            const r = REWARDS.find(x => x.id === id);
+            const toast = document.getElementById('rewardToast');
+            toast.classList.remove('hidden');
+            if (state.leaves < r.cost) {
+                toast.textContent = `You need ${r.cost - state.leaves} more leaves — pet Mochi to earn more.`;
+                return;
+            }
+            state.leaves -= r.cost;
+            updateLeaves();
+            toast.textContent = `🎉 Redeemed "${r.title}". Your code: ${r.code}`;
+        }
+
+        /* ============================================================
+           EXPORT
+           ============================================================ */
+        function exportCSV() {
+            const m = computeImpact(30), y = computeImpact(365);
+            const d = getActiveDeviceSpec();
+            const rows = [
+                ['Period', 'CO2 prevented (kg)', 'Money saved (RM)', 'Kopi cups'],
+                ['30 days', m.co2.toFixed(3), m.rm.toFixed(2), Math.round(m.kopi)],
+                ['1 year', y.co2.toFixed(3), y.rm.toFixed(2), Math.round(y.kopi)],
+                [],
+                ['Device', state.modelName],
+                ['Hardware profile', state.detectedHwSummary || state.device],
+                ['Battery replacement (RM)', d.cost],
+                ['Battery capacity (Wh)', d.wh],
+                ['Leaves', state.leaves],
+                ['Electricity price (RM/kWh)', TARIFF],
+                ['Grid emissions (kg CO2/kWh)', GRID]
+            ];
+            const blob = new Blob([rows.map(r => r.join(',')).join('\n')], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'wattpet-savings.csv';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            showExportToast('✓ wattpet-savings.csv downloaded');
+        }
+
+        function copySummary() {
+            const y = computeImpact(365);
+            const text = `My WattPet year (${state.modelName}): ${y.co2.toFixed(2)} kg CO₂ prevented, RM ${y.rm.toFixed(2)} saved (≈ ${Math.round(y.kopi)} kopi) 🌿🐱`;
+            if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
+            showExportToast('✓ Summary copied');
+        }
+
+        function showExportToast(msg) {
+            const t = document.getElementById('exportToast');
+            t.textContent = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 2500);
+        }
+
+        /* ============================================================
+           MAIN LOOP
+           ============================================================ */
+        const IDLE_LINES = ['*stretches* 🐾', 'The breeze feels nice 🍃', 'Mrrp? 👀', 'Keeping an eye on your battery 🔋'];
+        function loop() {
+            state.t++;
+            if (state.boop > 0) state.boop--;
+            if (state.jump > 0) state.jump--;
+            // Rare ~1/100 interaction where Mochi jumps when within the 20-80% healthy zone
+            if (state.t % 60 === 0 && state.jump === 0 && state.battery >= 20 && state.battery <= 80 && Math.random() < 0.01) {
+                triggerCatJump();
+            }
+            if (state.t % 900 === 450) {
+                const pool = getActiveLines(true);
+                say(pool[Math.floor(Math.random() * pool.length)]);
+            }
+            renderCats();
+            renderFallback();
+            requestAnimationFrame(loop);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAllPixelIcons();
+            populateSuggestions();
+            switchPage('sanctuary');
+            setPeriod(30);
+            autoDetectDeviceSpecs(false);
+            setOutfit('sprout');
+            buildRewards();
+            updateLeaves();
+            loadScene(0);
+            initBattery();
+            initStickyBar();
+            updateNotificationStatusBadge();
+            loop();
+            setTimeout(() => {
+                const welcome = state.battery < 20 ? 'Zzz… battery is low, napping… 💤' : 'Meow~ welcome back! 🐾';
+                say(welcome);
+            }, 800);
+        });
+    </script>
+</body>
+
+</html>
