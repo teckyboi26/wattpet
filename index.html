@@ -65,6 +65,31 @@
             border: 1px solid rgba(255, 255, 255, 0.20);
         }
 
+        /* ---- Rewards / game styling ---- */
+        .chip { display:inline-flex; align-items:center; gap:.35rem; padding:.3rem .7rem; border-radius:999px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.32); font-size:11px; font-weight:800; color:#fff; }
+        .btn3d { display:block; width:100%; padding:.85rem 1rem; border-radius:1rem; font-weight:800; font-size:.8rem; color:#fff; background:#40916C; box-shadow:0 4px 0 #1B4332; transition:transform .08s, box-shadow .08s; text-align:center; }
+        .btn3d:active:not([disabled]) { transform:translateY(3px); box-shadow:0 1px 0 #1B4332; }
+        .btn3d.gold { background:#F2B632; color:#3B2A06; box-shadow:0 4px 0 #A8741A; }
+        .btn3d.gold:active:not([disabled]) { box-shadow:0 1px 0 #A8741A; }
+        .btn3d.soft { background:#EAF6EC; color:#1B4332; box-shadow:0 4px 0 #C3D9C9; }
+        .btn3d.soft:active:not([disabled]) { box-shadow:0 1px 0 #C3D9C9; }
+        .btn3d[disabled] { background:#E4ECE6; color:#7C9283; box-shadow:0 4px 0 #CCD9D0; cursor:not-allowed; }
+        .day-dot { width:2.4rem; height:2.4rem; border-radius:999px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; border:2px solid #CFE3D5; background:#F2F8F3; color:#7C9283; }
+        .day-dot.done { background:#40916C; border-color:#2D6A4F; color:#fff; }
+        .day-dot.next { background:#FFF4D6; border-color:#F2B632; color:#8A5A07; animation:pulseRing 1.6s infinite; }
+        .ticket { position:relative; background:#fff; border-radius:1.5rem; overflow:hidden; }
+        .ticket-cut { border-top:2px dashed #CFE3D5; position:relative; }
+        .ticket-cut::before, .ticket-cut::after { content:''; position:absolute; top:-12px; width:22px; height:22px; border-radius:50%; background:#F7FBF7; }
+        .ticket-cut::before { left:-11px; } .ticket-cut::after { right:-11px; }
+        .stamp { position:absolute; top:42%; left:50%; transform:translate(-50%,-50%) rotate(-14deg); border:4px solid; border-radius:.75rem; padding:.2rem .9rem; font-weight:900; font-size:1.6rem; letter-spacing:.12em; opacity:.85; pointer-events:none; }
+        @keyframes pop { 0% { transform:scale(.6); opacity:0; } 60% { transform:scale(1.08); } 100% { transform:scale(1); opacity:1; } }
+        @keyframes sheetUp { from { transform:translateY(36px); opacity:0; } to { transform:none; opacity:1; } }
+        @keyframes pulseRing { 0%,100% { box-shadow:0 0 0 0 rgba(242,182,50,.55); } 50% { box-shadow:0 0 0 7px rgba(242,182,50,0); } }
+        @keyframes confettiFall { 0% { transform:translate3d(0,-12vh,0) rotate(0); opacity:1; } 100% { transform:translate3d(var(--dx),108vh,0) rotate(var(--rot)); opacity:.95; } }
+        .confetti-piece { position:absolute; top:0; border-radius:2px; animation:confettiFall var(--dur) cubic-bezier(.2,.6,.4,1) var(--delay) forwards; }
+        .sheet { animation:sheetUp .28s ease-out; }
+        .pop { animation:pop .45s ease-out; }
+
         .pixel {
             image-rendering: pixelated;
             image-rendering: crisp-edges;
@@ -388,20 +413,58 @@
              PAGE 2: REWARDS
              ========================================================= -->
         <main id="page-rewards" class="hidden flex flex-col gap-4">
-            <section class="rounded-[28px] p-5 sm:p-6 bg-gradient-to-br from-[#1B4332] via-[#2D6A4F] to-[#52B788] text-white flex flex-wrap items-center justify-between gap-4 shadow-lg">
-                <div>
-                    <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#B7E4C7]">Rewards</p>
-                    <h2 class="text-xl sm:text-2xl font-extrabold mt-1">Good battery habits, real perks</h2>
-                    <p class="text-xs text-white/85 mt-1 flex items-center gap-1.5 flex-wrap">Earn leaves <canvas data-px="leaf" width="14" height="14" class="pixel w-4 h-4 inline-block"></canvas> by petting Mochi, staying in the healthy zone and switching off sockets.</p>
+
+            <!-- Hero: leaves, tier, streak -->
+            <section class="rounded-[28px] p-5 sm:p-6 bg-gradient-to-br from-[#1B4332] via-[#2D6A4F] to-[#52B788] text-white shadow-lg">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#B7E4C7]">Rewards</p>
+                        <h2 class="text-xl sm:text-2xl font-extrabold mt-1">Good battery habits, real perks</h2>
+                        <div class="mt-3 flex flex-wrap items-center gap-2">
+                            <span id="tierChip" class="chip">🌱 Sprout</span>
+                            <span id="streakChip" class="chip">🔥 0 day streak</span>
+                        </div>
+                    </div>
+                    <div class="glass px-5 py-3 rounded-2xl text-center">
+                        <p class="text-[10px] uppercase font-extrabold text-[#D8F3DC]">Your leaves</p>
+                        <p class="num text-2xl font-extrabold text-[#FDE68A] flex items-center justify-center gap-1.5"><span id="rewardsPoints">300</span> <canvas data-px="leaf" width="14" height="14" class="pixel w-5 h-5"></canvas></p>
+                    </div>
                 </div>
-                <div class="glass px-5 py-3 rounded-2xl text-center">
-                    <p class="text-[10px] uppercase font-extrabold text-[#D8F3DC]">Your leaves</p>
-                    <p class="num text-2xl font-extrabold text-[#FDE68A] flex items-center justify-center gap-1.5"><span id="rewardsPoints">300</span> <canvas data-px="leaf" width="14" height="14" class="pixel w-5 h-5"></canvas></p>
+                <div class="mt-4">
+                    <div class="flex justify-between text-[11px] font-bold text-[#D8F3DC]"><span id="tierLabel"></span><span id="tierNext"></span></div>
+                    <div class="h-2.5 rounded-full bg-white/20 mt-1.5 overflow-hidden"><div id="tierBar" class="h-full rounded-full bg-[#FDE68A] transition-all duration-700" style="width:0%"></div></div>
                 </div>
             </section>
 
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Daily check-in -->
+                <section class="card rounded-[28px] p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <h2 class="text-base font-extrabold">Daily check-in</h2>
+                        <span id="checkinHint" class="text-[11px] font-bold text-[#526B5A]"></span>
+                    </div>
+                    <div id="checkinDays" class="mt-4 flex items-center justify-between gap-1"></div>
+                    <button id="checkinBtn" type="button" onclick="doCheckin()" class="btn3d gold mt-4">Claim today's leaves</button>
+                </section>
+
+                <!-- Daily quests -->
+                <section class="card rounded-[28px] p-5">
+                    <h2 class="text-base font-extrabold">Today's quests</h2>
+                    <div id="questList" class="mt-3 space-y-3"></div>
+                </section>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-1.5 p-1 rounded-2xl bg-white/70 border border-[#2D6A4F]/10 w-full sm:w-fit">
+                <button id="tabShop" type="button" onclick="setRewardTab('shop')" class="flex-1 sm:flex-initial px-5 py-2 rounded-xl text-xs font-extrabold transition">Rewards</button>
+                <button id="tabWallet" type="button" onclick="setRewardTab('wallet')" class="flex-1 sm:flex-initial px-5 py-2 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5">My coupons <span id="walletCount" class="min-w-[1.25rem] px-1.5 py-0.5 rounded-full bg-[#F2B632] text-[#3B2A06] text-[10px] font-black hidden"></span></button>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="rewardGrid"></div>
-            <div id="rewardToast" class="hidden card rounded-2xl p-4 text-center text-xs font-extrabold text-[#1B4332]"></div>
+            <div id="walletWrap" class="hidden">
+                <div id="walletList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                <button type="button" onclick="resetRewards()" class="mt-5 text-[11px] font-bold text-[#7C9283] underline underline-offset-2">Reset rewards data</button>
+            </div>
         </main>
 
         <!-- =========================================================
@@ -480,6 +543,7 @@
                             <span class="font-medium">Notifications</span>
                             <span id="notifStatusText" class="font-extrabold text-[#2D6A4F]">Checking…</span>
                         </div>
+                        <p class="mt-2 text-[11px] text-[#526B5A]">Alerts appear while WattPet is open or running in the background.</p>
                     </div>
                 </section>
 
@@ -642,6 +706,14 @@
         </footer>
     </div>
 
+    <!-- Modal sheet + confetti layer -->
+    <div id="rwModal" class="hidden fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-3">
+        <div class="absolute inset-0 bg-[#0E2015]/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div id="rwModalBody" class="sheet relative w-full max-w-sm max-h-[92dvh] overflow-y-auto rounded-[28px] bg-[#F7FBF7] shadow-2xl"></div>
+    </div>
+    <div id="confetti" class="fixed inset-0 pointer-events-none z-[300] overflow-hidden"></div>
+
+    <script>var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(o*r,n*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});</script>
     <script>
         /* ============================================================
            STATE
@@ -1792,7 +1864,7 @@
 
         function petMochi() {
             state.boop = state.battery < 20 ? 14 : 34;
-            addLeaves(5);
+            earnFromPet();
             // Rare ~1/100 interaction where Mochi jumps when within the 20-80% healthy zone
             if (state.battery >= 20 && state.battery <= 80 && Math.random() < 0.01) {
                 triggerCatJump();
@@ -2303,9 +2375,14 @@
             }
             const clamped = Math.min(100, Math.max(1, Math.round(lvl)));
             const wasBelow = !(state.charging && state.battery >= 80);
+            const wasCharging = state.charging;
             state.battery = clamped;
             if (typeof isCharging === 'boolean') {
                 state.charging = isCharging;
+            }
+            if (wasCharging && !state.charging && clamped >= 75 && clamped <= 88 && typeof earn === 'function') {
+                const gained = earn('unplug', 15);
+                if (gained) showToast('Perfect unplug +' + gained + ' leaves');
             }
             state.syncSource = source;
             state.lastSync = Date.now();
@@ -2559,150 +2636,601 @@
             setTimeout(() => { banner.classList.add('hidden'); }, 300);
         }
 
+        function isStandalone() {
+            return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+        }
+
         function updateNotificationStatusBadge() {
             const el = document.getElementById('notifStatusText');
             if (!el) return;
+            let text, color;
             if (!('Notification' in window)) {
-                el.textContent = 'In-app banner active 🔔';
-                el.className = 'font-bold text-[#A87441]';
-                return;
-            }
-            if (Notification.permission === 'granted') {
-                el.textContent = 'Allowed 🟢';
-                el.className = 'font-bold text-[#2D6A4F]';
+                text = isIOSDevice() && !isStandalone() ? 'Add to Home Screen first' : 'Not supported here';
+                color = '#A87441';
+            } else if (Notification.permission === 'granted') {
+                text = 'On'; color = '#2D6A4F';
             } else if (Notification.permission === 'denied') {
-                el.textContent = 'Blocked in browser settings 🔴';
-                el.className = 'font-bold text-[#C94A29]';
+                text = 'Blocked in browser settings'; color = '#C94A29';
             } else {
-                el.textContent = 'Ready (click button to enable) 🔔';
-                el.className = 'font-bold text-[#526B5A]';
+                text = 'Off. Tap Send test to turn on'; color = '#526B5A';
             }
+            el.textContent = text;
+            el.style.color = color;
         }
 
-        function triggerDeviceNotification(isManual = false) {
-            playNotificationChime();
-            const title = 'WattPet 🐾 · Healthy Zone Reminder';
-            const body = 'Meow! Battery reaches 80% — time to unplug & safeguard battery lifespan! 🔌';
-            const iconUrl = getCatNotificationIcon();
-
-            // 1. Show realistic top-of-screen device banner
-            showDeviceNotificationBanner(title, body);
-
-            // 2. Dispatch real OS / browser notification
-            if ('Notification' in window) {
-                if (Notification.permission === 'granted') {
-                    try {
-                        const notif = new Notification(title, {
-                            body: body,
-                            icon: iconUrl,
-                            badge: iconUrl,
-                            tag: 'wattpet-nudge',
-                            renotify: true
-                        });
-                        notif.onclick = () => {
-                            window.focus();
-                            notif.close();
-                        };
-                    } catch (e) {
-                        console.warn('Native notification suppressed:', e);
-                    }
-                    updateNotificationStatusBadge();
-                } else if (Notification.permission !== 'denied') {
-                    Notification.requestPermission().then(permission => {
-                        updateNotificationStatusBadge();
-                        if (permission === 'granted') {
-                            try {
-                                new Notification(title, {
-                                    body: body,
-                                    icon: iconUrl,
-                                    badge: iconUrl,
-                                    tag: 'wattpet-nudge',
-                                    renotify: true
-                                });
-                            } catch (e) {}
-                        }
-                    });
-                } else {
-                    updateNotificationStatusBadge();
-                }
+        // Must be called from a tap or click so the browser shows its permission prompt.
+        async function requestNotifyPermission() {
+            if (!('Notification' in window)) { updateNotificationStatusBadge(); return 'unsupported'; }
+            if (Notification.permission === 'default') {
+                try { await Notification.requestPermission(); } catch (e) {}
             }
+            updateNotificationStatusBadge();
+            return Notification.permission;
+        }
+
+        // Real system notification. Goes through the service worker so it works in the installed app
+        // (Android Chrome blocks `new Notification()` on the page itself).
+        async function sendSystemNotification({ title, body, tag = 'wattpet', url = '/' }) {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return false;
+            const options = {
+                body, tag, renotify: true,
+                icon: '/icons/icon-192.png', badge: '/icons/icon-192.png',
+                vibrate: [120, 60, 120], data: { url }
+            };
+            try {
+                if ('serviceWorker' in navigator) {
+                    const reg = await Promise.race([
+                        navigator.serviceWorker.ready,
+                        new Promise((_, rej) => setTimeout(() => rej(new Error('sw timeout')), 2500))
+                    ]);
+                    if (reg && reg.showNotification) { await reg.showNotification(title, options); return true; }
+                }
+            } catch (e) {}
+            try {
+                const n = new Notification(title, options);
+                n.onclick = () => { window.focus(); n.close(); };
+                return true;
+            } catch (e) { return false; }
+        }
+
+        async function triggerDeviceNotification(isManual = false) {
+            playNotificationChime();
+            const title = 'WattPet · Time to unplug';
+            const body = isManual
+                ? 'Test alert. This is how Mochi will nudge you at 80%.'
+                : `Battery is at ${state.battery}%. Unplug now to protect its lifespan.`;
+            if (isManual) await requestNotifyPermission();
+            const delivered = await sendSystemNotification({ title, body, tag: 'wattpet-nudge', url: '/' });
+            // In-app banner only when the system can't show the alert.
+            if (!delivered) showDeviceNotificationBanner(title, body);
             if (isManual) {
-                say('Ding! Test notification sent to your device 🔔');
+                say(delivered ? 'Notification sent 🔔' : 'Allow notifications to get alerts outside the app 🐾');
             }
         }
 
         function onToggle80() {
             recalc();
             const opt = document.getElementById('opt80');
-            if (opt && opt.checked) {
-                if ('Notification' in window && Notification.permission === 'default') {
-                    Notification.requestPermission().then(updateNotificationStatusBadge);
-                }
-                triggerDeviceNotification(false);
-            }
+            if (opt && opt.checked) requestNotifyPermission();
+        }
+
+        function handleDeepLink(hash) {
+            const h = (hash || '').replace('#', '');
+            if (h === 'rewards') { switchPage('rewards', true); }
+            else if (h === 'wallet') { switchPage('rewards', true); setRewardTab('wallet'); }
+        }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (e) => {
+                if (e.data && e.data.type === 'goto') handleDeepLink((e.data.url || '').split('#')[1]);
+            });
         }
 
         /* ============================================================
            LEAVES + REWARDS (Real visual photos + Pixel art badges)
            ============================================================ */
         const REWARDS = [
-            { id: 'kopi', title: 'RM 3 off your kopi', desc: 'Bring a reusable cup to a partner café.', cost: 300, code: 'WATTPET-KOPI3', tagLabel: 'Café', pxIcon: 'kopi', theme: 'meadow',
+            { id: 'kopi', short: 'KOPI', title: 'RM 3 off your kopi', desc: 'Bring a reusable cup to a partner café.', cost: 300, validDays: 14, tagLabel: 'Café', pxIcon: 'kopi', theme: 'meadow',
+              how: 'Show this code at the counter of a WattPet partner café.',
               img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=700&q=80' },
-            { id: 'tree', title: 'Plant a rainforest sapling', desc: 'A native tree planted with local conservation partners.', cost: 500, code: 'WATTPET-TREE1', tagLabel: 'Nature', pxIcon: 'tree', theme: 'forest',
+            { id: 'tree', short: 'TREE', title: 'Plant a rainforest sapling', desc: 'A native tree planted with local conservation partners.', cost: 500, validDays: 60, tagLabel: 'Nature', pxIcon: 'tree', theme: 'forest',
+              how: 'Keep this code. Your sapling is planted in the next planting round.',
               img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=700&q=80' },
-            { id: 'repair', title: 'RM 15 device care voucher', desc: 'Port cleaning and battery check to keep your device going.', cost: 650, code: 'WATTPET-CARE15', tagLabel: 'Repair', pxIcon: 'wrench', theme: 'galaxy',
+            { id: 'repair', short: 'CARE', title: 'RM 15 device care voucher', desc: 'Port cleaning and battery check to keep your device going.', cost: 650, validDays: 30, tagLabel: 'Repair', pxIcon: 'wrench', theme: 'galaxy',
+              how: 'Show this code at a WattPet partner repair shop.',
               img: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=700&q=80' }
         ];
 
-        function buildRewards() {
-            const grid = document.getElementById('rewardGrid');
-            grid.innerHTML = REWARDS.map(r => `
-                <article class="card rounded-[28px] overflow-hidden flex flex-col">
-                    <div class="relative h-44 overflow-hidden">
-                        <img src="${r.img}" alt="${r.title}" data-theme="${r.theme}" class="reward-img w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+        const TIERS = [
+            { n: 'Sprout', e: '🌱', min: 0 }, { n: 'Sapling', e: '🌿', min: 500 },
+            { n: 'Tree', e: '🌳', min: 1500 }, { n: 'Forest', e: '🏞️', min: 3500 }
+        ];
+        const CHECKIN = [5, 5, 10, 10, 15, 15, 40];
+        const QUESTS = [
+            { id: 'pet', label: 'Pet Mochi', hint: '+5 per pet', cap: 50, icon: '🐾' },
+            { id: 'healthy', label: 'Stay in the healthy zone', hint: '+2 every 5 min', cap: 30, icon: '🌿' },
+            { id: 'unplug', label: 'Unplug at about 80%', hint: '+15 each time', cap: 30, icon: '🔌' }
+        ];
+
+        /* ---------- saved game data ---------- */
+        const GAME_KEY = 'wattpet_game_v1';
+        let game = { leaves: 300, lifetime: 300, streak: 0, lastCheckin: '', coupons: [], notified: {}, expiryNotified: {}, daily: {} };
+
+        function todayKey() {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+        function daysBetween(a, b) { return Math.round((new Date(b + 'T00:00') - new Date(a + 'T00:00')) / 864e5); }
+        function fmtDate(ts) {
+            const d = new Date(ts);
+            return d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear();
+        }
+        function rollDaily() {
+            const t = todayKey();
+            if (!game.daily || game.daily.date !== t) game.daily = { date: t, pet: 0, healthy: 0, healthyMin: 0, unplug: 0, capShown: false };
+        }
+        function loadGame() {
+            let fresh = true;
+            try {
+                const raw = localStorage.getItem(GAME_KEY);
+                if (raw) { game = Object.assign(game, JSON.parse(raw)); fresh = false; }
+            } catch (e) {}
+            if (!Array.isArray(game.coupons)) game.coupons = [];
+            rollDaily();
+            state.leaves = game.leaves;
+            // Don't ping about rewards that were already affordable when the player arrived.
+            REWARDS.forEach(r => { if (state.leaves >= r.cost && game.notified[r.id] === undefined) game.notified[r.id] = true; });
+            if (fresh) saveGame();
+        }
+        function saveGame() {
+            game.leaves = state.leaves;
+            try { localStorage.setItem(GAME_KEY, JSON.stringify(game)); } catch (e) {}
+        }
+
+        /* ---------- little helpers ---------- */
+        let toastTimer = null;
+        function showToast(msg) {
+            let t = document.getElementById('appToast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'appToast';
+                t.className = 'fixed left-1/2 bottom-6 z-[250] px-4 py-2.5 rounded-full bg-[#172B1E] text-white text-xs font-extrabold shadow-xl transition-all duration-300';
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.style.opacity = '1';
+            t.style.transform = 'translate(-50%, 0)';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%, 10px)'; }, 1900);
+        }
+
+        function confetti(n = 40) {
+            const box = document.getElementById('confetti');
+            if (!box) return;
+            const colors = ['#F2B632', '#52B788', '#95D5B2', '#E07A5F', '#F4ACB7', '#FDE68A', '#40916C'];
+            for (let i = 0; i < n; i++) {
+                const c = document.createElement('span');
+                c.className = 'confetti-piece';
+                const size = 6 + Math.random() * 7;
+                c.style.left = (Math.random() * 100) + '%';
+                c.style.width = size + 'px';
+                c.style.height = (size * (0.5 + Math.random())) + 'px';
+                c.style.background = colors[i % colors.length];
+                c.style.setProperty('--dx', ((Math.random() - 0.5) * 220) + 'px');
+                c.style.setProperty('--rot', (Math.random() * 900 - 450) + 'deg');
+                c.style.setProperty('--dur', (1.8 + Math.random() * 1.4) + 's');
+                c.style.setProperty('--delay', (Math.random() * 0.35) + 's');
+                box.appendChild(c);
+                setTimeout(() => c.remove(), 3800);
+            }
+        }
+
+        function openModal(html) {
+            const m = document.getElementById('rwModal');
+            document.getElementById('rwModalBody').innerHTML = html;
+            m.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderAllPixelIcons(m);
+        }
+        function closeModal() {
+            document.getElementById('rwModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+        /* ---------- earning leaves ---------- */
+        function addLeaves(n) {
+            state.leaves += n;
+            if (n > 0) game.lifetime += n;
+            saveGame();
+            updateLeaves();
+            if (n > 0) checkUnlocks();
+        }
+
+        // Quest rewards are capped per day so the numbers stay honest.
+        function earn(questId, amount) {
+            rollDaily();
+            const q = QUESTS.find(x => x.id === questId);
+            const room = q.cap - (game.daily[questId] || 0);
+            if (room <= 0) return 0;
+            const n = Math.min(amount, room);
+            game.daily[questId] = (game.daily[questId] || 0) + n;
+            addLeaves(n);
+            if (state.page === 'rewards') renderQuests();
+            return n;
+        }
+
+        function earnFromPet() {
+            const n = earn('pet', 5);
+            if (n) showToast('+' + n + ' leaves');
+            else if (!game.daily.capShown) {
+                game.daily.capShown = true; saveGame();
+                showToast('Mochi is full of cuddles today. More leaves tomorrow!');
+            }
+        }
+
+        function checkUnlocks() {
+            REWARDS.forEach(r => {
+                if (state.leaves >= r.cost && !game.notified[r.id]) {
+                    game.notified[r.id] = true;
+                    saveGame();
+                    showToast('Reward unlocked: ' + r.title);
+                    sendSystemNotification({ title: 'Reward unlocked 🎁', body: 'You can redeem "' + r.title + '" now.', tag: 'wattpet-unlock-' + r.id, url: '/#rewards' });
+                }
+            });
+        }
+
+        /* ---------- check-in ---------- */
+        function streakNow() {
+            if (!game.lastCheckin) return 0;
+            return daysBetween(game.lastCheckin, todayKey()) <= 1 ? game.streak : 0;
+        }
+        function canCheckin() { return game.lastCheckin !== todayKey(); }
+        function doCheckin() {
+            if (!canCheckin()) return;
+            game.streak = streakNow() + 1;
+            game.lastCheckin = todayKey();
+            const reward = CHECKIN[(game.streak - 1) % 7];
+            addLeaves(reward);
+            saveGame();
+            confetti(reward >= 40 ? 70 : 28);
+            showToast('Day ' + game.streak + ' check-in: +' + reward + ' leaves');
+            renderRewardsPage();
+        }
+
+        /* ---------- coupons ---------- */
+        const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+        function randChunk(n) {
+            const arr = new Uint32Array(n);
+            (window.crypto || window.msCrypto).getRandomValues(arr);
+            return Array.from(arr, v => CODE_CHARS[v % CODE_CHARS.length]).join('');
+        }
+        function couponStatus(c) {
+            if (c.used) return 'used';
+            return Date.now() > c.expires ? 'expired' : 'active';
+        }
+        function daysLeft(c) {
+            const e = new Date(c.expires);
+            const key = e.getFullYear() + '-' + String(e.getMonth() + 1).padStart(2, '0') + '-' + String(e.getDate()).padStart(2, '0');
+            return Math.max(0, daysBetween(todayKey(), key));
+        }
+        function leftLabel(n, short) {
+            if (n === 0) return 'Last day';
+            return short ? n + 'd left' : n + (n === 1 ? ' day left' : ' days left');
+        }
+
+        function openRedeemConfirm(id) {
+            const r = REWARDS.find(x => x.id === id);
+            if (!r) return;
+            if (state.leaves < r.cost) { showToast('You need ' + (r.cost - state.leaves) + ' more leaves'); return; }
+            openModal(`
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 mx-auto rounded-3xl bg-[#D8F3DC] flex items-center justify-center"><canvas data-px="${r.pxIcon}" width="14" height="14" class="pixel w-9 h-9"></canvas></div>
+                    <h3 class="text-lg font-extrabold mt-4">${r.title}</h3>
+                    <p class="text-xs text-[#526B5A] mt-1">Valid for ${r.validDays} days after redeeming.</p>
+                    <div class="mt-5 rounded-2xl bg-white border border-[#2D6A4F]/10 divide-y divide-[#2D6A4F]/10 text-sm">
+                        <div class="flex justify-between px-4 py-3"><span class="text-[#526B5A]">Cost</span><b class="num">${r.cost} 🍃</b></div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[#526B5A]">Balance after</span><b class="num">${state.leaves - r.cost} 🍃</b></div>
+                    </div>
+                    <button type="button" onclick="confirmRedeem('${r.id}')" class="btn3d gold mt-5">Redeem now</button>
+                    <button type="button" onclick="closeModal()" class="mt-3 text-xs font-bold text-[#526B5A]">Not yet</button>
+                </div>`);
+        }
+
+        function confirmRedeem(id) {
+            const r = REWARDS.find(x => x.id === id);
+            if (!r || state.leaves < r.cost) { closeModal(); return; }
+            state.leaves -= r.cost;
+            REWARDS.forEach(x => { if (state.leaves < x.cost) delete game.notified[x.id]; });
+            const exp = new Date(Date.now() + r.validDays * 864e5);
+            exp.setHours(23, 59, 59, 999);
+            const coupon = {
+                id: 'c' + Date.now().toString(36) + randChunk(3), rid: r.id, title: r.title,
+                code: 'WP-' + r.short + '-' + randChunk(4) + '-' + randChunk(4),
+                issued: Date.now(), expires: exp.getTime(), used: false
+            };
+            game.coupons.unshift(coupon);
+            saveGame();
+            updateLeaves();
+            renderRewardsPage();
+            confetti(80);
+            try { playNotificationChime(); } catch (e) {}
+            showTicket(coupon.id, true);
+            sendSystemNotification({
+                title: 'Coupon ready 🎟️',
+                body: r.title + '. Code ' + coupon.code + ', valid until ' + fmtDate(coupon.expires) + '.',
+                tag: 'wattpet-coupon', url: '/#wallet'
+            });
+        }
+
+        function qrSVG(text) {
+            try {
+                const q = qrcode(0, 'M');
+                q.addData(text);
+                q.make();
+                return q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+            } catch (e) { return ''; }
+        }
+
+        function showTicket(cid, fresh) {
+            const c = game.coupons.find(x => x.id === cid);
+            if (!c) return;
+            const r = REWARDS.find(x => x.id === c.rid) || REWARDS[0];
+            const st = couponStatus(c);
+            const left = daysLeft(c);
+            const pill = st === 'used' ? ['Used', 'bg-[#E4ECE6] text-[#526B5A]']
+                : st === 'expired' ? ['Expired', 'bg-[#FCE7EA] text-[#C94A29]']
+                : left <= 3 ? [leftLabel(left), 'bg-[#FEF3C7] text-[#92400E]']
+                : [leftLabel(left), 'bg-[#D8F3DC] text-[#1B4332]'];
+            const dim = st !== 'active';
+            const stamp = st === 'used' ? '<div class="stamp text-[#526B5A] border-[#526B5A]">USED</div>'
+                : st === 'expired' ? '<div class="stamp text-[#C94A29] border-[#C94A29]">EXPIRED</div>' : '';
+            openModal(`
+                <div class="p-4 sm:p-5">
+                    ${fresh ? '<p class="pop text-center text-lg font-extrabold text-[#1B4332] mb-3">You got it! 🎉</p>' : ''}
+                    <div class="ticket shadow-lg border border-[#2D6A4F]/10">
+                        <div class="px-5 pt-5 pb-4 bg-gradient-to-br from-[#1B4332] to-[#40916C] text-white">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="chip"><canvas data-px="${r.pxIcon}" width="14" height="14" class="pixel w-3.5 h-3.5"></canvas>${r.tagLabel}</span>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black ${pill[1]}">${pill[0]}</span>
+                            </div>
+                            <h3 class="text-lg font-extrabold mt-3 leading-snug">${c.title}</h3>
+                        </div>
+                        <div class="ticket-cut"></div>
+                        <div class="relative px-5 py-5 text-center ${dim ? 'opacity-50' : ''}">
+                            <div class="mx-auto w-36 h-36 p-2 rounded-2xl bg-white border border-[#2D6A4F]/15">${qrSVG('WATTPET|' + c.code)}</div>
+                            <p class="mt-3 text-[10px] font-extrabold uppercase tracking-wider text-[#526B5A]">Your code</p>
+                            <p class="font-mono text-xl font-black tracking-wider text-[#172B1E] select-all">${c.code}</p>
+                        </div>
+                        ${stamp}
+                        <div class="px-5 pb-5 text-[11px] text-[#3F5446] leading-relaxed space-y-1.5">
+                            <div class="flex justify-between"><span class="text-[#526B5A]">Valid until</span><b>${fmtDate(c.expires)}</b></div>
+                            <div class="flex justify-between"><span class="text-[#526B5A]">Redeemed on</span><b>${fmtDate(c.issued)}</b></div>
+                            <p class="pt-2 text-[#526B5A]">${r.how} One use only.</p>
+                        </div>
+                    </div>
+                    <div class="grid ${st === 'active' ? 'grid-cols-2' : 'grid-cols-1'} gap-2.5 mt-4">
+                        <button type="button" onclick="copyCouponCode('${c.id}')" class="btn3d soft">Copy code</button>
+                        ${st === 'active' ? `<button type="button" onclick="askMarkUsed('${c.id}')" class="btn3d">Mark as used</button>` : ''}
+                    </div>
+                    <button type="button" onclick="closeModal()" class="block mx-auto mt-3 text-xs font-bold text-[#526B5A]">Close</button>
+                </div>`);
+        }
+
+        function copyCouponCode(cid) {
+            const c = game.coupons.find(x => x.id === cid);
+            if (!c) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(c.code).catch(() => {});
+            showToast('Code copied');
+        }
+
+        function askMarkUsed(cid) {
+            openModal(`
+                <div class="p-6 text-center">
+                    <div class="text-4xl">🎟️</div>
+                    <h3 class="text-lg font-extrabold mt-3">Mark this coupon as used?</h3>
+                    <p class="text-xs text-[#526B5A] mt-1.5">Do this after the shop has accepted your code. It can't be undone.</p>
+                    <button type="button" onclick="markUsed('${cid}')" class="btn3d mt-5">Yes, mark as used</button>
+                    <button type="button" onclick="showTicket('${cid}')" class="mt-3 text-xs font-bold text-[#526B5A]">Back</button>
+                </div>`);
+        }
+
+        function markUsed(cid) {
+            const c = game.coupons.find(x => x.id === cid);
+            if (c && !c.used) { c.used = true; c.usedAt = Date.now(); saveGame(); }
+            renderRewardsPage();
+            showTicket(cid);
+        }
+
+        function checkExpiringCoupons() {
+            game.coupons.forEach(c => {
+                if (couponStatus(c) === 'active' && daysLeft(c) <= 3 && !game.expiryNotified[c.id]) {
+                    game.expiryNotified[c.id] = true;
+                    saveGame();
+                    sendSystemNotification({
+                        title: 'Coupon expiring soon ⏰',
+                        body: c.title + ' expires on ' + fmtDate(c.expires) + '. Use it before then!',
+                        tag: 'wattpet-expiry-' + c.id, url: '/#wallet'
+                    });
+                }
+            });
+        }
+
+        function resetRewards() {
+            if (!confirm('Reset leaves, streak and coupons on this device?')) return;
+            try { localStorage.removeItem(GAME_KEY); } catch (e) {}
+            game = { leaves: 300, lifetime: 300, streak: 0, lastCheckin: '', coupons: [], notified: {}, expiryNotified: {}, daily: {} };
+            state.leaves = 300;
+            loadGame();
+            updateLeaves();
+            renderRewardsPage();
+            showToast('Rewards reset');
+        }
+
+        /* ---------- rendering ---------- */
+        let rewardTab = 'shop';
+        function setRewardTab(tab) {
+            rewardTab = tab;
+            document.getElementById('rewardGrid').classList.toggle('hidden', tab !== 'shop');
+            document.getElementById('walletWrap').classList.toggle('hidden', tab !== 'wallet');
+            const on = 'bg-[#2D6A4F] text-white shadow-sm', off = 'text-[#526B5A] hover:bg-[#EAF2EC]';
+            document.getElementById('tabShop').className = 'flex-1 sm:flex-initial px-5 py-2 rounded-xl text-xs font-extrabold transition ' + (tab === 'shop' ? on : off);
+            document.getElementById('tabWallet').className = 'flex-1 sm:flex-initial px-5 py-2 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5 ' + (tab === 'wallet' ? on : off);
+            if (tab === 'wallet') renderWallet();
+        }
+
+        function renderHero() {
+            const pts = document.getElementById('rewardsPoints');
+            if (pts) pts.textContent = state.leaves;
+            let ti = 0;
+            TIERS.forEach((t, i) => { if (game.lifetime >= t.min) ti = i; });
+            const tier = TIERS[ti], next = TIERS[ti + 1];
+            document.getElementById('tierChip').textContent = tier.e + ' ' + tier.n;
+            document.getElementById('streakChip').textContent = '🔥 ' + streakNow() + ' day streak';
+            document.getElementById('tierLabel').textContent = tier.n + ' tier';
+            document.getElementById('tierNext').textContent = next ? game.lifetime + ' / ' + next.min + ' to ' + next.n : 'Top tier reached';
+            const pct = next ? Math.min(100, (game.lifetime - tier.min) / (next.min - tier.min) * 100) : 100;
+            document.getElementById('tierBar').style.width = pct + '%';
+        }
+
+        function renderCheckin() {
+            const claimed = !canCheckin();
+            const s = streakNow();
+            const filled = claimed ? ((s - 1) % 7) + 1 : (s % 7);
+            document.getElementById('checkinDays').innerHTML = CHECKIN.map((v, i) => {
+                const cls = i < filled ? 'done' : (i === filled && !claimed ? 'next' : '');
+                const inner = i < filled ? '✓' : (i === 6 ? '🎁' : '+' + v);
+                return `<div class="flex flex-col items-center gap-1"><div class="day-dot ${cls}">${inner}</div><span class="text-[9px] font-bold text-[#7C9283]">Day ${i + 1}</span></div>`;
+            }).join('');
+            const btn = document.getElementById('checkinBtn');
+            btn.disabled = claimed;
+            btn.textContent = claimed ? 'Come back tomorrow' : "Claim today's leaves";
+            document.getElementById('checkinHint').textContent = claimed ? 'Checked in today ✓' : (s > 0 ? 'Keep your streak alive' : 'Start a streak');
+        }
+
+        function renderQuests() {
+            rollDaily();
+            document.getElementById('questList').innerHTML = QUESTS.map(q => {
+                const got = game.daily[q.id] || 0;
+                const done = got >= q.cap;
+                return `<div>
+                    <div class="flex items-center justify-between gap-2 text-xs">
+                        <span class="font-bold flex items-center gap-2"><span>${q.icon}</span>${q.label}<span class="text-[10px] font-semibold text-[#7C9283]">${q.hint}</span></span>
+                        <span class="num font-extrabold ${done ? 'text-[#2D6A4F]' : 'text-[#526B5A]'}">${done ? 'Done ✓' : got + ' / ' + q.cap}</span>
+                    </div>
+                    <div class="h-2 rounded-full bg-[#E5EFE7] mt-1.5 overflow-hidden"><div class="h-full rounded-full ${done ? 'bg-[#40916C]' : 'bg-gradient-to-r from-[#52B788] to-[#F2B632]'} transition-all duration-500" style="width:${Math.min(100, got / q.cap * 100)}%"></div></div>
+                </div>`;
+            }).join('');
+        }
+
+        function rewardCardHTML(r) {
+            const can = state.leaves >= r.cost;
+            const need = r.cost - state.leaves;
+            const pct = Math.min(100, Math.round(state.leaves / r.cost * 100));
+            return `
+                <article class="card rounded-[28px] overflow-hidden flex flex-col ${can ? 'ring-2 ring-[#F2B632]/80' : ''}">
+                    <div class="relative h-40 overflow-hidden">
+                        <img src="${r.img}" alt="${r.title}" data-theme="${r.theme}" class="reward-img w-full h-full object-cover ${can ? '' : 'saturate-[.7]'}" />
                         <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur text-white text-[11px] font-bold flex items-center gap-1.5"><canvas data-px="${r.pxIcon}" width="14" height="14" class="pixel w-3.5 h-3.5"></canvas><span>${r.tagLabel}</span></span>
                         <span class="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#FDE68A] text-[#6B4411] text-[11px] font-extrabold flex items-center gap-1"><span>${r.cost}</span><canvas data-px="leaf" width="14" height="14" class="pixel w-3.5 h-3.5"></canvas></span>
+                        ${can ? '<span class="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-[#F2B632] text-[#3B2A06] text-[10px] font-black tracking-wide">READY TO REDEEM</span>' : ''}
                     </div>
                     <div class="p-5 flex-1 flex flex-col">
                         <h3 class="text-base font-extrabold">${r.title}</h3>
                         <p class="text-xs text-[#526B5A] mt-1 flex-1">${r.desc}</p>
-                        <div class="h-1.5 rounded-full bg-[#E5EFE7] mt-4 overflow-hidden"><div class="reward-prog h-full rounded-full bg-gradient-to-r from-[#52B788] to-[#E9A825]" data-cost="${r.cost}"></div></div>
-                        <button onclick="redeem('${r.id}')" class="mt-3 w-full py-3 rounded-2xl bg-[#2D6A4F] hover:bg-[#1B4332] text-white text-xs font-extrabold transition">Redeem</button>
+                        <p class="text-[11px] font-bold text-[#2D6A4F] mt-2">Valid ${r.validDays} days after redeeming</p>
+                        <div class="h-2 rounded-full bg-[#E5EFE7] mt-3 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-[#52B788] to-[#F2B632] transition-all duration-700" style="width:${pct}%"></div></div>
+                        ${can
+                            ? `<button type="button" onclick="openRedeemConfirm('${r.id}')" class="btn3d gold mt-4">Redeem for ${r.cost} 🍃</button>`
+                            : `<button type="button" class="btn3d mt-4" disabled>${need} more leaves to unlock</button>`}
                     </div>
-                </article>`).join('');
+                </article>`;
+        }
+
+        function buildRewards() {
+            const grid = document.getElementById('rewardGrid');
+            grid.innerHTML = REWARDS.map(rewardCardHTML).join('');
             renderAllPixelIcons(grid);
-            document.querySelectorAll('.reward-img').forEach(img => {
+            grid.querySelectorAll('.reward-img').forEach(img => {
                 img.addEventListener('error', () => { img.src = sceneImage(img.dataset.theme); }, { once: true });
             });
         }
 
-        function addLeaves(n) {
-            state.leaves += n;
-            updateLeaves();
+        function renderWallet() {
+            const list = document.getElementById('walletList');
+            const order = { active: 0, expired: 1, used: 2 };
+            const items = game.coupons.slice().sort((a, b) => {
+                const sa = couponStatus(a), sb = couponStatus(b);
+                return sa !== sb ? order[sa] - order[sb] : (sa === 'active' ? a.expires - b.expires : b.issued - a.issued);
+            });
+            if (!items.length) {
+                list.innerHTML = `<div class="sm:col-span-2 card rounded-[28px] p-8 text-center">
+                    <div class="text-4xl">🎟️</div>
+                    <p class="text-sm font-extrabold mt-3">No coupons yet</p>
+                    <p class="text-xs text-[#526B5A] mt-1">Redeem a reward and your coupon will live here.</p>
+                    <button type="button" onclick="setRewardTab('shop')" class="btn3d mt-5 max-w-[14rem] mx-auto">Browse rewards</button>
+                </div>`;
+                return;
+            }
+            list.innerHTML = items.map(c => {
+                const r = REWARDS.find(x => x.id === c.rid) || REWARDS[0];
+                const st = couponStatus(c), left = daysLeft(c);
+                const chip = st === 'used' ? ['Used', 'bg-[#E4ECE6] text-[#526B5A]']
+                    : st === 'expired' ? ['Expired', 'bg-[#FCE7EA] text-[#C94A29]']
+                    : left <= 3 ? [leftLabel(left, true), 'bg-[#FEF3C7] text-[#92400E]'] : [leftLabel(left, true), 'bg-[#D8F3DC] text-[#1B4332]'];
+                return `<button type="button" onclick="showTicket('${c.id}')" class="card rounded-[22px] p-4 text-left flex items-center gap-3 hover:-translate-y-0.5 transition ${st !== 'active' ? 'opacity-70' : ''}">
+                    <span class="w-12 h-12 rounded-2xl bg-[#D8F3DC] flex items-center justify-center flex-shrink-0"><canvas data-px="${r.pxIcon}" width="14" height="14" class="pixel w-6 h-6"></canvas></span>
+                    <span class="flex-1 min-w-0">
+                        <span class="block text-sm font-extrabold truncate">${c.title}</span>
+                        <span class="block font-mono text-[11px] font-bold text-[#526B5A] truncate">${c.code}</span>
+                    </span>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black flex-shrink-0 ${chip[1]}">${chip[0]}</span>
+                </button>`;
+            }).join('');
+            renderAllPixelIcons(list);
+        }
+
+        function renderWalletBadge() {
+            const n = game.coupons.filter(c => couponStatus(c) === 'active').length;
+            const b = document.getElementById('walletCount');
+            if (b) { b.textContent = n; b.classList.toggle('hidden', n === 0); }
+        }
+
+        function renderRewardsPage() {
+            renderHero(); renderCheckin(); renderQuests(); buildRewards(); renderWalletBadge();
+            if (rewardTab === 'wallet') renderWallet();
         }
 
         function updateLeaves() {
-            document.getElementById('rewardsPoints').textContent = state.leaves;
-            document.querySelectorAll('.reward-prog').forEach(el => {
-                el.style.width = Math.min(100, state.leaves / +el.dataset.cost * 100) + '%';
-            });
             const next = REWARDS.find(r => r.cost > state.leaves) || REWARDS[REWARDS.length - 1];
-            document.getElementById('nextRewardName').textContent = next.title;
-            document.getElementById('nextRewardBar').style.width = Math.min(100, state.leaves / next.cost * 100) + '%';
-            document.getElementById('nextRewardText').textContent = `${Math.min(state.leaves, next.cost)} / ${next.cost}`;
+            const nn = document.getElementById('nextRewardName');
+            if (nn) nn.textContent = next.title;
+            const nb = document.getElementById('nextRewardBar');
+            if (nb) nb.style.width = Math.min(100, state.leaves / next.cost * 100) + '%';
+            const nt = document.getElementById('nextRewardText');
+            if (nt) nt.textContent = state.leaves >= next.cost ? 'Ready to redeem' : state.leaves + ' / ' + next.cost;
+            if (document.getElementById('rewardsPoints')) {
+                if (state.page === 'rewards') { renderHero(); buildRewards(); }
+                else document.getElementById('rewardsPoints').textContent = state.leaves;
+            }
         }
 
-        function redeem(id) {
-            const r = REWARDS.find(x => x.id === id);
-            const toast = document.getElementById('rewardToast');
-            toast.classList.remove('hidden');
-            if (state.leaves < r.cost) {
-                toast.textContent = `You need ${r.cost - state.leaves} more leaves — pet Mochi to earn more.`;
-                return;
-            }
-            state.leaves -= r.cost;
+        function initGame() {
+            loadGame();
+            setRewardTab('shop');
+            renderRewardsPage();
             updateLeaves();
-            toast.textContent = `🎉 Redeemed "${r.title}". Your code: ${r.code}`;
+            // Earn leaves for time spent in the healthy zone (only with a fresh battery reading).
+            setInterval(() => {
+                if (document.hidden || state.battery < 20) return;
+                if (state.charging && state.battery >= 80) return;
+                if (isStale()) return;
+                rollDaily();
+                game.daily.healthyMin = (game.daily.healthyMin || 0) + 1;
+                if (game.daily.healthyMin % 5 === 0) earn('healthy', 2);
+                saveGame();
+            }, 60000);
+            setTimeout(checkExpiringCoupons, 2500);
+            handleDeepLink(location.hash);
         }
 
         /* ============================================================
@@ -2779,8 +3307,7 @@
             setPeriod(30);
             autoDetectDeviceSpecs(false);
             setOutfit('sprout');
-            buildRewards();
-            updateLeaves();
+            initGame();
             loadScene(0);
             initBattery();
             initStickyBar();

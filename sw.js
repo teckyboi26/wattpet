@@ -1,4 +1,4 @@
-const VERSION = 'wattpet-v1';
+const VERSION = 'wattpet-v2';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -45,4 +45,21 @@ self.addEventListener('fetch', (e) => {
       })
     );
   }
+});
+
+// Tapping a notification opens (or focuses) the app and jumps to the right place.
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const target = (e.notification.data && e.notification.data.url) || '/';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const client of list) {
+        if ('focus' in client) {
+          client.postMessage({ type: 'goto', url: target });
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(target);
+    })
+  );
 });
