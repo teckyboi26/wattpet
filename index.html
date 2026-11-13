@@ -5,6 +5,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>WattPet — Cozy Battery Companion</title>
+    <meta name="theme-color" content="#2D6A4F" />
+    <meta name="description" content="Mochi the pixel cat rewards healthy battery habits." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="WattPet" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
     <!-- Tailwind (falls back to a mirror if the main CDN is blocked) -->
     <script src="https://cdn.tailwindcss.com"
@@ -2757,6 +2766,10 @@
             renderCats();
             renderFallback();
             requestAnimationFrame(loop);
+        }
+
+        if ('serviceWorker' in navigator && location.protocol === 'https:') {
+            window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
