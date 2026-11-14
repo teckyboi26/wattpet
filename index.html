@@ -317,13 +317,13 @@
 
                         <div class="w-px h-6 bg-[#2D6A4F]/10 hidden sm:block"></div>
 
-                        <!-- Kopi Worth (Whole Number!) -->
+                        <!-- Treats worth -->
                         <div class="flex items-center gap-2">
                             <div class="w-7 h-7 rounded-lg bg-[#EDE0D4] border border-[#7F5539]/20 flex items-center justify-center flex-shrink-0">
                                 <canvas data-px="kopi" width="20" height="20" class="pixel w-3.5 h-3.5"></canvas>
                             </div>
                             <div class="leading-tight">
-                                <span class="text-[9px] font-bold text-[#526B5A] uppercase block">Kopi worth</span>
+                                <span class="text-[9px] font-bold text-[#526B5A] uppercase block">Treats worth</span>
                                 <span class="text-xs sm:text-sm font-black num text-[#7F5539]"><span id="impKopi">2</span><span class="text-[10px] ml-0.5 font-bold text-[#526B5A]">cups</span></span>
                             </div>
                         </div>
@@ -652,6 +652,7 @@
                                         <div class="grid grid-cols-2 gap-2 mt-3">
                         <button onclick="exportCSV()" class="py-3 rounded-2xl bg-[#2D6A4F] hover:bg-[#1B4332] text-white text-xs font-extrabold transition flex items-center justify-center gap-2"><canvas data-px="download" width="14" height="14" class="pixel w-4 h-4"></canvas><span>Download CSV</span></button>
                         <button onclick="copySummary()" class="py-3 rounded-2xl bg-[#EAF6EC] hover:bg-[#D8F3DC] text-[#1B4332] border border-[#52B788]/40 text-xs font-extrabold transition flex items-center justify-center gap-2"><canvas data-px="copy" width="14" height="14" class="pixel w-4 h-4"></canvas><span>Copy summary</span></button>
+                        <button onclick="showShareCard()" class="col-span-2 py-3 rounded-2xl bg-[#F2B632] hover:bg-[#E5A820] text-[#3B2A06] text-xs font-extrabold transition">Share my impact card</button>
                     </div>
                     <p id="exportToast" class="hidden text-xs font-bold text-[#2D6A4F] mt-2"></p>
                 </section>
@@ -671,7 +672,7 @@
                         </div>
                         <div class="flex items-start gap-3 p-3 rounded-2xl bg-[#F3ECE6]">
                             <canvas data-px="kopi" width="14" height="14" class="pixel w-5 h-5 flex-shrink-0 mt-0.5"></canvas>
-                            <p class="text-xs text-[#3F5446] leading-relaxed"><b>Kopi worth</b> = money saved ÷ RM 2.50 (a kopi at a kopitiam, rounded to whole cups).</p>
+                            <p class="text-xs text-[#3F5446] leading-relaxed"><b>Treats worth</b> = money saved ÷ RM 2.50 (a typical local snack or drink, rounded to whole items).</p>
                         </div>
                     </div>
 
@@ -1422,7 +1423,7 @@
                 animateNumber(co2El, r.co2, 2);
             }
             animateNumber(document.getElementById('impRm'), r.rm, 2);
-            // Whole numbers for Kopi worth
+            // Whole numbers for treats worth
             animateNumber(document.getElementById('impKopi'), Math.round(r.kopi), 0);
 
             const d = getActiveDeviceSpec();
@@ -1877,7 +1878,40 @@
             }
         }
 
+        const OUTFIT_COST = { flower: 150, hat: 250 };
+        function updateOutfitLocks() {
+            const owned = game.owned || [];
+            document.querySelectorAll('.outfit-btn').forEach(b => {
+                const cost = OUTFIT_COST[b.dataset.outfit];
+                const locked = cost && !owned.includes(b.dataset.outfit);
+                b.style.opacity = locked ? '0.5' : '';
+                b.title = locked ? 'Unlock for ' + cost + ' leaves' : '';
+            });
+        }
         function setOutfit(o) {
+            const cost = OUTFIT_COST[o];
+            if (cost && !(game.owned || []).includes(o)) { openOutfitBuy(o); return; }
+            applyOutfit(o);
+        }
+        function openOutfitBuy(o) {
+            const cost = OUTFIT_COST[o], name = o === 'flower' ? 'Flower crown' : 'Sun hat';
+            const can = state.leaves >= cost;
+            openModal(`<div class="p-6 text-center">
+                <div class="text-4xl">${o === 'flower' ? '🌸' : '👒'}</div>
+                <h3 class="text-lg font-extrabold mt-3">${name} for Mochi</h3>
+                <p class="text-xs text-[#526B5A] mt-1">${can ? 'Yours to keep once unlocked.' : 'You need ' + (cost - state.leaves) + ' more leaves.'}</p>
+                <button type="button" ${can ? '' : 'disabled'} onclick="buyOutfit('${o}')" class="btn3d gold mt-5">Unlock for ${cost} 🍃</button>
+                <button type="button" onclick="closeModal()" class="mt-3 text-xs font-bold text-[#526B5A]">Not now</button></div>`);
+        }
+        function buyOutfit(o) {
+            const cost = OUTFIT_COST[o];
+            if (!cost || state.leaves < cost) return;
+            state.leaves -= cost;
+            game.owned = (game.owned || []).concat(o);
+            REWARDS.forEach(x => { if (state.leaves < x.cost) delete game.notified[x.id]; });
+            saveGame(); updateLeaves(); updateOutfitLocks(); closeModal(); confetti(30); applyOutfit(o);
+        }
+        function applyOutfit(o) {
             state.outfit = o;
             document.querySelectorAll('.outfit-btn').forEach(b => {
                 b.className = 'outfit-btn w-9 h-9 rounded-full text-sm flex items-center justify-center transition ' + (b.dataset.outfit === o ? 'bg-white/90 ring-2 ring-[#95D5B2]' : 'hover:bg-white/20');
@@ -2728,7 +2762,7 @@
            LEAVES + REWARDS (Real visual photos + Pixel art badges)
            ============================================================ */
         const REWARDS = [
-            { id: 'kopi', short: 'KOPI', title: 'RM 3 off your kopi', desc: 'Bring a reusable cup to a partner café.', cost: 300, validDays: 14, tagLabel: 'Café', pxIcon: 'kopi', theme: 'meadow',
+            { id: 'kopi', short: 'KOPI', title: 'RM 3 off your drink', desc: 'Bring a reusable cup to a partner café.', cost: 300, validDays: 14, tagLabel: 'Café', pxIcon: 'kopi', theme: 'meadow',
               how: 'Show this code at the counter of a WattPet partner café.', },
             { id: 'tree', short: 'TREE', title: 'Plant a rainforest sapling', desc: 'A native tree planted with local conservation partners.', cost: 500, validDays: 60, tagLabel: 'Nature', pxIcon: 'tree', theme: 'forest',
               how: 'Keep this code. Your sapling is planted in the next planting round.', },
@@ -2771,6 +2805,7 @@
                 if (raw) { game = Object.assign(game, JSON.parse(raw)); fresh = false; }
             } catch (e) {}
             if (!Array.isArray(game.coupons)) game.coupons = [];
+            if (!Array.isArray(game.owned)) game.owned = [];
             rollDaily();
             state.leaves = game.leaves;
             // Don't ping about rewards that were already affordable when the player arrived.
@@ -3213,6 +3248,83 @@
             }
         }
 
+        const ONBOARD = [
+            { e: '🐱', t: 'Meet Mochi', d: 'Mochi is your battery buddy. Keep your charge between 20% and 80% and Mochi stays happy.' },
+            { e: '🍃', t: 'Earn leaves', d: 'Pet Mochi, check in every day and unplug on time to collect leaves.' },
+            { e: '🎟️', t: 'Get real perks', d: 'Swap leaves for coupons from partners. Add WattPet to your Home Screen to get alerts.' }
+        ];
+        function showOnboarding(i) {
+            const o = ONBOARD[i], last = i === ONBOARD.length - 1;
+            openModal(`<div class="p-7 text-center">
+                <div class="pop text-6xl">${o.e}</div>
+                <h3 class="text-xl font-extrabold mt-4">${o.t}</h3>
+                <p class="text-sm text-[#3F5446] mt-2 leading-relaxed">${o.d}</p>
+                <div class="flex justify-center gap-1.5 mt-5">${ONBOARD.map((_, k) => `<span class="h-1.5 rounded-full ${k === i ? 'w-6 bg-[#40916C]' : 'w-1.5 bg-[#CFE3D5]'}"></span>`).join('')}</div>
+                <button type="button" onclick="${last ? 'closeModal()' : 'showOnboarding(' + (i + 1) + ')'}" class="btn3d gold mt-6">${last ? "Let's go" : 'Next'}</button>
+                ${last ? '' : '<button type="button" onclick="closeModal()" class="mt-3 text-xs font-bold text-[#526B5A]">Skip</button>'}
+            </div>`);
+        }
+
+        function currentTier() {
+            let t = TIERS[0];
+            TIERS.forEach(x => { if (game.lifetime >= x.min) t = x; });
+            return t;
+        }
+        function drawShareCard() {
+            const W = 1080, H = 1920, c = document.createElement('canvas');
+            c.width = W; c.height = H;
+            const x = c.getContext('2d'), y = computeImpact(365), tier = currentTier();
+            const g = x.createLinearGradient(0, 0, 0, H);
+            g.addColorStop(0, '#1B4332'); g.addColorStop(0.6, '#40916C'); g.addColorStop(1, '#B7E4C7');
+            x.fillStyle = g; x.fillRect(0, 0, W, H);
+            x.fillStyle = 'rgba(255,255,255,0.06)';
+            [[180, 300, 260], [900, 1500, 340], [820, 420, 160]].forEach(a => { x.beginPath(); x.arc(a[0], a[1], a[2], 0, 7); x.fill(); });
+            x.textAlign = 'center'; x.fillStyle = '#fff'; x.font = '800 88px sans-serif';
+            x.fillText('WattPet', W / 2, 220);
+            try {
+                const src = logoCtx.canvas; x.imageSmoothingEnabled = false;
+                const w = 440, h = w * src.height / src.width;
+                x.drawImage(src, (W - w) / 2, 300, w, h);
+            } catch (e) {}
+            x.fillStyle = '#D8F3DC'; x.font = '600 46px sans-serif';
+            x.fillText('My charging habits could prevent', W / 2, 900);
+            x.fillStyle = '#FDE68A'; x.font = '800 150px sans-serif';
+            x.fillText(y.co2.toFixed(1) + ' kg CO₂', W / 2, 1060);
+            x.fillStyle = '#fff'; x.font = '800 110px sans-serif';
+            x.fillText('RM ' + Math.round(y.rm) + ' saved', W / 2, 1250);
+            x.fillStyle = '#D8F3DC'; x.font = '600 38px sans-serif';
+            x.fillText('per year, estimated', W / 2, 1320);
+            x.fillStyle = 'rgba(255,255,255,0.18)'; x.fillRect(W / 2 - 330, 1400, 660, 96);
+            x.fillStyle = '#fff'; x.font = '800 48px sans-serif';
+            x.fillText(tier.e + ' ' + tier.n + '   🔥 ' + streakNow() + ' day streak', W / 2, 1465);
+            x.fillStyle = '#1B4332'; x.font = '800 54px sans-serif';
+            x.fillText('Try WattPet: ' + location.host, W / 2, 1740);
+            x.font = '600 28px sans-serif'; x.fillText('Estimates use typical device and Malaysian grid values', W / 2, 1810);
+            return c;
+        }
+        function showShareCard() {
+            const c = drawShareCard();
+            openModal(`<div class="p-4 text-center">
+                <img src="${c.toDataURL('image/png')}" alt="My WattPet impact" class="mx-auto rounded-2xl shadow-lg max-h-[62dvh]" />
+                <button type="button" onclick="shareImpact()" class="btn3d gold mt-4">Share</button>
+                <button type="button" onclick="closeModal()" class="mt-3 text-xs font-bold text-[#526B5A]">Close</button></div>`);
+        }
+        function shareImpact() {
+            drawShareCard().toBlob(async (b) => {
+                if (!b) return;
+                const file = new File([b], 'wattpet-impact.png', { type: 'image/png' });
+                try {
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({ files: [file], text: 'My WattPet impact. Try it: ' + location.origin });
+                        return;
+                    }
+                } catch (e) { if (e && e.name === 'AbortError') return; }
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(b); a.download = 'wattpet-impact.png'; a.click();
+                showToast('Image saved');
+            }, 'image/png');
+        }
+
         function initGame() {
             loadGame();
             setRewardTab('shop');
@@ -3230,6 +3342,13 @@
             }, 60000);
             setTimeout(checkExpiringCoupons, 2500);
             handleDeepLink(location.hash);
+            updateOutfitLocks();
+            try {
+                if (!localStorage.getItem('wattpet_onboarded') && !location.hash) {
+                    localStorage.setItem('wattpet_onboarded', '1');
+                    setTimeout(() => showOnboarding(0), 700);
+                }
+            } catch (e) {}
         }
 
         /* ============================================================
@@ -3239,7 +3358,7 @@
             const m = computeImpact(30), y = computeImpact(365);
             const d = getActiveDeviceSpec();
             const rows = [
-                ['Period', 'CO2 prevented (kg)', 'Money saved (RM)', 'Kopi cups'],
+                ['Period', 'CO2 prevented (kg)', 'Money saved (RM)', 'Treats'],
                 ['30 days', m.co2.toFixed(3), m.rm.toFixed(2), Math.round(m.kopi)],
                 ['1 year', y.co2.toFixed(3), y.rm.toFixed(2), Math.round(y.kopi)],
                 [],
@@ -3262,7 +3381,7 @@
 
         function copySummary() {
             const y = computeImpact(365);
-            const text = `My WattPet year (${state.modelName}): ${y.co2.toFixed(2)} kg CO₂ prevented, RM ${y.rm.toFixed(2)} saved (≈ ${Math.round(y.kopi)} kopi) 🌿🐱`;
+            const text = `My WattPet year (${state.modelName}): ${y.co2.toFixed(2)} kg CO₂ prevented, RM ${y.rm.toFixed(2)} saved (about ${Math.round(y.kopi)} treats) 🌿🐱`;
             if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
             showExportToast('✓ Summary copied');
         }
