@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>WattPet — Cozy Battery Companion</title>
+    <title>WattPet: Your battery buddy</title>
     <meta name="theme-color" content="#2D6A4F" />
     <meta name="description" content="Mochi the pixel cat rewards healthy battery habits." />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -20,7 +20,7 @@
             onerror="var s=document.createElement('script');s.src='https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js';document.head.appendChild(s);"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -28,7 +28,7 @@
         html, body {
             margin: 0;
             min-height: 100dvh;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #172B1E;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
@@ -65,11 +65,15 @@
             border: 1px solid rgba(255, 255, 255, 0.20);
         }
 
+        h1, h2, h3, .num, .btn3d, .chip { font-family: 'Fredoka', 'Nunito', sans-serif; letter-spacing: 0.005em; }
+        .main-nav:active { transform: scale(0.94); }
+        @keyframes dotPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+        #navDotRewards { animation: dotPulse 1.6s infinite; }
         /* ---- Rewards / game styling ---- */
         .chip { display:inline-flex; align-items:center; gap:.35rem; padding:.3rem .7rem; border-radius:999px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.32); font-size:11px; font-weight:800; color:#fff; }
         .btn3d { display:block; width:100%; padding:.85rem 1rem; border-radius:1rem; font-weight:800; font-size:.8rem; color:#fff; background:#40916C; box-shadow:0 4px 0 #1B4332; transition:transform .08s, box-shadow .08s; text-align:center; }
         .btn3d:active:not([disabled]) { transform:translateY(3px); box-shadow:0 1px 0 #1B4332; }
-        .btn3d.gold { background:#F2B632; color:#3B2A06; box-shadow:0 4px 0 #A8741A; }
+        .btn3d.gold { background:linear-gradient(#FFC857,#F5A524); color:#3B2200; box-shadow:0 4px 0 #B8710F; }
         .btn3d.gold:active:not([disabled]) { box-shadow:0 1px 0 #A8741A; }
         .btn3d.soft { background:#EAF6EC; color:#1B4332; box-shadow:0 4px 0 #C3D9C9; }
         .btn3d.soft:active:not([disabled]) { box-shadow:0 1px 0 #C3D9C9; }
@@ -162,7 +166,7 @@
                     <span id="notifTime">now</span>
                 </div>
                 <h4 id="notifTitle" class="text-xs sm:text-sm font-black text-white mt-0.5 leading-snug">Healthy Zone Reminder</h4>
-                <p id="notifBody" class="text-[11px] sm:text-xs text-white/85 mt-0.5 leading-snug">Meow! Battery reaches 80% — time to unplug &amp; safeguard battery lifespan! 🔌</p>
+                <p id="notifBody" class="text-[11px] sm:text-xs text-white/85 mt-0.5 leading-snug">Meow! You are at 80%. Time to unplug 🔌</p>
             </div>
             <button onclick="dismissNotificationBanner()" class="text-white/60 hover:text-white p-1 rounded-lg text-xs leading-none">✕</button>
         </div>
@@ -190,49 +194,41 @@
                         <span id="miniPct" class="num text-xs font-extrabold">68%</span>
                     </div>
                 </div>
-                <nav class="flex items-center gap-1 bg-[#EEF5EF] p-1 rounded-xl">
-                    <button onclick="switchPage('sanctuary', true)" data-nav="sanctuary" class="mini-nav w-9 h-9 rounded-lg flex items-center justify-center" title="Sanctuary"><canvas data-px="leaf" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
-                    <button onclick="switchPage('rewards', true)" data-nav="rewards" class="mini-nav w-9 h-9 rounded-lg flex items-center justify-center" title="Rewards"><canvas data-px="gift" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
-                    <button onclick="switchPage('settings', true)" data-nav="settings" class="mini-nav w-9 h-9 rounded-lg flex items-center justify-center" title="Settings"><canvas data-px="gear" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
-                </nav>
+                
             </div>
         </div>
     </div>
 
-    <div class="w-full max-w-6xl mx-auto px-3 sm:px-5 lg:px-8 py-3 sm:py-5 flex flex-col gap-4">
+    <div class="w-full max-w-6xl mx-auto px-3 sm:px-5 lg:px-8 py-3 sm:py-5 pb-32 flex flex-col gap-4">
 
         <!-- =========================================================
              HEADER: Brand & Navigation (Clean, fits any width with zero overflow)
              ========================================================= -->
-        <header id="mainHeader" class="card rounded-[26px] p-2.5 sm:p-3.5 md:px-5 md:py-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 md:gap-4 shadow-xs border border-[#2D6A4F]/15 overflow-hidden">
-            <div class="flex items-center justify-between gap-3 min-w-0">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#74C69D] to-[#2D6A4F] flex items-center justify-center shadow-xs flex-shrink-0">
-                        <canvas id="logoCatCanvas" width="60" height="52" class="pixel w-[32px] h-[28px]"></canvas>
-                    </div>
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-1.5">
-                            <h1 class="text-base sm:text-lg font-black tracking-tight leading-none text-[#172B1E]">WattPet</h1>
-                            <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-[#D8F3DC] text-[#2D6A4F] border border-[#2D6A4F]/20 flex-shrink-0">ACTIVE</span>
-                        </div>
-                        <p class="text-[11px] font-semibold text-[#526B5A] truncate mt-0.5">Eco battery companion</p>
-                    </div>
+        <header id="mainHeader" class="flex items-center justify-between gap-3 px-1">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#74C69D] to-[#2D6A4F] flex items-center justify-center shadow-sm flex-shrink-0">
+                    <canvas id="logoCatCanvas" width="60" height="52" class="pixel w-[32px] h-[28px]"></canvas>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-xl font-bold tracking-tight leading-none text-[#172B1E]">WattPet</h1>
+                    <p class="text-[11px] font-bold text-[#526B5A] mt-1">Your battery buddy</p>
                 </div>
             </div>
-
-            <!-- Navigation Tabs: Full-width equal 3-column tabs on compact screens (< md), sleek inline pill bar on desktop (md+). Guaranteed 0 overflow! -->
-            <nav class="grid grid-cols-3 gap-1 bg-[#EAF2EC] p-1 rounded-2xl border border-[#2D6A4F]/10 w-full md:w-auto md:flex md:items-center md:gap-1.5 max-w-full">
-                <button onclick="switchPage('sanctuary')" data-nav="sanctuary" class="main-nav flex-1 md:flex-initial px-2 py-2 sm:px-3 md:px-3.5 md:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
-                    <canvas data-px="leaf" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Sanctuary</span>
-                </button>
-                <button onclick="switchPage('rewards')" data-nav="rewards" class="main-nav flex-1 md:flex-initial px-2 py-2 sm:px-3 md:px-3.5 md:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
-                    <canvas data-px="gift" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Rewards</span>
-                </button>
-                <button onclick="switchPage('settings')" data-nav="settings" class="main-nav flex-1 md:flex-initial px-2 py-2 sm:px-3 md:px-3.5 md:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200">
-                    <canvas data-px="gear" width="28" height="28" class="pixel w-3.5 h-3.5 flex-shrink-0"></canvas><span>Settings</span>
-                </button>
-            </nav>
+            <button type="button" onclick="switchPage('rewards', true)" class="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/85 border border-[#2D6A4F]/15 shadow-sm text-sm font-bold text-[#172B1E] active:scale-95 transition" aria-label="Open rewards">
+                <span>🍃 <span id="hdrLeaves" class="num">300</span></span>
+                <span class="w-px h-4 bg-[#2D6A4F]/20"></span>
+                <span>🔥 <span id="hdrStreak" class="num">0</span></span>
+            </button>
         </header>
+
+        <!-- Bottom navigation -->
+        <nav id="bottomNav" class="fixed bottom-0 inset-x-0 z-[60] px-3 pt-2 pointer-events-none" style="padding-bottom:max(env(safe-area-inset-bottom),10px)">
+            <div class="pointer-events-auto mx-auto max-w-md rounded-[28px] bg-white/92 backdrop-blur-xl border border-[#2D6A4F]/15 shadow-[0_12px_32px_rgba(23,43,30,0.20)] p-1.5 grid grid-cols-3 gap-1">
+                <button onclick="switchPage('sanctuary', true)" data-nav="sanctuary" class="main-nav"><canvas data-px="leaf" width="28" height="28" class="pixel w-5 h-5"></canvas><span>Home</span></button>
+                <button onclick="switchPage('rewards', true)" data-nav="rewards" class="main-nav"><canvas data-px="gift" width="28" height="28" class="pixel w-5 h-5"></canvas><span>Rewards</span><i id="navDotRewards" class="hidden absolute top-1.5 right-[28%] w-2.5 h-2.5 rounded-full bg-[#F5A524] border-2 border-white"></i></button>
+                <button onclick="switchPage('settings', true)" data-nav="settings" class="main-nav"><canvas data-px="gear" width="28" height="28" class="pixel w-5 h-5"></canvas><span>Settings</span></button>
+            </div>
+        </nav>
 
         <!-- =========================================================
              PAGE 1: SANCTUARY
@@ -324,7 +320,7 @@
                             </div>
                             <div class="leading-tight">
                                 <span class="text-[9px] font-bold text-[#526B5A] uppercase block">Treats worth</span>
-                                <span class="text-xs sm:text-sm font-black num text-[#7F5539]"><span id="impKopi">2</span><span class="text-[10px] ml-0.5 font-bold text-[#526B5A]">cups</span></span>
+                                <span class="text-xs sm:text-sm font-black num text-[#7F5539]"><span id="impKopi">2</span><span class="text-[10px] ml-0.5 font-bold text-[#526B5A]">treats</span></span>
                             </div>
                         </div>
 
@@ -407,6 +403,13 @@
                 </div>
                 <button onclick="switchPage('rewards')" class="px-4 py-2.5 rounded-2xl bg-[#EAF6EC] hover:bg-[#D8F3DC] text-xs font-extrabold text-[#1B4332] transition">View rewards →</button>
             </section>
+                    <section class="card rounded-[24px] p-4 flex items-start gap-3">
+                <span class="text-2xl leading-none">💡</span>
+                <div>
+                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-[#7C9283]">Mochi's tip of the day</p>
+                    <p id="dailyTip" class="text-sm font-semibold text-[#3F5446] mt-1 leading-relaxed"></p>
+                </div>
+            </section>
         </main>
 
         <!-- =========================================================
@@ -473,11 +476,11 @@
         <main id="page-settings" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
 
             <div class="flex flex-col gap-4">
-                <!-- Merged Card: Run in background + Notifications + Show Mochi toggle -->
+                <!-- Merged Card: Reminders + Notifications + Show Mochi toggle -->
                 <section class="card rounded-[28px] p-5">
                     <div class="flex items-center justify-between gap-3 pb-4 border-b border-[#2D6A4F]/10">
                         <div>
-                            <h2 class="text-base font-extrabold">Run in background</h2>
+                            <h2 class="text-base font-extrabold">Reminders</h2>
                         </div>
                         <label class="switch"><input type="checkbox" id="optBg" checked onchange="recalc()"><span></span></label>
                     </div>
@@ -513,7 +516,7 @@
                                     <canvas data-px="zzz" width="28" height="28" class="pixel w-5 h-5"></canvas>
                                 </span>
                                 <div>
-                                    <p class="text-sm font-bold">Rest idle tabs</p>
+                                    <p class="text-sm font-bold">Pause unused tabs</p>
                                     <p class="text-[11px] text-[#526B5A]">Pause tabs you aren't using</p>
                                 </div>
                             </div>
@@ -525,8 +528,8 @@
                                     <canvas data-px="cat" width="28" height="28" class="pixel w-5 h-5"></canvas>
                                 </span>
                                 <div>
-                                    <p class="text-sm font-bold">Show Mochi on screen</p>
-                                    <p class="text-[11px] text-[#526B5A]">Hide the cat, keep the scenery</p>
+                                    <p class="text-sm font-bold">Show Mochi</p>
+                                    <p class="text-[11px] text-[#526B5A]">Turn off to see only the scenery</p>
                                 </div>
                             </div>
                             <label class="switch"><input type="checkbox" id="optShowCat" checked onchange="toggleCatVisibility()"><span></span></label>
@@ -594,9 +597,9 @@
                             <span>Set up auto sync with Shortcuts</span><span>›</span>
                         </summary>
                         <ol class="list-decimal pl-4 mt-2.5 space-y-1.5">
-                            <li>In <b>Shortcuts</b>, open <b>Automation</b>, tap <b>+</b>, choose <b>Charger</b> then <b>Is Connected</b>, and select <b>Run Immediately</b>.</li>
-                            <li>Add <b>Get Battery Level</b>, then <b>Open URLs</b>. Paste the plug-in link and swap <b>BATTERY</b> for the Battery Level variable.</li>
-                            <li>Repeat for <b>Is Disconnected</b> with the unplug link.</li>
+                            <li>In the Shortcuts app, create an automation for <b>Charger: Is Connected</b> and turn on <b>Run Immediately</b>.</li>
+                            <li>Add <b>Get Battery Level</b> and <b>Open URLs</b>. Paste the plug-in link and replace <b>BATTERY</b> with the battery level.</li>
+                            <li>Do the same for <b>Is Disconnected</b> using the unplug link.</li>
                         </ol>
                         <div class="grid grid-cols-2 gap-2 mt-3">
                             <button type="button" onclick="copySyncLink(1)" class="py-2 rounded-xl text-[11px] font-extrabold bg-[#2D6A4F] text-white hover:bg-[#1B4332] transition">Copy plug-in link</button>
@@ -620,7 +623,7 @@
 
                     <div id="detectedSpecBox" class="mt-3 p-2.5 rounded-2xl bg-[#F2F8F3] border border-[#2D6A4F]/10 text-[11px] text-[#3F5446] flex items-center gap-2">
                         <canvas id="detectedDevIcon" data-px="laptop" width="14" height="14" class="pixel w-4 h-4 flex-shrink-0"></canvas>
-                        <span id="detectedSpecText" class="truncate font-semibold">Detecting device hardware specifications…</span>
+                        <span id="detectedSpecText" class="truncate font-semibold">Checking your device…</span>
                     </div>
 
                     <div class="grid grid-cols-3 gap-2 mt-3">
@@ -630,7 +633,7 @@
                     </div>
 
                     <div class="mt-3 pt-3 border-t border-[#2D6A4F]/10">
-                        <label for="modelInput" class="block text-xs font-bold text-[#172B1E]">Device model &amp; series</label>
+                        <label for="modelInput" class="block text-xs font-bold text-[#172B1E]">Your device</label>
                         <div class="flex gap-2 mt-1.5">
                             <input id="modelInput" list="modelSuggestions" type="text"
                                    placeholder="e.g. iPhone 15 Pro, Galaxy S24, MacBook Air M3..."
@@ -659,7 +662,7 @@
 
                 <!-- Simple explanation -->
                 <section id="numbersCard" class="card rounded-[28px] p-5">
-                    <h2 class="text-base font-extrabold">Where the numbers come from</h2>
+                    <h2 class="text-base font-extrabold">How we estimate</h2>
 
                     <div class="mt-3 space-y-2">
                         <div class="flex items-start gap-3 p-3 rounded-2xl bg-[#FFF6E8]">
@@ -682,8 +685,8 @@
                         <div class="flex justify-between px-3 py-2 bg-white/70"><span class="text-[#526B5A]">Battery capacity</span><b id="asmWh" class="num">15 Wh</b></div>
                         <div class="flex justify-between px-3 py-2"><span class="text-[#526B5A]">Battery life with 80% habit</span><b>2 → 3 years</b></div>
                         <div class="flex justify-between px-3 py-2 bg-white/70"><span class="text-[#526B5A]">Electricity price</span><b class="num">RM 0.4443 / kWh</b></div>
-                        <div class="flex justify-between px-3 py-2"><span class="text-[#526B5A]">Grid emissions</span><b class="num">0.758 kg CO₂ / kWh</b></div>
-                        <div class="flex justify-between px-3 py-2 bg-white/70"><span class="text-[#526B5A]">Making a battery</span><b class="num">~85 kg CO₂ per kWh</b></div>
+                        <div class="flex justify-between px-3 py-2"><span class="text-[#526B5A]">CO₂ per kWh of electricity</span><b class="num">0.758 kg CO₂ / kWh</b></div>
+                        <div class="flex justify-between px-3 py-2 bg-white/70"><span class="text-[#526B5A]">CO₂ to make a battery</span><b class="num">~85 kg CO₂ per kWh</b></div>
                     </div>
 
                     <details class="mt-3 text-[11px] text-[#526B5A]">
@@ -1622,8 +1625,8 @@
                 if (el) el.classList.toggle('hidden', p !== page);
             });
             document.querySelectorAll('.main-nav').forEach(b => {
-                b.className = 'main-nav flex-1 md:flex-initial px-2 py-2 sm:px-3 md:px-3.5 md:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 ' +
-                    (b.dataset.nav === page ? 'bg-[#2D6A4F] text-white shadow-sm' : 'text-[#526B5A] hover:text-[#172B1E] hover:bg-white/60');
+                b.className = 'main-nav relative flex flex-col items-center justify-center gap-0.5 py-2 rounded-[22px] text-[10px] font-extrabold transition-all duration-200 ' +
+                    (b.dataset.nav === page ? 'bg-[#2D6A4F] text-white shadow-sm' : 'text-[#526B5A] hover:bg-[#EAF2EC]');
             });
             document.querySelectorAll('.mini-nav').forEach(b => {
                 b.className = 'mini-nav w-9 h-9 rounded-lg text-sm flex items-center justify-center transition ' + (b.dataset.nav === page ? 'bg-[#2D6A4F] shadow-sm' : 'hover:bg-white');
@@ -2892,6 +2895,7 @@
 
         function earnFromPet() {
             const n = earn('pet', 5);
+            buzz(10);
             if (n) showToast('+' + n + ' leaves');
             else if (!game.daily.capShown) {
                 game.daily.capShown = true; saveGame();
@@ -2924,6 +2928,7 @@
             addLeaves(reward);
             saveGame();
             confetti(reward >= 40 ? 70 : 28);
+            buzz([20, 30, 20]);
             showToast('Day ' + game.streak + ' check-in: +' + reward + ' leaves');
             renderRewardsPage();
         }
@@ -2984,6 +2989,7 @@
             updateLeaves();
             renderRewardsPage();
             confetti(80);
+            buzz([30, 40, 60]);
             try { playNotificationChime(); } catch (e) {}
             showTicket(coupon.id, true);
             sendSystemNotification({
@@ -3230,11 +3236,12 @@
         }
 
         function renderRewardsPage() {
-            renderHero(); renderCheckin(); renderQuests(); buildRewards(); renderWalletBadge();
+            renderHero(); renderCheckin(); renderQuests(); buildRewards(); renderWalletBadge(); updateHeaderStats(); updateNavDot();
             if (rewardTab === 'wallet') renderWallet();
         }
 
         function updateLeaves() {
+            updateHeaderStats();
             const next = REWARDS.find(r => r.cost > state.leaves) || REWARDS[REWARDS.length - 1];
             const nn = document.getElementById('nextRewardName');
             if (nn) nn.textContent = next.title;
@@ -3325,8 +3332,44 @@
             }, 'image/png');
         }
 
+        const TIPS = [
+            'Keeping your battery between 20% and 80% puts less strain on it than full charges.',
+            'Heat is a battery\'s enemy. Take off thick cases while charging.',
+            'Plug in around 20% instead of letting the battery hit 0% again and again.',
+            'If your device feels hot, let it cool down before you charge it.',
+            'Lower screen brightness is the easiest way to stretch a charge.',
+            'Chargers still draw a little power when idle. Switch off at the wall when you are done.',
+            'Slow charging is gentler than fast charging when you are not in a hurry.',
+            'Storing a device for months? Leave it at around 50% charge.',
+            'Keep your system and apps up to date. Updates often improve battery use.',
+            'Turn off background refresh for apps you rarely open.',
+            'A battery lasts a set number of charge cycles. Fewer full cycles means a longer life.',
+            'Use an official or certified charger. It protects your battery and your safety.',
+            'Laptops that sit on the charger all week last longer with a charge limit switched on.',
+            'Dark mode can save battery on phones with OLED screens.'
+        ];
+        function buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p || 12); } catch (e) {} }
+        function updateHeaderStats() {
+            const l = document.getElementById('hdrLeaves'), st = document.getElementById('hdrStreak');
+            if (l) l.textContent = state.leaves;
+            if (st) st.textContent = streakNow();
+        }
+        function updateNavDot() {
+            const d = document.getElementById('navDotRewards');
+            if (!d) return;
+            const expiring = game.coupons.some(c => couponStatus(c) === 'active' && daysLeft(c) <= 3);
+            d.classList.toggle('hidden', !(canCheckin() || expiring));
+        }
+        function showDailyTip() {
+            const el = document.getElementById('dailyTip');
+            if (!el) return;
+            const day = Math.floor(Date.now() / 864e5);
+            el.textContent = TIPS[day % TIPS.length];
+        }
+
         function initGame() {
             loadGame();
+            showDailyTip();
             setRewardTab('shop');
             renderRewardsPage();
             updateLeaves();
