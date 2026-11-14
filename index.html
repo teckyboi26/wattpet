@@ -1942,18 +1942,17 @@
         /* ============================================================
            SCENERY — real nature & space videos with live scene overlays
            ============================================================ */
+        // Competition rules ban stock footage. The built-in scenery is drawn in code (original).
+        // To use real video, film your own clips, save them as videos/own-meadow.mp4, own-stream.mp4,
+        // own-galaxy.mp4, own-rain.mp4, own-night.mp4, then set OWN_VIDEOS to true.
+        const OWN_VIDEOS = false;
         const SCENES = [
-            { id: 'meadow', name: 'Sunny Meadow', icon: '🌼', pxIcon: 'flower', theme: 'meadow',
-              src: ['videos/meadow.mp4', 'https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4', 'https://assets.mixkit.co/videos/1173/1173-720.mp4'] },
-            { id: 'stream', name: 'Forest Stream', icon: '🌿', pxIcon: 'leaf', theme: 'forest',
-              src: ['videos/stream.mp4', 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4', 'https://assets.mixkit.co/videos/529/529-720.mp4'] },
-            { id: 'galaxy', name: 'Milky Way', icon: '🌌', pxIcon: 'galaxy', theme: 'galaxy',
-              src: ['videos/galaxy.mp4', 'https://assets.mixkit.co/videos/19636/19636-720.mp4', 'https://assets.mixkit.co/videos/46101/46101-720.mp4', 'https://assets.mixkit.co/videos/1610/1610-720.mp4', 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4'] },
-            { id: 'rain', name: 'Rainy Leaves', icon: '🌧️', pxIcon: 'rain', theme: 'rain',
-              src: ['videos/rain.mp4', 'https://assets.mixkit.co/videos/preview/mixkit-rain-falling-on-the-water-of-a-lake-seen-up-18312-large.mp4', 'https://assets.mixkit.co/videos/18312/18312-720.mp4'] },
-            { id: 'night', name: 'Firefly Night', icon: '🌙', pxIcon: 'moon', theme: 'night',
-              src: ['videos/night.mp4', 'https://assets.mixkit.co/videos/50869/50869-720.mp4', 'https://assets.mixkit.co/videos/529/529-720.mp4'] }
-        ];
+            { id: 'meadow', name: 'Sunny Meadow', icon: '🌼', pxIcon: 'flower', theme: 'meadow' },
+            { id: 'stream', name: 'Forest Stream', icon: '🌿', pxIcon: 'leaf', theme: 'forest' },
+            { id: 'galaxy', name: 'Milky Way', icon: '🌌', pxIcon: 'galaxy', theme: 'galaxy' },
+            { id: 'rain', name: 'Rainy Leaves', icon: '🌧️', pxIcon: 'rain', theme: 'rain' },
+            { id: 'night', name: 'Firefly Night', icon: '🌙', pxIcon: 'moon', theme: 'night' }
+        ].map(sc => Object.assign(sc, { src: OWN_VIDEOS ? ['videos/own-' + sc.id + '.mp4'] : [] }));
         let sceneIdx = 0;
         let sceneToken = 0;
         let videoReady = false;
@@ -2730,14 +2729,11 @@
            ============================================================ */
         const REWARDS = [
             { id: 'kopi', short: 'KOPI', title: 'RM 3 off your kopi', desc: 'Bring a reusable cup to a partner café.', cost: 300, validDays: 14, tagLabel: 'Café', pxIcon: 'kopi', theme: 'meadow',
-              how: 'Show this code at the counter of a WattPet partner café.',
-              img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=700&q=80' },
+              how: 'Show this code at the counter of a WattPet partner café.', },
             { id: 'tree', short: 'TREE', title: 'Plant a rainforest sapling', desc: 'A native tree planted with local conservation partners.', cost: 500, validDays: 60, tagLabel: 'Nature', pxIcon: 'tree', theme: 'forest',
-              how: 'Keep this code. Your sapling is planted in the next planting round.',
-              img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=700&q=80' },
+              how: 'Keep this code. Your sapling is planted in the next planting round.', },
             { id: 'repair', short: 'CARE', title: 'RM 15 device care voucher', desc: 'Port cleaning and battery check to keep your device going.', cost: 650, validDays: 30, tagLabel: 'Repair', pxIcon: 'wrench', theme: 'galaxy',
-              how: 'Show this code at a WattPet partner repair shop.',
-              img: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=700&q=80' }
+              how: 'Show this code at a WattPet partner repair shop.', }
         ];
 
         const TIERS = [
@@ -3122,6 +3118,9 @@
             }).join('');
         }
 
+        const _artCache = {};
+        function rewardArt(theme) { return _artCache[theme] || (_artCache[theme] = sceneImage(theme)); }
+
         function rewardCardHTML(r) {
             const can = state.leaves >= r.cost;
             const need = r.cost - state.leaves;
@@ -3129,7 +3128,7 @@
             return `
                 <article class="card rounded-[28px] overflow-hidden flex flex-col ${can ? 'ring-2 ring-[#F2B632]/80' : ''}">
                     <div class="relative h-40 overflow-hidden">
-                        <img src="${r.img}" alt="${r.title}" data-theme="${r.theme}" class="reward-img w-full h-full object-cover ${can ? '' : 'saturate-[.7]'}" />
+                        <img src="${rewardArt(r.theme)}" alt="${r.title}" data-theme="${r.theme}" class="reward-img w-full h-full object-cover ${can ? '' : 'saturate-[.7]'}" />
                         <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur text-white text-[11px] font-bold flex items-center gap-1.5"><canvas data-px="${r.pxIcon}" width="14" height="14" class="pixel w-3.5 h-3.5"></canvas><span>${r.tagLabel}</span></span>
                         <span class="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#FDE68A] text-[#6B4411] text-[11px] font-extrabold flex items-center gap-1"><span>${r.cost}</span><canvas data-px="leaf" width="14" height="14" class="pixel w-3.5 h-3.5"></canvas></span>
                         ${can ? '<span class="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-[#F2B632] text-[#3B2A06] text-[10px] font-black tracking-wide">READY TO REDEEM</span>' : ''}
