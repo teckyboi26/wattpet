@@ -65,6 +65,9 @@
             border: 1px solid rgba(255, 255, 255, 0.20);
         }
 
+        html, body { background: linear-gradient(180deg, #F5FAF4 0%, #EAF4EC 100%) fixed; }
+        .card { background: rgba(255,255,255,0.94); border: 1px solid rgba(45,106,79,0.08); box-shadow: 0 10px 28px -14px rgba(23,43,30,0.18); }
+        #stickyBar { display: none !important; }
         h1, h2, h3, .num, .btn3d, .chip { font-family: 'Fredoka', 'Nunito', sans-serif; letter-spacing: 0.005em; }
         .main-nav:active { transform: scale(0.94); }
         @keyframes dotPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
@@ -215,7 +218,7 @@
                 </div>
             </div>
             <button type="button" onclick="switchPage('rewards', true)" class="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/85 border border-[#2D6A4F]/15 shadow-sm text-sm font-bold text-[#172B1E] active:scale-95 transition" aria-label="Open rewards">
-                <span>🍃 <span id="hdrLeaves" class="num">300</span></span>
+                <span>🍃 <span id="hdrLeaves" class="num inline-block">300</span></span>
                 <span class="w-px h-4 bg-[#2D6A4F]/20"></span>
                 <span>🔥 <span id="hdrStreak" class="num">0</span></span>
             </button>
@@ -236,13 +239,13 @@
         <main id="page-sanctuary" class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
 
             <!-- Compact, Sleek Battery Health & Eco Impact Banner (Only shows on Sanctuary column!) -->
-            <section class="lg:col-span-12 card rounded-[22px] p-2.5 sm:p-3 border border-[#2D6A4F]/15 shadow-xs bg-gradient-to-r from-[#F5FAF6] via-[#FFFDF7] to-[#F4FAF2]">
+            <section class="lg:col-span-12 card rounded-[28px] p-4 sm:p-5">
                 <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-4">
 
                     <!-- Left: Sleek Mini Battery Health Gauge + Interactive 3-Zone Slider -->
                     <div class="flex items-center gap-3 flex-1 min-w-0 pr-0 md:pr-3 border-b md:border-b-0 md:border-r border-[#2D6A4F]/10 pb-2 md:pb-0">
                         <!-- Mini radial ring -->
-                        <div class="relative w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center">
+                        <div class="relative w-16 h-16 flex-shrink-0 flex items-center justify-center">
                             <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 48 48">
                                 <circle cx="24" cy="24" r="19" stroke="#DFEDE3" stroke-width="4.5" fill="transparent" />
                                 <circle id="ringArc" cx="24" cy="24" r="19" stroke="url(#ringGrad)" stroke-width="4.5"
@@ -256,8 +259,8 @@
                                 </defs>
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center leading-tight">
-                                <span id="ringPct" class="text-xs font-black num text-[#172B1E]">68%</span>
-                                <span id="ringCharge" class="text-[7.5px] font-bold text-[#526B5A] leading-none">On batt</span>
+                                <span id="ringPct" class="text-base font-bold num text-[#172B1E]">68%</span>
+                                <span id="ringCharge" class="text-[9px] font-bold text-[#526B5A] leading-none mt-0.5">On batt</span>
                             </div>
                         </div>
 
@@ -268,7 +271,7 @@
                                     <span class="text-[10px] font-extrabold uppercase tracking-wide text-[#526B5A]">Battery</span>
                                     <span id="battTitle" class="text-xs font-black text-[#2D6A4F] truncate">Healthy zone</span>
                                 </div>
-                                <span id="battStatusBadge" class="text-[9px] font-black px-2 py-0.5 rounded-full bg-white/90 border border-[#2D6A4F]/15 text-[#2D6A4F]">Update needed</span>
+                                <span id="battStatusBadge" onclick="openQuickSync()" class="cursor-pointer text-[9px] font-black px-2 py-0.5 rounded-full bg-white/90 border border-[#2D6A4F]/15 text-[#92400E]">Update needed</span>
                             </div>
 
                             <!-- 3-Zone Bar (display only) -->
@@ -285,49 +288,19 @@
                         </div>
                     </div>
 
-                    <!-- Right: Sleek Inline Eco & Wallet Metrics (CO2 | Money | Kopi + 30d/1y) -->
-                    <div class="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-4 flex-shrink-0">
-                        <!-- CO2 -->
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-[#D8F3DC] border border-[#2D6A4F]/15 flex items-center justify-center flex-shrink-0">
-                                <canvas data-px="leaf" width="20" height="20" class="pixel w-3.5 h-3.5"></canvas>
-                            </div>
-                            <div class="leading-tight">
-                                <span class="text-[9px] font-bold text-[#526B5A] uppercase block">CO₂ saved</span>
-                                <span class="text-xs sm:text-sm font-black num text-[#172B1E]"><span id="impCo2">143</span><span id="impCo2Unit" class="text-[10px] ml-0.5 font-bold text-[#526B5A]">g</span></span>
+                    <!-- Savings -->
+                    <div class="flex flex-col gap-2 md:w-[24rem] flex-shrink-0">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-extrabold text-[#7C9283]">Your savings</span>
+                            <div class="flex items-center bg-[#EAF2EC] p-0.5 rounded-lg text-[10px] font-black">
+                                <button onclick="setPeriod(30)" id="per30" class="px-2.5 py-1 rounded-md transition font-black">30d</button>
+                                <button onclick="setPeriod(365)" id="per365" class="px-2.5 py-1 rounded-md transition font-black">1y</button>
                             </div>
                         </div>
-
-                        <div class="w-px h-6 bg-[#2D6A4F]/10 hidden sm:block"></div>
-
-                        <!-- Money Saved -->
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-[#FFE8D6] border border-[#E07A5F]/20 flex items-center justify-center flex-shrink-0">
-                                <canvas data-px="coin" width="20" height="20" class="pixel w-3.5 h-3.5"></canvas>
-                            </div>
-                            <div class="leading-tight">
-                                <span class="text-[9px] font-bold text-[#526B5A] uppercase block">Money saved</span>
-                                <span class="text-xs sm:text-sm font-black num text-[#172B1E]"><span class="text-[10px] mr-0.5 text-[#526B5A]">RM</span><span id="impRm">5.28</span></span>
-                            </div>
-                        </div>
-
-                        <div class="w-px h-6 bg-[#2D6A4F]/10 hidden sm:block"></div>
-
-                        <!-- Treats worth -->
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-[#EDE0D4] border border-[#7F5539]/20 flex items-center justify-center flex-shrink-0">
-                                <canvas data-px="kopi" width="20" height="20" class="pixel w-3.5 h-3.5"></canvas>
-                            </div>
-                            <div class="leading-tight">
-                                <span class="text-[9px] font-bold text-[#526B5A] uppercase block">Treats worth</span>
-                                <span class="text-xs sm:text-sm font-black num text-[#7F5539]"><span id="impKopi">2</span><span class="text-[10px] ml-0.5 font-bold text-[#526B5A]">treats</span></span>
-                            </div>
-                        </div>
-
-                        <!-- 30d / 1y Period Toggle -->
-                        <div class="flex items-center bg-[#EAF2EC] p-0.5 rounded-lg text-[9px] font-black border border-[#2D6A4F]/10 ml-1">
-                            <button onclick="setPeriod(30)" id="per30" class="px-2 py-0.5 rounded transition font-black">30d</button>
-                            <button onclick="setPeriod(365)" id="per365" class="px-2 py-0.5 rounded transition font-black">1y</button>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="rounded-2xl bg-[#EEF7F0] px-2 py-3 text-center"><div class="num text-lg font-bold text-[#1B4332] leading-none"><span id="impCo2">143</span><span id="impCo2Unit" class="text-[11px] ml-0.5 font-bold text-[#526B5A]">g</span></div><div class="text-[10px] font-bold text-[#7C9283] mt-1.5">CO₂ saved</div></div>
+                            <div class="rounded-2xl bg-[#FFF1E4] px-2 py-3 text-center"><div class="num text-lg font-bold text-[#1B4332] leading-none"><span class="text-[11px] mr-0.5 text-[#526B5A]">RM</span><span id="impRm">5.28</span></div><div class="text-[10px] font-bold text-[#7C9283] mt-1.5">Money saved</div></div>
+                            <div class="rounded-2xl bg-[#F4EDE5] px-2 py-3 text-center"><div class="num text-lg font-bold text-[#7F5539] leading-none"><span id="impKopi">2</span></div><div class="text-[10px] font-bold text-[#7C9283] mt-1.5">Treats worth</div></div>
                         </div>
                     </div>
 
@@ -359,7 +332,7 @@
                             <span id="sceneName" class="hidden sm:inline font-bold">Sunny Meadow</span>
                             <svg class="w-3.5 h-3.5 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
                         </button>
-                        <div id="scenePicker" class="hidden absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white/98 backdrop-blur-2xl rounded-2xl p-2 space-y-1 z-[100] shadow-[0_16px_40px_rgba(0,0,0,0.35)] border border-[#2D6A4F]/20"></div>
+                        <div id="scenePicker" class="hidden absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-[#FBFCF8] rounded-3xl p-2.5 space-y-1 z-[100] shadow-[0_18px_44px_rgba(23,43,30,0.28)] border border-[#2D6A4F]/15"></div>
                         <input id="customVideoInput" type="file" accept="video/*" class="hidden" onchange="useCustomVideo(event)" />
                     </div>
                 </div>
@@ -403,12 +376,10 @@
                 </div>
                 <button onclick="switchPage('rewards')" class="px-4 py-2.5 rounded-2xl bg-[#EAF6EC] hover:bg-[#D8F3DC] text-xs font-extrabold text-[#1B4332] transition">View rewards →</button>
             </section>
-                    <section class="card rounded-[24px] p-4 flex items-start gap-3">
-                <span class="text-2xl leading-none">💡</span>
-                <div>
-                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-[#7C9283]">Mochi's tip of the day</p>
-                    <p id="dailyTip" class="text-sm font-semibold text-[#3F5446] mt-1 leading-relaxed"></p>
-                </div>
+                    <section class="card rounded-[24px] p-4">
+                <div class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">Your week</h3><span id="weekScore" class="num text-sm font-bold text-[#2D6A4F]">No data yet</span></div>
+                <p id="weekNote" class="text-[11px] text-[#526B5A] mt-0.5"></p>
+                <div id="weekBars" class="mt-3 flex items-end justify-between gap-2 h-16"></div>
             </section>
         </main>
 
@@ -425,7 +396,7 @@
                         <h2 class="text-xl sm:text-2xl font-extrabold mt-1">Good battery habits, real perks</h2>
                         <div class="mt-3 flex flex-wrap items-center gap-2">
                             <span id="tierChip" class="chip">🌱 Sprout</span>
-                            <span id="streakChip" class="chip">🔥 0 day streak</span>
+                            <span id="streakChip" class="chip hidden">🔥 0 day streak</span>
                         </div>
                     </div>
                     <div class="glass px-5 py-3 rounded-2xl text-center">
@@ -468,6 +439,10 @@
                 <div id="walletList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                 <button type="button" onclick="resetRewards()" class="mt-5 text-[11px] font-bold text-[#7C9283] underline underline-offset-2">Reset rewards data</button>
             </div>
+            <details class="card rounded-[28px] p-5">
+                <summary class="flex items-center justify-between cursor-pointer list-none"><h2 class="text-base font-bold">Badges</h2><span id="badgeCount" class="num text-sm font-bold text-[#2D6A4F]">0/8</span></summary>
+                <div id="badgeGrid" class="mt-4 grid grid-cols-4 gap-2"></div>
+            </details>
         </main>
 
         <!-- =========================================================
@@ -550,6 +525,17 @@
                     </div>
                 </section>
 
+                <!-- Language -->
+                <section class="card rounded-[28px] p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <h2 class="text-base font-bold">Language</h2>
+                        <div class="flex gap-1 p-1 rounded-2xl bg-[#EAF2EC]">
+                            <button id="langEn" type="button" onclick="setLang('en')">EN</button>
+                            <button id="langMs" type="button" onclick="setLang('ms')">BM</button>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Battery sync -->
                 <section class="card rounded-[28px] p-5 border border-[#2D6A4F]/15 shadow-xs">
                     <div class="flex items-center justify-between gap-3">
@@ -590,6 +576,7 @@
                     </div>
 
                     <p id="battSyncAge" class="mt-3 text-[11px] font-semibold text-[#526B5A]"></p>
+                    <button id="qsBtn" type="button" onclick="openQuickSync()" class="btn3d soft mt-3">Update battery now</button>
 
                     <!-- iPhone / iPad: Shortcuts sync -->
                     <details id="iosSyncHelp" style="display:none" class="mt-3 rounded-2xl bg-[#F2F8F3] border border-[#2D6A4F]/10 px-3.5 py-3 text-[11px] text-[#3F5446] leading-relaxed">
@@ -634,12 +621,13 @@
 
                     <div class="mt-3 pt-3 border-t border-[#2D6A4F]/10">
                         <label for="modelInput" class="block text-xs font-bold text-[#172B1E]">Your device</label>
-                        <div class="flex gap-2 mt-1.5">
-                            <input id="modelInput" list="modelSuggestions" type="text"
-                                   placeholder="e.g. iPhone 15 Pro, Galaxy S24, MacBook Air M3..."
-                                   oninput="lookupModel(this.value)"
-                                   class="flex-1 min-w-0 rounded-xl bg-white border border-[#2D6A4F]/20 px-3 py-2 text-xs font-bold text-[#172B1E] placeholder:font-normal placeholder:text-[#526B5A]/70 focus:outline-none focus:ring-2 focus:ring-[#52B788]" />
-                            <datalist id="modelSuggestions"></datalist>
+                        <div class="relative mt-1.5">
+                            <input id="modelInput" type="text" autocomplete="off"
+                                   placeholder="e.g. iPhone 15 Pro, Galaxy S24, MacBook Air M3"
+                                   oninput="lookupModel(this.value); showModelMenu()" onfocus="showModelMenu()"
+                                   class="w-full rounded-2xl bg-white border border-[#2D6A4F]/20 pl-3.5 pr-9 py-2.5 text-[13px] font-bold text-[#172B1E] placeholder:font-normal placeholder:text-[#526B5A]/70 focus:outline-none focus:ring-2 focus:ring-[#95D5B2]" />
+                            <svg class="w-4 h-4 text-[#7C9283] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                            <div id="modelMenu" class="hidden absolute left-0 right-0 mt-2 max-h-64 overflow-y-auto rounded-3xl bg-[#FBFCF8] border border-[#2D6A4F]/15 p-1.5 z-[90] shadow-[0_18px_44px_rgba(23,43,30,0.22)]"></div>
                         </div>
                         <p id="modelMatchedInfo" class="text-[11px] font-bold text-[#2D6A4F] mt-2">
                             Matched: Standard Phone · 15 Wh · RM 380 replacement
@@ -654,8 +642,7 @@
                     <h2 class="text-base font-extrabold">Export my data</h2>
                                         <div class="grid grid-cols-2 gap-2 mt-3">
                         <button onclick="exportCSV()" class="py-3 rounded-2xl bg-[#2D6A4F] hover:bg-[#1B4332] text-white text-xs font-extrabold transition flex items-center justify-center gap-2"><canvas data-px="download" width="14" height="14" class="pixel w-4 h-4"></canvas><span>Download CSV</span></button>
-                        <button onclick="copySummary()" class="py-3 rounded-2xl bg-[#EAF6EC] hover:bg-[#D8F3DC] text-[#1B4332] border border-[#52B788]/40 text-xs font-extrabold transition flex items-center justify-center gap-2"><canvas data-px="copy" width="14" height="14" class="pixel w-4 h-4"></canvas><span>Copy summary</span></button>
-                        <button onclick="showShareCard()" class="col-span-2 py-3 rounded-2xl bg-[#F2B632] hover:bg-[#E5A820] text-[#3B2A06] text-xs font-extrabold transition">Share my impact card</button>
+                        <button onclick="showShareCard()" class="py-3 rounded-2xl bg-[#F2B632] hover:bg-[#E5A820] text-[#3B2A06] text-xs font-extrabold transition">Share my impact card</button>
                     </div>
                     <p id="exportToast" class="hidden text-xs font-bold text-[#2D6A4F] mt-2"></p>
                 </section>
@@ -701,6 +688,7 @@
                     </details>
                 </section>
             </div>
+                    <a href="/partner.html" class="block text-center text-xs font-bold text-[#2D6A4F] underline underline-offset-2 py-2">Own a business? Open the partner coupon checker</a>
         </main>
 
         <footer class="text-center text-[11px] text-[#526B5A] pb-2 flex items-center justify-center gap-1.5">
@@ -1300,9 +1288,23 @@
             { name: 'Acer Swift / Aspire / Nitro',          cat: 'laptop', wh: 54.0, cost: 430, src: 'Acer MY Service' }
         ];
 
+        function showModelMenu() {
+            const inp = document.getElementById('modelInput'), menu = document.getElementById('modelMenu');
+            if (!inp || !menu) return;
+            const q = inp.value.toLowerCase().trim();
+            const items = MODEL_DB.filter(m => !q || m.name.toLowerCase().includes(q) || m.src.toLowerCase().includes(q)).slice(0, 8);
+            menu.innerHTML = items.length ? items.map(m => `<button type="button" data-name="${m.name}" class="model-opt w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl text-left hover:bg-[#F0F7F2] transition"><span class="min-w-0"><span class="block text-[13px] font-bold text-[#172B1E] truncate">${m.name}</span><span class="block text-[10px] font-semibold text-[#7C9283] truncate">${m.src}</span></span><span class="num text-xs font-bold text-[#2D6A4F] flex-shrink-0">RM ${m.cost}</span></button>`).join('')
+                : `<p class="px-3 py-3 text-xs text-[#526B5A]">No match. We'll use a standard estimate.</p>`;
+            menu.classList.remove('hidden');
+        }
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('modelMenu');
+            const b = e.target.closest && e.target.closest('.model-opt');
+            if (b) { const inp = document.getElementById('modelInput'); inp.value = b.dataset.name; lookupModel(b.dataset.name); if (menu) menu.classList.add('hidden'); return; }
+            if (menu && !menu.contains(e.target) && e.target.id !== 'modelInput') menu.classList.add('hidden');
+        });
+
         function populateSuggestions() {
-            const dl = document.getElementById('modelSuggestions');
-            dl.innerHTML = MODEL_DB.map(m => `<option value="${m.name}">${m.src} · RM ${m.cost}</option>`).join('');
         }
 
         function updateDeviceButtonsUI(activeDev) {
@@ -1439,8 +1441,8 @@
             state.period = days;
             const b30 = document.getElementById('per30');
             const b365 = document.getElementById('per365');
-            if (b30) b30.className = 'px-2 py-0.5 rounded transition font-black ' + (days === 30 ? 'bg-[#2D6A4F] text-white shadow-xs' : 'text-[#526B5A] hover:bg-white font-bold');
-            if (b365) b365.className = 'px-2 py-0.5 rounded transition font-black ' + (days === 365 ? 'bg-[#2D6A4F] text-white shadow-xs' : 'text-[#526B5A] hover:bg-white font-bold');
+            if (b30) b30.className = 'px-2.5 py-1 rounded-md transition font-black ' + (days === 30 ? 'bg-[#2D6A4F] text-white shadow-xs' : 'text-[#526B5A] hover:bg-white font-bold');
+            if (b365) b365.className = 'px-2.5 py-1 rounded-md transition font-black ' + (days === 365 ? 'bg-[#2D6A4F] text-white shadow-xs' : 'text-[#526B5A] hover:bg-white font-bold');
             const badge = document.getElementById('periodBadge');
             if (badge) badge.textContent = `Active: ${days === 30 ? '30 days' : '1 year'} projection`;
             recalc();
@@ -1633,6 +1635,7 @@
             });
             const curPageEl = document.getElementById('page-' + page);
             if (curPageEl) renderAllPixelIcons(curPageEl);
+            if (page === 'sanctuary' && typeof renderWeek === 'function') renderWeek();
             if (scrollTop) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -2055,23 +2058,20 @@
         function buildScenePicker() {
             const p = document.getElementById('scenePicker');
             if (!p) return;
+            const tick = '<svg class="w-4 h-4 text-[#2D6A4F] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
             p.innerHTML = `
-                <div class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#526B5A]">Live Sanctuary Scenery</div>
-                ${SCENES.map((s, i) => `
-                <button onclick="pickScene(${i})" class="w-full flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-left text-xs font-bold transition ${i === sceneIdx ? 'bg-[#2D6A4F] text-white shadow-xs' : 'hover:bg-[#EAF6EC] text-[#172B1E]'}">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <span class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${i === sceneIdx ? 'bg-white/20' : 'bg-[#EAF6EC]'}">
-                            <canvas data-px="${s.pxIcon}" width="28" height="28" class="pixel w-4 h-4"></canvas>
-                        </span>
-                        <span class="truncate">${s.name}</span>
-                    </div>
-                    ${i === sceneIdx ? '<span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-white/20">Active</span>' : ''}
-                </button>`).join('')}
-                <div class="h-px bg-[#2D6A4F]/10 my-1"></div>
-                <button onclick="document.getElementById('customVideoInput').click()" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-xs font-bold hover:bg-[#FFF6E8] text-[#172B1E]">
-                    <span class="w-7 h-7 rounded-lg bg-[#FFEEDD] flex items-center justify-center flex-shrink-0">
-                        <canvas data-px="plus" width="28" height="28" class="pixel w-4 h-4"></canvas>
+                <div class="px-3 pt-1 pb-1.5 text-[11px] font-extrabold text-[#7C9283]">Scenery</div>
+                ${SCENES.map((sc, i) => `
+                <button onclick="pickScene(${i})" class="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl text-left text-[13px] font-bold transition ${i === sceneIdx ? 'bg-[#DDF1E3] text-[#1B4332] ring-1 ring-[#2D6A4F]/20' : 'hover:bg-[#F0F7F2] text-[#2F4637]'}">
+                    <span class="flex items-center gap-3 min-w-0">
+                        <span class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${i === sceneIdx ? 'bg-white' : 'bg-[#EAF6EC]'}"><canvas data-px="${sc.pxIcon}" width="28" height="28" class="pixel w-4 h-4"></canvas></span>
+                        <span class="truncate">${sc.name}</span>
                     </span>
+                    ${i === sceneIdx ? tick : ''}
+                </button>`).join('')}
+                <div class="h-px bg-[#2D6A4F]/10 my-1.5"></div>
+                <button onclick="document.getElementById('customVideoInput').click()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-left text-[13px] font-bold hover:bg-[#FFF4E4] text-[#2F4637] transition">
+                    <span class="w-8 h-8 rounded-xl bg-[#FFEEDD] flex items-center justify-center flex-shrink-0"><canvas data-px="plus" width="28" height="28" class="pixel w-4 h-4"></canvas></span>
                     <span>Use my own video</span>
                 </button>`;
             renderAllPixelIcons(p);
@@ -2374,6 +2374,7 @@
             show('manualControls', !live);
             show('manualStep', !live);
             show('battSyncAge', !live);
+            show('qsBtn', !live);
             show('iosSyncHelp', !live && isIOSDevice());
             show('otherSyncHelp', !live && !isIOSDevice());
 
@@ -2418,7 +2419,7 @@
             }
             if (wasCharging && !state.charging && clamped >= 75 && clamped <= 88 && typeof earn === 'function') {
                 const gained = earn('unplug', 15);
-                if (gained) showToast('Perfect unplug +' + gained + ' leaves');
+                if (gained) { if (game.stats) game.stats.unplugs++; showToast('Perfect unplug +' + gained + ' leaves'); }
             }
             state.syncSource = source;
             state.lastSync = Date.now();
@@ -2431,6 +2432,7 @@
             renderBattery();
             updateCalibrationUI();
             recalc();
+            if (typeof logBattery === 'function') { logBattery(); if (state.page === 'sanctuary') renderWeek(); }
             if (wasBelow && state.charging && state.battery >= 80 && document.getElementById('opt80') && document.getElementById('opt80').checked) {
                 say(`Meow! ${state.battery}% — time to unplug 🔌`);
                 triggerDeviceNotification(false);
@@ -2587,11 +2589,13 @@
                 }).catch(() => {
                     state.liveBattery = false;
                     updateCalibrationUI();
+                    maybeQuickSync();
                 });
             } else {
                 // iOS / iPadOS WebKit and Firefox do not expose the Battery Status API.
                 state.liveBattery = false;
                 updateCalibrationUI();
+                maybeQuickSync();
             }
         }
 
@@ -2795,7 +2799,7 @@
         function daysBetween(a, b) { return Math.round((new Date(b + 'T00:00') - new Date(a + 'T00:00')) / 864e5); }
         function fmtDate(ts) {
             const d = new Date(ts);
-            return d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear();
+            return d.getDate() + ' ' + (lang === 'ms' ? ['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogo','Sep','Okt','Nov','Dis'] : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])[d.getMonth()] + ' ' + d.getFullYear();
         }
         function rollDaily() {
             const t = todayKey();
@@ -2809,6 +2813,8 @@
             } catch (e) {}
             if (!Array.isArray(game.coupons)) game.coupons = [];
             if (!Array.isArray(game.owned)) game.owned = [];
+            if (!game.stats) game.stats = { pets: 0, unplugs: 0 };
+            if (!game.badges) game.badges = {};
             rollDaily();
             state.leaves = game.leaves;
             // Don't ping about rewards that were already affordable when the player arrived.
@@ -2817,6 +2823,7 @@
         }
         function saveGame() {
             game.leaves = state.leaves;
+            try { if (typeof checkBadges === 'function') checkBadges(); } catch (e) {}
             try { localStorage.setItem(GAME_KEY, JSON.stringify(game)); } catch (e) {}
         }
 
@@ -2894,25 +2901,11 @@
         }
 
         function earnFromPet() {
-            const n = earn('pet', 5);
-            buzz(10);
-            if (n) showToast('+' + n + ' leaves');
-            else if (!game.daily.capShown) {
-                game.daily.capShown = true; saveGame();
-                showToast('Mochi is full of cuddles today. More leaves tomorrow!');
-            }
+            if (game.stats) game.stats.pets++;
+            earn('pet', 5);
         }
 
-        function checkUnlocks() {
-            REWARDS.forEach(r => {
-                if (state.leaves >= r.cost && !game.notified[r.id]) {
-                    game.notified[r.id] = true;
-                    saveGame();
-                    showToast('Reward unlocked: ' + r.title);
-                    sendSystemNotification({ title: 'Reward unlocked 🎁', body: 'You can redeem "' + r.title + '" now.', tag: 'wattpet-unlock-' + r.id, url: '/#rewards' });
-                }
-            });
-        }
+        function checkUnlocks() { /* quiet by design: no popups or alerts when a reward unlocks */ }
 
         /* ---------- check-in ---------- */
         function streakNow() {
@@ -2954,6 +2947,23 @@
             return short ? n + 'd left' : n + (n === 1 ? ' day left' : ' days left');
         }
 
+        // Pilot-grade coupon code: WP-<TYPE>-<random>-<expiry><check>. The partner page can verify it offline.
+        const CALPHA = 'ABCDEFGHJKMNPQRSTVWXYZ23456789';
+        function codeHash(str) {
+            let h = 2166136261; str = 'wattpet-pilot' + str;
+            for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+            return h;
+        }
+        function makeCode(short, expTs) {
+            const e = new Date(expTs);
+            const idx = Math.max(0, Math.min(899, Math.round((Date.UTC(e.getFullYear(), e.getMonth(), e.getDate()) - Date.UTC(2026, 0, 1)) / 864e5)));
+            const arr = new Uint32Array(4); crypto.getRandomValues(arr);
+            const x = Array.from(arr, v => CALPHA[v % 30]).join('');
+            const ee = CALPHA[Math.floor(idx / 30)] + CALPHA[idx % 30];
+            const h = codeHash(short + x + ee);
+            return 'WP-' + short + '-' + x + '-' + ee + CALPHA[h % 30] + CALPHA[Math.floor(h / 30) % 30];
+        }
+
         function openRedeemConfirm(id) {
             const r = REWARDS.find(x => x.id === id);
             if (!r) return;
@@ -2981,7 +2991,7 @@
             exp.setHours(23, 59, 59, 999);
             const coupon = {
                 id: 'c' + Date.now().toString(36) + randChunk(3), rid: r.id, title: r.title,
-                code: 'WP-' + r.short + '-' + randChunk(4) + '-' + randChunk(4),
+                code: makeCode(r.short, exp.getTime()),
                 issued: Date.now(), expires: exp.getTime(), used: false
             };
             game.coupons.unshift(coupon);
@@ -2992,11 +3002,6 @@
             buzz([30, 40, 60]);
             try { playNotificationChime(); } catch (e) {}
             showTicket(coupon.id, true);
-            sendSystemNotification({
-                title: 'Coupon ready 🎟️',
-                body: r.title + '. Code ' + coupon.code + ', valid until ' + fmtDate(coupon.expires) + '.',
-                tag: 'wattpet-coupon', url: '/#wallet'
-            });
         }
 
         function qrSVG(text) {
@@ -3236,7 +3241,7 @@
         }
 
         function renderRewardsPage() {
-            renderHero(); renderCheckin(); renderQuests(); buildRewards(); renderWalletBadge(); updateHeaderStats(); updateNavDot();
+            renderHero(); renderCheckin(); renderQuests(); buildRewards(); renderWalletBadge(); updateHeaderStats(); updateNavDot(); renderBadges();
             if (rewardTab === 'wallet') renderWallet();
         }
 
@@ -3351,7 +3356,11 @@
         function buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p || 12); } catch (e) {} }
         function updateHeaderStats() {
             const l = document.getElementById('hdrLeaves'), st = document.getElementById('hdrStreak');
-            if (l) l.textContent = state.leaves;
+            if (l) {
+                const prev = parseInt(l.textContent, 10);
+                l.textContent = state.leaves;
+                if (state.leaves > prev) { l.classList.remove('pop'); void l.offsetWidth; l.classList.add('pop'); }
+            }
             if (st) st.textContent = streakNow();
         }
         function updateNavDot() {
@@ -3367,9 +3376,191 @@
             el.textContent = TIPS[day % TIPS.length];
         }
 
+        /* ---------- quick battery sync (iPad, iPhone and browsers without battery access) ---------- */
+        let qsShown = false;
+        function maybeQuickSync() {
+            return; // no automatic popup: the battery is updated on demand
+            qsShown = true;
+            setTimeout(() => { const m = document.getElementById('rwModal'); if (m && m.classList.contains('hidden')) openQuickSync(); }, 1600);
+        }
+        function qsSet(n) {
+            document.getElementById('qsRange').value = n;
+            document.getElementById('qsVal').textContent = n + '%';
+        }
+        function openQuickSync() {
+            openModal(`<div class="p-6 text-center">
+                <div class="text-4xl">🔋</div>
+                <h3 class="text-lg font-bold mt-2">What's your battery now?</h3>
+                <p class="text-xs text-[#526B5A] mt-1">${isIOSDevice() ? 'Apple does not let websites read the battery, so match the number on your screen.' : 'Match the number you see on your screen.'}</p>
+                <div id="qsVal" class="num text-6xl font-bold text-[#2D6A4F] mt-4">${state.battery}%</div>
+                <input id="qsRange" type="range" min="1" max="100" value="${state.battery}" oninput="document.getElementById('qsVal').textContent = this.value + '%'" class="w-full mt-3 accent-[#2D6A4F]" />
+                <div class="grid grid-cols-4 gap-1.5 mt-2">
+                    ${[20, 50, 80, 100].map(n => `<button type="button" onclick="qsSet(${n})" class="py-2 rounded-xl text-xs font-extrabold bg-[#EAF2EC] text-[#2D6A4F] hover:bg-[#D8F3DC] transition">${n}%</button>`).join('')}
+                </div>
+                <div class="flex items-center justify-between mt-4 px-1">
+                    <span class="text-sm font-bold">Charging right now</span>
+                    <label class="switch"><input id="qsCharge" type="checkbox" ${state.charging ? 'checked' : ''}><span></span></label>
+                </div>
+                <button type="button" onclick="saveQuickSync()" class="btn3d gold mt-5">Looks right</button>
+                <button type="button" onclick="closeModal()" class="mt-3 text-xs font-bold text-[#526B5A]">Later</button>
+            </div>`);
+        }
+        function saveQuickSync() {
+            const v = parseInt(document.getElementById('qsRange').value, 10);
+            const ch = document.getElementById('qsCharge').checked;
+            closeModal();
+            setBatteryLevel(v, ch, 'manual');
+            showToast('Battery updated');
+        }
+
+        /* ---------- badges ---------- */
+        function weekPctNow() {
+            let H = 0, T = 0;
+            Object.values(weekStats()).forEach(v => { H += v.h; T += v.t; });
+            return T >= 3600000 ? H / T * 100 : null;
+        }
+        const BADGES = [
+            { id: 'pet', e: '🐾', n: 'First pet', test: () => game.stats.pets >= 1 },
+            { id: 's3', e: '🔥', n: '3-day streak', test: () => game.streak >= 3 },
+            { id: 's7', e: '🏅', n: '7-day streak', test: () => game.streak >= 7 },
+            { id: 'coupon', e: '🎟️', n: 'First coupon', test: () => game.coupons.length >= 1 },
+            { id: 'week', e: '🌿', n: 'Healthy week', test: () => { const w = weekPctNow(); return w !== null && w >= 70; } },
+            { id: 'dress', e: '👒', n: 'Dress-up', test: () => game.owned.length >= 1 },
+            { id: 'leaf', e: '🍃', n: 'Leaf collector', test: () => game.lifetime >= 500 },
+            { id: 'unplug', e: '🔌', n: 'Perfect unplug', test: () => game.stats.unplugs >= 1 }
+        ];
+        let badgeBusy = false;
+        function checkBadges() {
+            if (badgeBusy || !game.badges) return;
+            badgeBusy = true;
+            try {
+                BADGES.forEach(b => {
+                    if (!game.badges[b.id] && b.test()) {
+                        game.badges[b.id] = Date.now();
+                        showToast('Badge unlocked: ' + b.n);
+                    }
+                });
+            } finally { badgeBusy = false; }
+        }
+        function renderBadges() {
+            const g = document.getElementById('badgeGrid');
+            if (!g) return;
+            g.innerHTML = BADGES.map(b => {
+                const on = !!game.badges[b.id];
+                return `<div class="flex flex-col items-center text-center gap-1 ${on ? '' : 'opacity-40 grayscale'}"><div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl ${on ? 'bg-[#FFF4D6] ring-2 ring-[#F5A524]/60' : 'bg-[#EAF2EC]'}">${b.e}</div><span class="text-[10px] font-bold leading-tight text-[#3F5446]">${b.n}</span></div>`;
+            }).join('');
+            const c = document.getElementById('badgeCount');
+            if (c) c.textContent = Object.keys(game.badges).length + '/' + BADGES.length;
+        }
+
+        /* ---------- language: English / Bahasa Malaysia ---------- */
+        const LANG_KEY = 'wattpet_lang';
+        let lang = (function () { try { return localStorage.getItem(LANG_KEY) || 'en'; } catch (e) { return 'en'; } })();
+        const MS = {"Your savings": "Penjimatan anda", "Your battery buddy": "Rakan bateri anda", "Home": "Utama", "Rewards": "Ganjaran", "Settings": "Tetapan", "Battery": "Bateri", "Update needed": "Perlu kemas kini", "CO₂ saved": "CO₂ dijimatkan", "Money saved": "Wang dijimatkan", "Treats worth": "Setara hidangan", "treats": "hidangan", "Tap to pet Mochi": "Ketuk untuk belai Mochi", "Next reward": "Ganjaran seterusnya", "View rewards →": "Lihat ganjaran →", "Healthy zone": "Zon sihat", "Healthy": "Sihat", "Charging gently": "Mengecas perlahan", "Charging": "Mengecas", "Running low": "Hampir habis", "Time to unplug": "Masa cabut pengecas", "Unplug now": "Cabut sekarang", "Over 80%": "Lebih 80%", "Low Battery": "Bateri rendah", "Mochi is content": "Mochi gembira", "Mochi is sleeping… 💤": "Mochi sedang tidur… 💤", "Mochi says: unplug me! 🔌": "Mochi kata: cabut saya! 🔌", "Plug in soon to prevent deep discharge": "Cas tidak lama lagi untuk elak bateri kosong sepenuhnya", "Unplug now to avoid top-off wear": "Cabut sekarang untuk elak kehausan bateri", "Charging inside the safe 20%–80% zone": "Mengecas dalam zon selamat 20%–80%", "Your week": "Minggu anda", "No data yet": "Belum ada data", "Keep WattPet open or synced and your week fills in here.": "Biarkan WattPet dibuka atau disegerak dan minggu anda akan muncul di sini.", "of the time WattPet could see your battery was in the healthy zone.": "daripada masa WattPet dapat melihat bateri anda berada dalam zon sihat.", "Mochi's tip of the day": "Petua Mochi hari ini", "Keeping your battery between 20% and 80% puts less strain on it than full charges.": "Mengekalkan bateri antara 20% dan 80% kurang membebankannya berbanding cas penuh.", "Heat is a battery's enemy. Take off thick cases while charging.": "Haba musuh bateri. Tanggalkan sarung tebal semasa mengecas.", "Plug in around 20% instead of letting the battery hit 0% again and again.": "Cas sekitar 20% dan jangan biarkan bateri sampai 0% berulang kali.", "If your device feels hot, let it cool down before you charge it.": "Jika peranti terasa panas, biarkan ia sejuk sebelum dicas.", "Lower screen brightness is the easiest way to stretch a charge.": "Mengurangkan kecerahan skrin ialah cara paling mudah untuk menjimatkan cas.", "Chargers still draw a little power when idle. Switch off at the wall when you are done.": "Pengecas masih menggunakan sedikit kuasa walaupun tidak digunakan. Matikan suis dinding apabila siap.", "Slow charging is gentler than fast charging when you are not in a hurry.": "Mengecas perlahan lebih lembut daripada mengecas pantas apabila anda tidak tergesa-gesa.", "Storing a device for months? Leave it at around 50% charge.": "Menyimpan peranti berbulan-bulan? Biarkan pada cas sekitar 50%.", "Keep your system and apps up to date. Updates often improve battery use.": "Kemas kini sistem dan aplikasi anda. Kemas kini sering memperbaiki penggunaan bateri.", "Turn off background refresh for apps you rarely open.": "Matikan muat semula latar belakang untuk aplikasi yang jarang dibuka.", "A battery lasts a set number of charge cycles. Fewer full cycles means a longer life.": "Bateri tahan bilangan kitaran cas yang tertentu. Kurang kitaran penuh bermaksud hayat lebih panjang.", "Use an official or certified charger. It protects your battery and your safety.": "Gunakan pengecas rasmi atau bersijil. Ia melindungi bateri dan keselamatan anda.", "Laptops that sit on the charger all week last longer with a charge limit switched on.": "Komputer riba yang sentiasa dicas tahan lebih lama dengan had cas diaktifkan.", "Dark mode can save battery on phones with OLED screens.": "Mod gelap boleh menjimatkan bateri pada telefon skrin OLED.", "Good battery habits, real perks": "Tabiat bateri yang baik, ganjaran sebenar", "Your leaves": "Daun anda", "Daily check-in": "Daftar masuk harian", "Claim today's leaves": "Tuntut daun hari ini", "Come back tomorrow": "Datang semula esok", "Today's quests": "Misi hari ini", "Pet Mochi": "Belai Mochi", "Stay in the healthy zone": "Kekal dalam zon sihat", "Unplug at about 80%": "Cabut pengecas sekitar 80%", "+5 per pet": "+5 setiap belaian", "+2 every 5 min": "+2 setiap 5 minit", "+15 each time": "+15 setiap kali", "My coupons": "Kupon saya", "Badges": "Lencana", "Reset rewards data": "Tetap semula data ganjaran", "Done ✓": "Selesai ✓", "Checked in today ✓": "Sudah daftar masuk hari ini ✓", "Keep your streak alive": "Kekalkan rentetan anda", "Start a streak": "Mulakan rentetan", "RM 3 off your drink": "Diskaun RM 3 untuk minuman anda", "Bring a reusable cup to a partner café.": "Bawa cawan guna semula ke kafe rakan kongsi.", "Plant a rainforest sapling": "Tanam anak pokok hutan hujan", "A native tree planted with local conservation partners.": "Pokok asli ditanam bersama rakan pemuliharaan tempatan.", "RM 15 device care voucher": "Baucar penjagaan peranti RM 15", "Port cleaning and battery check to keep your device going.": "Pembersihan port dan semakan bateri supaya peranti terus berfungsi.", "Café": "Kafe", "Nature": "Alam", "Repair": "Baiki", "Ready to redeem": "Sedia ditebus", "READY TO REDEEM": "SEDIA DITEBUS", "Redeem now": "Tebus sekarang", "Not yet": "Belum lagi", "Not now": "Bukan sekarang", "Cost": "Kos", "Balance after": "Baki selepas", "You got it! 🎉": "Anda dapat! 🎉", "Your code": "Kod anda", "Valid until": "Sah sehingga", "Redeemed on": "Ditebus pada", "Copy code": "Salin kod", "Mark as used": "Tandakan sudah guna", "Close": "Tutup", "Code copied": "Kod disalin", "No coupons yet": "Belum ada kupon", "Redeem a reward and your coupon will live here.": "Tebus ganjaran dan kupon anda akan disimpan di sini.", "Browse rewards": "Lihat ganjaran", "Used": "Telah guna", "Expired": "Tamat tempoh", "Last day": "Hari terakhir", "One use only.": "Sekali guna sahaja.", "Show this code at the counter of a WattPet partner café.": "Tunjukkan kod ini di kaunter kafe rakan kongsi WattPet.", "Show this code at a WattPet partner repair shop.": "Tunjukkan kod ini di kedai baiki rakan kongsi WattPet.", "Keep this code. Your sapling is planted in the next planting round.": "Simpan kod ini. Anak pokok anda ditanam pada pusingan penanaman seterusnya.", "Mark this coupon as used?": "Tandakan kupon ini sudah guna?", "Yes, mark as used": "Ya, tandakan sudah guna", "Back": "Kembali", "Do this after the shop has accepted your code. It can't be undone.": "Lakukan ini selepas kedai menerima kod anda. Ia tidak boleh dibatalkan.", "Meet Mochi": "Kenali Mochi", "Mochi is your battery buddy. Keep your charge between 20% and 80% and Mochi stays happy.": "Mochi ialah rakan bateri anda. Kekalkan cas antara 20% dan 80% dan Mochi akan gembira.", "Earn leaves": "Kumpul daun", "Pet Mochi, check in every day and unplug on time to collect leaves.": "Belai Mochi, daftar masuk setiap hari dan cabut pengecas tepat pada masanya untuk kumpul daun.", "Get real perks": "Dapatkan ganjaran sebenar", "Swap leaves for coupons from partners. Add WattPet to your Home Screen to get alerts.": "Tukar daun dengan kupon daripada rakan kongsi. Tambah WattPet ke Skrin Utama untuk terima amaran.", "Next": "Seterusnya", "Skip": "Langkau", "Let's go": "Jom mulakan", "What's your battery now?": "Berapa bateri anda sekarang?", "Looks right": "Nampak betul", "Later": "Nanti", "Charging right now": "Sedang mengecas", "Update battery now": "Kemas kini bateri sekarang", "Language": "Bahasa", "Reminders": "Peringatan", "80% charge reminder": "Peringatan cas 80%", "Nudge me to unplug at 80%": "Ingatkan saya cabut pengecas pada 80%", "Wall switch reminder": "Peringatan suis dinding", "Remind me to switch off the socket": "Ingatkan saya matikan soket", "Pause unused tabs": "Jeda tab yang tidak digunakan", "Pause tabs you aren't using": "Jeda tab yang tidak anda guna", "Show Mochi": "Tunjuk Mochi", "Turn off to see only the scenery": "Matikan untuk lihat pemandangan sahaja", "Send test notification": "Hantar notifikasi ujian", "Notifications": "Notifikasi", "Alerts appear while WattPet is open or running in the background.": "Amaran muncul semasa WattPet dibuka atau berjalan di latar belakang.", "Charger connected": "Pengecas disambung", "On battery": "Guna bateri", "Charging ⚡": "Mengecas ⚡", "My device": "Peranti saya", "Your device": "Peranti anda", "Auto-detected, or enter your model.": "Dikesan automatik, atau masukkan model anda.", "Checking your device…": "Menyemak peranti anda…", "Export my data": "Eksport data saya", "Download CSV": "Muat turun CSV", "Copy summary": "Salin ringkasan", "Share my impact card": "Kongsi kad impak saya", "How we estimate": "Cara kami menganggar", "Sources": "Sumber", "Scenery": "Pemandangan", "Use my own video": "Guna video saya sendiri", "Sunny Meadow": "Padang Cerah", "Forest Stream": "Anak Sungai Hutan", "Milky Way": "Bima Sakti", "Rainy Leaves": "Daun Berhujan", "Firefly Night": "Malam Kelip-kelip", "Active": "Aktif", "No match. We'll use a standard estimate.": "Tiada padanan. Kami guna anggaran standard.", "Set up auto sync with Shortcuts": "Sediakan segerak automatik dengan Shortcuts", "Copy plug-in link": "Salin pautan cabut-masuk", "Copy unplug link": "Salin pautan cabut", "Safari and Firefox can't read the battery. Use Chrome or Edge for automatic updates.": "Safari dan Firefox tidak boleh membaca bateri. Guna Chrome atau Edge untuk kemas kini automatik.", "Not updated yet": "Belum dikemas kini", "Updated just now": "Baru dikemas kini", "First pet": "Belaian pertama", "3-day streak": "Rentetan 3 hari", "7-day streak": "Rentetan 7 hari", "First coupon": "Kupon pertama", "Healthy week": "Minggu sihat", "Dress-up": "Bergaya", "Leaf collector": "Pengumpul daun", "Perfect unplug": "Cabut tepat", "Rewards reset": "Ganjaran ditetapkan semula", "Battery updated": "Bateri dikemas kini", "Image saved": "Imej disimpan", "Mochi is full of cuddles today. More leaves tomorrow!": "Mochi sudah puas dibelai hari ini. Lebih banyak daun esok!", "Apple does not let websites read the battery, so match the number on your screen.": "Apple tidak membenarkan laman web membaca bateri, jadi padankan nombor pada skrin anda.", "Match the number you see on your screen.": "Padankan nombor yang anda nampak pada skrin."};
+        const MS_PAT = [["^\\+(\\d+) leaves$", "+$1 daun"], ["^(\\d+) more leaves to unlock$", "$1 daun lagi untuk dibuka"], ["^You need (\\d+) more leaves$", "Anda perlukan $1 daun lagi"], ["^Redeem for (\\d+) 🍃$", "Tebus dengan $1 🍃"], ["^Unlock for (\\d+) 🍃$", "Buka dengan $1 🍃"], ["^Valid (\\d+) days after redeeming$", "Sah $1 hari selepas ditebus"], ["^Valid for (\\d+) days after redeeming\\.$", "Sah selama $1 hari selepas ditebus."], ["^(\\d+) days? left$", "$1 hari lagi"], ["^(\\d+)d left$", "$1h lagi"], ["^Updated (\\d+) min ago$", "Dikemas kini $1 minit lalu"], ["^Updated (\\d+) h ago$", "Dikemas kini $1 jam lalu"], ["^(🔥 )?(\\d+) day streak$", "$1Rentetan $2 hari"], ["^(🌱|🌿|🌳|🏞️) Sprout$", "$1 Pucuk"], ["^(🌱|🌿|🌳|🏞️) Sapling$", "$1 Anak pokok"], ["^(🌱|🌿|🌳|🏞️) Tree$", "$1 Pokok"], ["^(🌱|🌿|🌳|🏞️) Forest$", "$1 Hutan"], ["^(Sprout|Sapling|Tree|Forest) tier$", "Peringkat $1"], ["^(\\d+) / (\\d+) to (Sprout|Sapling|Tree|Forest)$", "$1 / $2 ke $3"], ["^(\\d+) / (\\d+) leaves$", "$1 / $2 daun"], ["^Day (\\d+)$", "Hari $1"], ["^Day (\\d+) check-in: \\+(\\d+) leaves$", "Daftar masuk hari $1: +$2 daun"], ["^Perfect unplug \\+(\\d+) leaves$", "Cabut tepat +$1 daun"], ["^Reward unlocked: (.+)$", "Ganjaran dibuka: $1"], ["^Badge unlocked: (.+)$", "Lencana dibuka: $1"], ["^Unlock for (\\d+) 🍃$", "Buka dengan $1 🍃"], ["^(\\d+) \\/ (\\d+)$", "$1 / $2"]].map(p => [new RegExp(p[0]), p[1]]);
+        const trOrig = new WeakMap();
+        let trObs = null;
+        function trStr(t) {
+            const m = /^(\s*)([\s\S]*?)(\s*)$/.exec(t), core = m[2];
+            if (!core) return t;
+            let r = Object.prototype.hasOwnProperty.call(MS, core) ? MS[core] : undefined;
+            if (r === undefined) { for (const [re, to] of MS_PAT) { if (re.test(core)) { r = core.replace(re, (...m) => to.replace(/\$(\d)/g, (_, i) => trStr(m[+i] || ''))); break; } } }
+            return r === undefined ? t : m[1] + r + m[3];
+        }
+        function trNode(n) {
+            const cur = n.nodeValue;
+            if (trOrig.has(n) && cur === trStr(trOrig.get(n))) return;
+            const out = trStr(cur);
+            if (out !== cur) { trOrig.set(n, cur); n.nodeValue = out; }
+        }
+        function textNodes(root) {
+            const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: (n) => {
+                const pn = n.parentNode && n.parentNode.nodeName;
+                return (pn === 'SCRIPT' || pn === 'STYLE' || pn === 'TEXTAREA') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+            } });
+            const list = []; while (w.nextNode()) list.push(w.currentNode);
+            return list;
+        }
+        function styleLangBtns() {
+            const on = 'bg-[#2D6A4F] text-white shadow-sm', off = 'text-[#526B5A]';
+            const en = document.getElementById('langEn'), ms = document.getElementById('langMs');
+            if (en) en.className = 'px-4 py-1.5 rounded-xl text-xs font-extrabold transition ' + (lang === 'en' ? on : off);
+            if (ms) ms.className = 'px-4 py-1.5 rounded-xl text-xs font-extrabold transition ' + (lang === 'ms' ? on : off);
+        }
+        function applyLang() {
+            document.documentElement.lang = lang === 'ms' ? 'ms' : 'en';
+            if (trObs) { trObs.disconnect(); trObs = null; }
+            if (lang === 'ms') {
+                textNodes(document.body).forEach(trNode);
+                trObs = new MutationObserver((muts) => {
+                    trObs.disconnect();
+                    muts.forEach(m => {
+                        if (m.type === 'characterData') trNode(m.target);
+                        m.addedNodes.forEach(n => { if (n.nodeType === 3) trNode(n); else if (n.nodeType === 1) textNodes(n).forEach(trNode); });
+                    });
+                    trObs.observe(document.body, { childList: true, subtree: true, characterData: true });
+                });
+                trObs.observe(document.body, { childList: true, subtree: true, characterData: true });
+            } else {
+                textNodes(document.body).forEach(n => { if (trOrig.has(n) && n.nodeValue === trStr(trOrig.get(n))) n.nodeValue = trOrig.get(n); });
+            }
+            styleLangBtns();
+        }
+        function setLang(l, silent) {
+            lang = l;
+            try { localStorage.setItem(LANG_KEY, l); } catch (e) {}
+            applyLang();
+            if (!silent) showToast(l === 'ms' ? 'Bahasa Malaysia' : 'English');
+        }
+
+        /* ---------- weekly habits (from battery readings WattPet could see) ---------- */
+        const LOG_KEY = 'wattpet_log_v1';
+        let battLog = [];
+        function loadLog() { try { battLog = JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch (e) { battLog = []; } }
+        function logBattery() {
+            const now = Date.now(), last = battLog[battLog.length - 1];
+            if (last && now - last.t < 5 * 60000 && Math.abs(last.l - state.battery) < 3 && last.c === state.charging) return;
+            battLog.push({ t: now, l: state.battery, c: state.charging });
+            battLog = battLog.filter(x => x.t >= now - 8 * 864e5).slice(-3000);
+            try { localStorage.setItem(LOG_KEY, JSON.stringify(battLog)); } catch (e) {}
+        }
+        function weekStats() {
+            const days = {}, cap = 30 * 60000, now = Date.now();
+            for (let i = 0; i < battLog.length; i++) {
+                const a = battLog[i], end = i + 1 < battLog.length ? battLog[i + 1].t : now;
+                const dur = Math.min(end - a.t, cap);
+                if (dur <= 0) continue;
+                const d = new Date(a.t), k = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+                const ok = a.l >= 20 && a.l <= 80;
+                days[k] = days[k] || { h: 0, t: 0 };
+                days[k].t += dur; if (ok) days[k].h += dur;
+            }
+            return days;
+        }
+        function renderWeek() {
+            const box = document.getElementById('weekBars');
+            if (!box) return;
+            const stats = weekStats(), names = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            let H = 0, T = 0, html = '';
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(Date.now() - i * 864e5), k = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+                const st = stats[k], pct = st && st.t >= 5 * 60000 ? Math.round(st.h / st.t * 100) : null;
+                if (st) { H += st.h; T += st.t; }
+                const col = pct === null ? '#E5EFE7' : pct >= 70 ? '#40916C' : pct >= 40 ? '#F5A524' : '#E07A5F';
+                html += `<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end"><div class="w-full rounded-lg transition-all duration-500" style="height:${pct === null ? 6 : Math.max(8, pct)}%;background:${col}"></div><span class="text-[10px] font-bold ${i === 0 ? 'text-[#172B1E]' : 'text-[#7C9283]'}">${names[d.getDay()]}</span></div>`;
+            }
+            box.innerHTML = html;
+            const enough = T >= 30 * 60000, pct = enough ? Math.round(H / T * 100) : null;
+            document.getElementById('weekScore').textContent = enough ? pct + '%' : 'No data yet';
+            document.getElementById('weekNote').textContent = enough
+                ? 'of the time WattPet could see your battery was in the healthy zone.'
+                : 'Keep WattPet open or synced and your week fills in here.';
+        }
+
         function initGame() {
             loadGame();
-            showDailyTip();
+            loadLog();
+            renderWeek();
             setRewardTab('shop');
             renderRewardsPage();
             updateLeaves();
@@ -3386,6 +3577,7 @@
             setTimeout(checkExpiringCoupons, 2500);
             handleDeepLink(location.hash);
             updateOutfitLocks();
+            setLang(lang, true);
             try {
                 if (!localStorage.getItem('wattpet_onboarded') && !location.hash) {
                     localStorage.setItem('wattpet_onboarded', '1');
