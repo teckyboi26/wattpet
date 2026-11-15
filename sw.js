@@ -1,4 +1,4 @@
-const VERSION = 'wattpet-v2';
+const VERSION = 'wattpet-v3';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -23,9 +23,9 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(
       fetch(req).then((res) => {
         const copy = res.clone();
-        caches.open(VERSION).then((c) => c.put('/index.html', copy));
+        caches.open(VERSION).then((c) => c.put(req, copy));
         return res;
-      }).catch(() => caches.match('/index.html', { ignoreSearch: true }))
+      }).catch(() => caches.match(req, { ignoreSearch: true }).then((m) => m || caches.match('/index.html')))
     );
     return;
   }
