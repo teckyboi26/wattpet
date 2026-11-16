@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
+    <script>(function(){try{var t=localStorage.getItem('wattpet_theme')||'auto';var d=t==='dark'||(t==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>WattPet: Your battery buddy</title>
     <meta name="theme-color" content="#1F7A4D" />
@@ -59,10 +60,11 @@
         }
 
         .glass-dark {
-            background: rgba(14, 32, 21, 0.52);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.20);
+            background: rgba(14, 32, 21, 0.42);
+            backdrop-filter: blur(16px) saturate(1.2);
+            -webkit-backdrop-filter: blur(16px) saturate(1.2);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.12) inset;
         }
 
         html, body { background: linear-gradient(180deg, #F5FAF4 0%, #EAF4EC 100%) fixed; }
@@ -70,6 +72,8 @@
         #stickyBar { display: none !important; }
         h1, h2, h3, .num, .btn3d, .chip { font-family: 'Fredoka', 'Nunito', sans-serif; letter-spacing: 0.005em; }
         .main-nav:active { transform: scale(0.94); }
+        @keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        .page-in { animation: pageIn .35s cubic-bezier(.22,1,.36,1); }
         @keyframes dotPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
         #navDotRewards { animation: dotPulse 1.6s infinite; }
         /* ---- Rewards / game styling ---- */
@@ -134,6 +138,73 @@
             *:not(.cap) { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
             .cap { animation: capFade 4.2s linear forwards !important; transform: none !important; }
         }
+
+
+        /* ---------- Dark mode ---------- */
+        html.dark { color-scheme: dark; }
+        html.dark, html.dark body { background: linear-gradient(180deg, #0F1A14 0%, #0A120E 100%) fixed; color: #E6F2EA; }
+        html.dark .card { background: rgba(24, 37, 30, 0.94); border-color: rgba(255, 255, 255, 0.07); box-shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.6); }
+        html.dark .bg-white { background-color: #1B2A23; }
+        html.dark .bg-white\/70 { background-color: rgba(27, 42, 35, 0.7); }
+        html.dark .bg-white\/85 { background-color: rgba(27, 42, 35, 0.85); }
+        html.dark .bg-white\/90 { background-color: rgba(27, 42, 35, 0.9); }
+        html.dark .bg-white\/92 { background-color: rgba(27, 42, 35, 0.92); }
+        html.dark .btn3d.soft { background: #22362C; color: #CDE8D6; box-shadow: 0 4px 0 #15231C; }
+        html.dark .btn3d[disabled] { background: #26332C; color: #6F8578; box-shadow: 0 4px 0 #1A261F; }
+        html.dark .day-dot { background: #22322A; border-color: #34493D; color: #8FA597; }
+        html.dark .day-dot.next { background: #3A3216; border-color: #F2B632; color: #F5D27A; }
+        html.dark .ticket { background: #1E2D25; }
+        html.dark .ticket-cut { border-top-color: #34493D; }
+        html.dark .ticket-cut::before, html.dark .ticket-cut::after { background: #192A19; }
+        html.dark .switch span { background: #3A4A41; }
+        html.dark .switch input:checked + span { background: #2E9A63; }
+        html.dark input, html.dark select { color: #E6F2EA; }
+        html.dark .shadow-xs { box-shadow: none; }
+        html.dark .bg-\[\#CFE3D5\]{background-color:#283B2E}
+        html.dark .bg-\[\#D8F3DC\]{background-color:#1E3822}
+        html.dark .bg-\[\#DDF1E3\]{background-color:#1E3725}
+        html.dark .bg-\[\#E2ECF9\]{background-color:#1C2633}
+        html.dark .bg-\[\#E3ECE5\]{background-color:#243027}
+        html.dark .bg-\[\#E4ECE6\]{background-color:#253027}
+        html.dark .bg-\[\#E5EFE7\]{background-color:#223025}
+        html.dark .bg-\[\#E8F1FF\]{background-color:#19222F}
+        html.dark .bg-\[\#EAF2EC\]{background-color:#202E24}
+        html.dark .bg-\[\#EAF6EC\]{background-color:#1B321E}
+        html.dark .bg-\[\#EEF7F0\]{background-color:#1B2F1F}
+        html.dark .bg-\[\#F2F8F3\]{background-color:#1C2C1E}
+        html.dark .bg-\[\#F3ECE6\]{background-color:#32271D}
+        html.dark .bg-\[\#F4ACB7\]{background-color:#46262B}
+        html.dark .bg-\[\#F4EDE5\]{background-color:#34291C}
+        html.dark .bg-\[\#F7FBF7\]{background-color:#192A19}
+        html.dark .bg-\[\#FBFCF8\]{background-color:#262B17}
+        html.dark .bg-\[\#FCE7EA\]{background-color:#311A1D}
+        html.dark .bg-\[\#FDE8C8\]{background-color:#3A301F}
+        html.dark .bg-\[\#FEF3C7\]{background-color:#3A351F}
+        html.dark .bg-\[\#FFE5D9\]{background-color:#34241C}
+        html.dark .bg-\[\#FFEEDD\]{background-color:#33271B}
+        html.dark .bg-\[\#FFF1E4\]{background-color:#31251A}
+        html.dark .bg-\[\#FFF4D6\]{background-color:#352F1D}
+        html.dark .bg-\[\#FFF6E8\]{background-color:#2F2719}
+        html.dark .from-\[\#D8F3DC\]{--tw-gradient-from:#1E3822 var(--tw-gradient-from-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(0,0,0,0))}
+        html.dark .hover\:bg-\[\#D8F3DC\]:hover{background-color:#1E3822}
+        html.dark .hover\:bg-\[\#EAF2EC\]:hover{background-color:#202E24}
+        html.dark .hover\:bg-\[\#EAF6EC\]:hover{background-color:#1B321E}
+        html.dark .hover\:bg-\[\#F0F7F2\]:hover{background-color:#1C2D21}
+        html.dark .hover\:bg-\[\#F8D0D6\]:hover{background-color:#391F23}
+        html.dark .hover\:bg-\[\#FFF4E4\]:hover{background-color:#31271A}
+        html.dark .placeholder\:text-\[\#526B5A\]\/70::placeholder{color:#9FB8A8}
+        html.dark .text-\[\#172B1E\]{color:#E6F2EA}
+        html.dark .text-\[\#1B4332\]{color:#CDE8D6}
+        html.dark .text-\[\#1F7A4D\]{color:#4CC08A}
+        html.dark .text-\[\#2F4637\]{color:#D3E4D9}
+        html.dark .text-\[\#3F5446\]{color:#B8CDBF}
+        html.dark .text-\[\#526B5A\]{color:#9FB8A8}
+        html.dark .text-\[\#7C9283\]{color:#8DA093}
+        html.dark .text-\[\#7F5539\]{color:#C09172}
+        html.dark .text-\[\#92400E\]{color:#EC7D39}
+        html.dark .text-\[\#B8710F\]{color:#DE8812}
+        html.dark .text-\[\#C94A29\]{color:#E1856D}
+        html.dark .to-\[\#FFF1D6\]{--tw-gradient-to:#352D1D var(--tw-gradient-to-position)}
 
         /* Sticky mini banner */
         #stickyBar { transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .35s; }
@@ -303,6 +374,7 @@
                 <video id="sceneVideo" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" autoplay muted loop playsinline preload="auto"></video>
                 <canvas id="sceneOverlay" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
                 <div class="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/45 pointer-events-none"></div>
+                <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse at 50% 55%, transparent 52%, rgba(0,0,0,0.30) 100%)"></div>
 
                 <!-- Caption bubbles layer (z-20 so dropdown menu is always visible above) -->
                 <div id="captionLayer" class="absolute inset-0 z-20 pointer-events-none"></div>
@@ -329,7 +401,7 @@
                 <!-- Cat -->
                 <div id="catStageWrap" class="relative z-10 flex flex-col items-center justify-center">
                     <canvas id="catCanvas" width="224" height="196" class="pixel w-[200px] h-[175px] sm:w-[240px] sm:h-[210px]"></canvas>
-                    <div id="catShadow" class="w-36 h-4 rounded-[50%] bg-black/35 blur-[6px] -mt-4 transition-transform duration-150"></div>
+                    <div id="catShadow" class="w-40 h-5 rounded-[50%] bg-black/30 blur-[8px] -mt-5 transition-transform duration-150"></div>
                     <div id="petHint" class="mt-3 glass-dark px-4 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-2 transition-opacity duration-700">
                         <canvas data-px="paw" width="14" height="14" class="pixel w-4 h-4"></canvas><span>Tap to pet Mochi</span>
                     </div>
@@ -343,6 +415,15 @@
                         <button onclick="setOutfit('flower')" data-outfit="flower" class="outfit-btn w-9 h-9 rounded-full flex items-center justify-center transition" title="Flower crown"><canvas data-px="flower" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
                         <button onclick="setOutfit('hat')"    data-outfit="hat"    class="outfit-btn w-9 h-9 rounded-full flex items-center justify-center transition" title="Straw hat"><canvas data-px="hat" width="14" height="14" class="pixel w-4 h-4"></canvas></button>
                     </div>
+                    <button id="animalBtn" type="button" onclick="openAnimalPicker()" class="glass-dark w-11 h-11 rounded-full flex items-center justify-center text-xl active:scale-95 transition" title="Change animal" aria-label="Change animal">🐱</button>
+                </div>
+                <div id="buyBar" class="hidden absolute z-30 left-1/2 -translate-x-1/2 bottom-[78px] w-[min(92%,380px)] glass-dark rounded-2xl px-4 py-3 flex items-center gap-3 pop">
+                    <div class="flex-1 min-w-0">
+                        <p id="buyName" class="text-sm font-bold text-white truncate"></p>
+                        <p id="buySub" class="text-[11px] text-white/75 mt-0.5"></p>
+                    </div>
+                    <button type="button" onclick="cancelPreview()" class="px-3 py-2 rounded-xl text-xs font-bold bg-white/15 text-white hover:bg-white/25 transition">Cancel</button>
+                    <button id="buyBtn" type="button" onclick="buyPreview()" class="btn3d gold !w-auto px-4 !py-2 text-xs">Buy</button>
                 </div>
             </section>
 
@@ -521,6 +602,16 @@
                         </div>
                         <div class="flex items-center justify-between gap-3 pt-3">
                             <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-2xl bg-[#E8F1FF] border border-[#4A7BD0]/20 flex items-center justify-center shadow-xs flex-shrink-0 text-lg">🎬</span>
+                                <div>
+                                    <p class="text-sm font-bold">Live video scenery</p>
+                                    <p class="text-[11px] text-[#526B5A]">Turn off to save data, or before you record your video</p>
+                                </div>
+                            </div>
+                            <label class="switch"><input type="checkbox" id="optVideo" checked onchange="setLiveVideo(this.checked)"><span></span></label>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 pt-3">
+                            <div class="flex items-center gap-3">
                                 <span class="w-10 h-10 rounded-2xl bg-[#E8F1FF] border border-[#4A7BD0]/20 flex items-center justify-center shadow-xs flex-shrink-0 text-lg">🔊</span>
                                 <div>
                                     <p class="text-sm font-bold">Mochi sounds</p>
@@ -552,6 +643,18 @@
                         <div class="flex gap-1 p-1 rounded-2xl bg-[#EAF2EC]">
                             <button id="langEn" type="button" onclick="setLang('en')">EN</button>
                             <button id="langMs" type="button" onclick="setLang('ms')">BM</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Appearance -->
+                <section class="card rounded-[28px] p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <h2 class="text-base font-bold">Appearance</h2>
+                        <div class="flex gap-1 p-1 rounded-2xl bg-[#EAF2EC]">
+                            <button id="thAuto" type="button" onclick="setTheme('auto')">Auto</button>
+                            <button id="thLight" type="button" onclick="setTheme('light')">Light</button>
+                            <button id="thDark" type="button" onclick="setTheme('dark')">Dark</button>
                         </div>
                     </div>
                 </section>
@@ -1655,7 +1758,9 @@
             });
             const curPageEl = document.getElementById('page-' + page);
             if (curPageEl) renderAllPixelIcons(curPageEl);
+            if (typeof cancelPreview === 'function') cancelPreview();
             if (page === 'sanctuary' && typeof renderWeek === 'function') renderWeek();
+            { const pe = document.getElementById('page-' + page); if (pe) { pe.classList.remove('page-in'); void pe.offsetWidth; pe.classList.add('page-in'); } }
             if (scrollTop) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1790,7 +1895,12 @@
             }
         }
 
-        /* ---------- tired Mochi: walks on all fours, circles, curls up and sleeps (battery under 20%) ---------- */
+        /* ---------- animals: cat, dog, bunny (side view) and snake, in code ---------- */
+        const SPECIES = {
+            cat:   { O: '#E98A2E', D: '#B8561A', L: '#F6C48A', W: '#FFF1DC', P: '#F2A2AE', brx: 9,   bry: 5,   hr: 4.5, legs: 4, ears: 'point',  snout: 0 },
+            dog:   { O: '#C98B4B', D: '#7B4A26', L: '#EBCB98', W: '#FFF3E0', P: '#F2A2AE', brx: 9.5, bry: 5.2, hr: 4.6, legs: 5, ears: 'floppy', snout: 2.4 },
+            bunny: { O: '#EFE9E0', D: '#B7AEA2', L: '#FFFFFF', W: '#FFFFFF', P: '#F4A3B5', brx: 7.6, bry: 5.8, hr: 4.0, legs: 3, ears: 'long',   snout: 0 }
+        };
         function pxEll(ctx, px, cx, cy, rx, ry, col) {
             ctx.fillStyle = col;
             for (let y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y++) {
@@ -1800,57 +1910,136 @@
                 }
             }
         }
-        function drawTiredCat(ctx, px, t, o) {
-            const p = o.curl, L = (a, b) => a + (b - a) * p;
+        function pxEllFill(ctx, px, cx, cy, rx, ry, col) { pxEll(ctx, px, cx, cy, rx, ry, col); }
+        function pxRect(ctx, px, x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(Math.round(x) * px, Math.round(y) * px, Math.max(1, Math.round(w)) * px, Math.max(1, Math.round(h)) * px); }
+        function drawOutfitAt(ctx, px, hx, hy, hr, outfit, t) {
+            if (!outfit || outfit === 'none') return;
+            const R = (x, y, w, h, c) => pxRect(ctx, px, x, y, w, h, c), top = hy - hr;
+            if (outfit === 'sprout') {
+                const sw = Math.round(Math.sin(t * 0.07));
+                R(hx, top - 3, 1, 3, '#1F7A4D'); R(hx - 2 + sw, top - 4, 2, 1, '#4CC08A'); R(hx + 1 + sw, top - 5, 2, 1, '#74C69D');
+            } else if (outfit === 'flower') {
+                [[-3.5, '#FFB3C6'], [0, '#FF758F'], [3.5, '#FFB3C6']].forEach(a => {
+                    const x = hx + a[0], y = top - 0.5;
+                    R(x, y - 1, 1, 1, a[1]); R(x - 1, y, 3, 1, a[1]); R(x, y + 1, 1, 1, a[1]); R(x, y, 1, 1, '#FBBF24');
+                });
+            } else if (outfit === 'hat') {
+                R(hx - 3.5, top - 3.4, 7, 3, '#2B1A12'); R(hx - 2.5, top - 3, 5, 3, '#F2CC8F'); R(hx - 2.5, top - 0.6, 5, 1, '#E04F5F');
+                R(hx - 6, top - 0.4, 12, 1, '#2B1A12'); R(hx - 5, top - 0.4, 10, 1, '#E9C46A');
+            }
+        }
+        function zzz(ctx, px, t, hx, hy) {
+            const ph = (t % 120) / 120;
+            ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.9; ctx.fillStyle = '#FFFFFF';
+            ctx.font = `800 ${Math.round(px * (2 + ph * 1.5))}px Fredoka, sans-serif`;
+            ctx.fillText('z', (hx + 2 + ph * 3) * px, (hy - 4 - ph * 6) * px);
+            ctx.restore();
+        }
+        function drawQuad(ctx, px, t, o) {
+            const sp = SPECIES[o.species || 'cat'], K = '#2B1A12', p = o.curl || 0, L = (a, b) => a + (b - a) * p;
+            const awake = !!o.awake, kind = o.species || 'cat';
             const breathe = Math.sin(t * (o.boop > 0 ? 0.18 : 0.045)) * (p > 0.9 ? 0.55 : 0.25);
+            const hop = (awake && o.boop > 0) ? -Math.abs(Math.sin(o.boop * 0.3)) * 1.6 : 0;
             const step = o.walk ? t * 0.09 : 0;
-            const C = { K: '#2B1A12', O: '#E98A2E', D: '#B8561A', L: '#F6C48A', W: '#FFF1DC', P: '#F2A2AE' };
             const parts = [], details = [];
             const E = (cx, cy, rx, ry, c) => parts.push(['e', cx, cy, rx, ry, c]);
             const R = (x, y, w, h, c) => parts.push(['r', x, y, w, h, c]);
             const dE = (cx, cy, rx, ry, c) => details.push(['e', cx, cy, rx, ry, c]);
             const dR = (x, y, w, h, c) => details.push(['r', x, y, w, h, c]);
-            const bx = L(14, 15.5), by = L(17, 19.3), brx = L(9, 10.5), bry = L(5, 6.4) + breathe;
-            const hx = L(24.6, 21.3), hy = L(13.4, 20.4), hr = L(4.5, 3.9);
-            // tail: hangs low when tired, wraps round the body when curled
-            const T0 = [[5, 16], [3.8, 16.4], [2.6, 17.6], [2, 19.2], [2.2, 21], [3, 22.4], [4.2, 23.2]];
+            const bx = L(14, 15.5), by = L(17, 19.3), brx = L(sp.brx, sp.brx + 1.5), bry = L(sp.bry, sp.bry + 1.4) + breathe;
+            const hr = L(sp.hr, sp.hr - 0.6), hx = L(24.4, 21.3), hy = L(13.4, 20.4);
+            // tail
+            const w = (awake && p < 0.5) ? Math.sin(t * 0.22) * 1.3 : 0;
             const T1 = [[6, 22], [8, 24.4], [11, 25.7], [14.5, 26.2], [18, 25.8], [21, 24.8], [23.5, 23.2]];
-            T0.forEach((a, i) => R(L(a[0], T1[i][0]) - 1, L(a[1], T1[i][1]) - 1, 2.4, 2.4, i % 2 ? C.D : C.O));
-            // legs (shrink away while curling, step while walking)
-            const legLen = Math.round(L(4, 0));
+            if (kind === 'bunny') {
+                E(bx - brx + 0.6, by - 0.6 + p * 1.4, 1.9, 1.9, sp.W);
+            } else {
+                const T0 = kind === 'dog'
+                    ? [[5, 15.5], [4.2, 14.4], [3.5, 13], [3, 11.6], [2.8 + w * 0.6, 10.2], [3 + w, 8.9], [3.4 + w * 1.5, 7.8]]
+                    : [[5, 16], [3.8, 16.4], [2.6, 17.6], [2, 19.2], [2.2, 21], [3, 22.4], [4.2, 23.2]];
+                T0.forEach((a, i) => R(L(a[0], T1[i][0]) - 1, L(a[1], T1[i][1]) - 1, 2.4, 2.4, i % 2 ? sp.D : sp.O));
+            }
+            // legs
+            const legLen = Math.round(L(sp.legs, 0));
             if (legLen > 0) {
-                [[21, 0], [18, 3.1], [9, 3.1], [6, 0]].forEach(([lx, ph]) => {
-                    const lift = o.walk && Math.sin(step + ph) > 0.55 ? 1 : 0;
-                    R(lx, by + bry - 1 - lift, 2, legLen + 1, C.O);
+                const xs = kind === 'bunny' ? [[19, 0], [16.5, 3.1]] : [[kind === 'dog' ? 22 : 21, 0], [kind === 'dog' ? 19 : 18, 3.1], [kind === 'dog' ? 8 : 9, 3.1], [kind === 'dog' ? 5 : 6, 0]];
+                xs.forEach(a => {
+                    const lift = o.walk && Math.sin(step + a[1]) > 0.55 ? 1 : 0;
+                    R(a[0], by + bry - 1 - lift, kind === 'dog' ? 2.4 : 2, legLen + 1, sp.O);
                 });
             }
-            E(bx, by, brx, bry, C.O);
-            if (p < 0.7) E((bx + hx) / 2 + 2.2, (by + hy) / 2 - 0.4, 3.4, 3.4, C.O);
-            E(hx, hy, hr * 1.05, hr * 0.95, C.O);
-            const ey = hy - hr - 1.2, flick = (Math.floor(t / 90) % 7 === 0) ? 1 : 0;
-            R(hx - 3.4, ey + flick, 2, 2, C.O); R(hx + 1.5, ey, 2, 2, C.O);
-            // details
-            dE(bx, by + bry * 0.55, brx * 0.72, bry * 0.45, C.L);
-            for (let i = 0; i < 4; i++) dR(bx - 5 + i * 3.2, by - bry + 0.3, 1, p > 0.5 ? 3 : 2, C.D);
-            dR(hx - 3, ey + 0.6 + flick, 1, 1, C.P); dR(hx + 2, ey + 0.6, 1, 1, C.P);
-            for (let k = -1; k <= 1; k++) dR(hx - 0.5 + k * 1.5, hy - hr + 0.4, 1, 2, C.D);
-            dE(hx + hr * 0.5, hy + hr * 0.4, hr * 0.5, hr * 0.38, C.W);
-            dR(hx + hr * 0.85, hy + hr * 0.05, 1, 1, C.P);
-            dR(hx + 0.8, hy - hr * 0.3, 2, 1, C.K);
-            if (p > 0.55) dR(hx + 1.5, hy - hr * 0.3 + 1, 1, 1, C.K);
-            // draw: dark outline pass, then fills, then details
-            const out = (a) => { ctx.fillStyle = C.K; if (a[0] === 'e') pxEllFill(ctx, px, a[1], a[2], a[3] + 1, a[4] + 1, C.K); else ctx.fillRect(Math.round(a[1] - 1) * px, Math.round(a[2] - 1) * px, Math.round(a[3] + 2) * px, Math.round(a[4] + 2) * px); };
-            const fill = (a) => { if (a[0] === 'e') pxEllFill(ctx, px, a[1], a[2], a[3], a[4], a[5]); else { ctx.fillStyle = a[5]; ctx.fillRect(Math.round(a[1]) * px, Math.round(a[2]) * px, Math.max(1, Math.round(a[3])) * px, Math.max(1, Math.round(a[4])) * px); } };
-            parts.forEach(out); parts.forEach(fill); details.forEach(fill);
-            if (p > 0.85) {
-                const ph = (t % 120) / 120;
-                ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.9; ctx.fillStyle = '#FFFFFF';
-                ctx.font = `800 ${Math.round(px * (2 + ph * 1.5))}px Fredoka, sans-serif`;
-                ctx.fillText('z', (hx + 2 + ph * 3) * px, (hy - 4 - ph * 6) * px);
-                ctx.restore();
+            if (kind === 'bunny') E(bx - 3.6, by + bry * 0.35, 3.4, 3.2 - p * 0.6, sp.O);
+            E(bx, by, brx, bry, sp.O);
+            if (p < 0.7) E((bx + hx) / 2 + 2.2, (by + hy) / 2 - 0.4, 3.4, 3.4, sp.O);
+            E(hx, hy, hr * 1.05, hr * 0.95, sp.O);
+            // ears
+            const flick = (Math.floor(t / 90) % 7 === 0) ? 1 : 0;
+            if (sp.ears === 'point') {
+                const ey = hy - hr - 1.2;
+                R(hx - 3.4, ey + flick, 2, 2, sp.O); R(hx + 1.5, ey, 2, 2, sp.O);
+                dR(hx - 3, ey + 0.6 + flick, 1, 1, sp.P); dR(hx + 2, ey + 0.6, 1, 1, sp.P);
+            } else if (sp.ears === 'floppy') {
+                const sag = L(0, 1);
+                E(hx - 2.4, hy + 0.8 + sag, 1.9, 3.3, sp.D); E(hx + 2.4, hy + 0.4 + sag, 1.7, 3.1, sp.D);
+            } else {
+                const len = L(3.6, 2.3), fold = L(0, 2.0);
+                E(hx - 1.8 - fold * 0.5, hy - hr - len + 1.2 + fold, 1.5, len, sp.O); E(hx + 1.6 - fold * 0.2, hy - hr - len + 0.6 + fold, 1.5, len + 0.4, sp.O);
+                dE(hx - 1.8 - fold * 0.5, hy - hr - len + 1.4 + fold, 0.7, len * 0.7, sp.P); dE(hx + 1.6 - fold * 0.2, hy - hr - len + 0.8 + fold, 0.7, len * 0.7, sp.P);
             }
+            if (sp.snout) E(hx + hr * 0.95 + 0.8, hy + hr * 0.4, sp.snout * 0.85, 1.7, sp.L);
+            // details
+            dE(bx, by + bry * 0.55, brx * 0.72, bry * 0.45, sp.L);
+            if (kind === 'cat') { for (let i = 0; i < 4; i++) dR(bx - 5 + i * 3.2, by - bry + 0.3, 1, p > 0.5 ? 3 : 2, sp.D); for (let k = -1; k <= 1; k++) dR(hx - 0.5 + k * 1.5, hy - hr + 0.4, 1, 2, sp.D); }
+            if (kind === 'dog') { dE(bx + 0.5, by - bry * 0.45, brx * 0.55, bry * 0.42, sp.D); dE(hx + 1.2, hy - 1.2, 1.6, 1.5, sp.D); }
+            if (kind === 'bunny') { dE(bx - 1, by - bry * 0.45, brx * 0.45, bry * 0.36, sp.D); }
+            if (kind === 'bunny') { dE(hx + hr * 0.55, hy + hr * 0.42, 1.2, 0.9, sp.W); }
+            else if (kind === 'dog') { dR(hx + hr * 0.95 + sp.snout * 0.85, hy + hr * 0.15, 1.6, 1.5, K); }
+            else { dE(hx + hr * 0.5, hy + hr * 0.4, hr * 0.5, hr * 0.38, sp.W); }
+            if (kind !== 'dog') dR(hx + hr * 0.85, hy + hr * (kind === 'bunny' ? 0.2 : 0.05), 1, 1, sp.P);
+            const ex = hx + hr * 0.4, ey2 = hy - hr * 0.3, blink = (t % 200) < 7;
+            if (!awake || blink || p > 0.55) { dR(ex, ey2 + 0.5, 2, 1, K); if (p > 0.55) dR(ex + 1, ey2 + 1.5, 1, 1, K); }
+            else { dR(ex, ey2, 2, 2, K); dR(ex, ey2, 1, 1, '#FFFFFF'); }
+            if (kind === 'dog' && awake && o.boop > 0) dR(hx + hr * 0.95 + 1.2, hy + hr * 0.75, 1.4, 2, '#F06A7C');
+            const out = (a) => { if (a[0] === 'e') pxEllFill(ctx, px, a[1], a[2], a[3] + 1, a[4] + 1, K); else { ctx.fillStyle = K; ctx.fillRect(Math.round(a[1] - 1) * px, Math.round(a[2] - 1) * px, Math.round(a[3] + 2) * px, Math.round(a[4] + 2) * px); } };
+            const fill = (a) => { if (a[0] === 'e') pxEllFill(ctx, px, a[1], a[2], a[3], a[4], a[5]); else pxRect(ctx, px, a[1], a[2], a[3], a[4], a[5]); };
+            ctx.save(); ctx.translate(0, hop * px);
+            parts.forEach(out); parts.forEach(fill); details.forEach(fill);
+            drawOutfitAt(ctx, px, hx, hy, hr, o.outfit, t);
+            ctx.restore();
+            if (p > 0.85) zzz(ctx, px, t, hx, hy);
         }
-        function pxEllFill(ctx, px, cx, cy, rx, ry, col) { pxEll(ctx, px, cx, cy, rx, ry, col); }
+        function drawTiredCat(ctx, px, t, o) { drawQuad(ctx, px, t, Object.assign({ species: 'cat' }, o)); }
+        function drawSnake(ctx, px, t, o) {
+            const p = o.curl || 0, awake = !!o.awake, N = 28, K = '#1F2D1B';
+            const G = '#4FA64B', G2 = '#3A8A3E', B = '#D6EBA4';
+            const hop = (awake && o.boop > 0) ? -Math.abs(Math.sin(o.boop * 0.3)) * 1.4 : 0, pts = [];
+            for (let i = 0; i < N; i++) {
+                const s = i / (N - 1);
+                const lx = 2 + s * 22, wave = Math.sin(i * 0.55 - t * (awake ? 0.09 : 0.02)) * 2.2 * (1 - p);
+                const lift = s > 0.78 ? -((s - 0.78) / 0.22) * 8 * (1 - p) : 0;
+                const ly = 21.5 + wave + lift;
+                const th = (1 - s) * 5.4 + 0.4, rr = 1.4 + (1 - s) * 9.2;
+                const sx = 16 + Math.cos(th) * rr * 1.15, sy = 21.4 + Math.sin(th) * rr * 0.42 - s * s * 1.8;
+                pts.push([lx + (sx - lx) * p, ly + (sy - ly) * p]);
+            }
+            ctx.save(); ctx.translate(0, hop * px);
+            const rad = (i) => 1.0 + 1.9 * Math.sin(Math.min(1, (i / (N - 1)) * 1.25) * Math.PI / 2);
+            pts.forEach((q, i) => pxEll(ctx, px, q[0], q[1], rad(i) + 1, rad(i) + 1, K));
+            pts.forEach((q, i) => { pxEll(ctx, px, q[0], q[1], rad(i), rad(i), (i % 4 < 2) ? G : G2); });
+            pts.forEach((q, i) => { if (i % 4 === 1) pxEll(ctx, px, q[0], q[1] - rad(i) * 0.35, 0.9, 0.7, '#2D6E34'); if (i % 2 === 0 && i > 2) pxEll(ctx, px, q[0], q[1] + rad(i) * 0.45, rad(i) * 0.7, 0.6, B); });
+            const h = pts[N - 1], hr = 3.7;
+            pxEll(ctx, px, h[0] + 0.6, h[1], hr + 1.3, hr * 0.8 + 1.1, K);
+            pxEll(ctx, px, h[0] + 0.6, h[1], hr + 0.3, hr * 0.8 + 0.1, G);
+            pxEll(ctx, px, h[0] + 1, h[1] + 1, hr * 0.8, 1.2, B);
+            const blink = (t % 210) < 8;
+            if (!awake || blink || p > 0.55) pxRect(ctx, px, h[0] + 1, h[1] - 0.8, 2, 1, K);
+            else { pxRect(ctx, px, h[0] + 1, h[1] - 1.4, 2, 2, '#F2D24B'); pxRect(ctx, px, h[0] + 1.6, h[1] - 1.4, 1, 2, K); }
+            if (awake && (t % 120) < 16) { pxRect(ctx, px, h[0] + hr + 1.2, h[1] + 0.3, 3, 1, '#E0475B'); pxRect(ctx, px, h[0] + hr + 3.8, h[1] - 0.6, 1, 1, '#E0475B'); pxRect(ctx, px, h[0] + hr + 3.8, h[1] + 1.2, 1, 1, '#E0475B'); }
+            drawOutfitAt(ctx, px, h[0] + 0.6, h[1], hr - 0.4, o.outfit, t);
+            ctx.restore();
+            if (p > 0.85) zzz(ctx, px, t, h[0], h[1]);
+        }
+
         let tiredT = -1, tiredInit = false, tiredSaid = 0;
 
         const catCanvas = document.getElementById('catCanvas');
@@ -1864,22 +2053,23 @@
             const isHighAlert = state.charging && state.battery >= 80;
 
             cctx.clearRect(0, 0, 224, 196);
+            const sp = state.previewAnimal || state.animal || 'cat', outfit = state.previewOutfit || state.outfit;
             if (isLow) {
                 if (tiredT < 0) { tiredT = tiredInit ? 0 : 420; tiredSaid = tiredInit ? 0 : 2; } else tiredT += (state.dt || 1);
                 if (tiredSaid < 1 && tiredT >= 140) { tiredSaid = 1; say('So sleepy… 😴'); }
                 if (tiredSaid < 2 && tiredT >= 320) { tiredSaid = 2; say('Zzz…'); }
-                const c = Math.max(0, Math.min(1, (tiredT - 110) / 190));
-                drawTiredCat(cctx, 7, state.t, { curl: c * c * (3 - 2 * c), walk: tiredT < 150, boop: state.boop });
+                const c = Math.max(0, Math.min(1, (tiredT - 110) / 190)), cv = c * c * (3 - 2 * c);
+                if (sp === 'snake') drawSnake(cctx, 7, state.t, { curl: cv, awake: false, boop: state.boop, outfit });
+                else drawQuad(cctx, 7, state.t, { species: sp, curl: cv, walk: tiredT < 150, awake: false, boop: state.boop, outfit });
             } else {
                 tiredT = -1;
-                drawCat(cctx, 7, 28, 28, state.t, {
-                    boop: state.boop,
-                    jump: state.jump,
-                    outfit: state.outfit,
-                    sleepy: false,
-                    alert: isHighAlert,
-                    showZzz: true
-                });
+                if (sp === 'cat') {
+                    drawCat(cctx, 7, 28, 28, state.t, { boop: state.boop, jump: state.jump, outfit, sleepy: false, alert: isHighAlert, showZzz: true });
+                } else if (sp === 'snake') {
+                    drawSnake(cctx, 7, state.t, { curl: 0, awake: true, boop: state.boop, outfit });
+                } else {
+                    drawQuad(cctx, 7, state.t, { species: sp, curl: 0, walk: false, awake: true, boop: state.boop, outfit });
+                }
             }
             tiredInit = true;
 
@@ -1973,65 +2163,143 @@
             return actx;
         }
         function rnd(a, b) { return a + Math.random() * (b - a); }
-        function voiceMeow(c, kitten) {
-            const now = c.currentTime, base = kitten ? rnd(650, 820) : rnd(380, 520), dur = kitten ? rnd(0.3, 0.45) : rnd(0.5, 0.85);
-            const osc = c.createOscillator(); osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(base * 0.85, now);
-            osc.frequency.exponentialRampToValueAtTime(base * rnd(1.25, 1.5), now + dur * 0.3);
-            osc.frequency.exponentialRampToValueAtTime(base * rnd(0.6, 0.8), now + dur);
-            const lfo = c.createOscillator(); lfo.frequency.value = rnd(5, 8);
-            const lg = c.createGain(); lg.gain.value = base * 0.025; lfo.connect(lg); lg.connect(osc.frequency);
-            const mix = c.createGain();
-            mix.gain.setValueAtTime(0.0001, now);
-            mix.gain.exponentialRampToValueAtTime(rnd(0.22, 0.3), now + 0.06);
-            mix.gain.setValueAtTime(0.24, now + dur * 0.7);
-            mix.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-            const f1 = c.createBiquadFilter(); f1.type = 'bandpass'; f1.frequency.value = rnd(650, 800); f1.Q.value = 3;
-            const f2 = c.createBiquadFilter(); f2.type = 'bandpass'; f2.Q.value = 4;
-            f2.frequency.setValueAtTime(rnd(1100, 1400), now);
-            f2.frequency.linearRampToValueAtTime(rnd(2000, 2600), now + dur * 0.35);
-            f2.frequency.linearRampToValueAtTime(rnd(900, 1200), now + dur);
-            osc.connect(f1); osc.connect(f2); f1.connect(mix); f2.connect(mix); mix.connect(c.destination);
-            osc.start(now); lfo.start(now); osc.stop(now + dur + 0.05); lfo.stop(now + dur + 0.05);
-        }
-        function voicePurr(c) {
-            const now = c.currentTime, dur = rnd(1.2, 2.2);
+        function noise(c) {
             if (!noiseBuf) { noiseBuf = c.createBuffer(1, c.sampleRate, c.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
-            const src = c.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
-            const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = rnd(260, 380);
-            const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = rnd(110, 150); bp.Q.value = 0.8;
-            const am = c.createGain(); am.gain.value = 0.22;
-            const lfo = c.createOscillator(); lfo.frequency.value = rnd(20, 27);
-            const lg = c.createGain(); lg.gain.value = 0.2; lfo.connect(lg); lg.connect(am.gain);
-            const env = c.createGain();
-            env.gain.setValueAtTime(0.0001, now);
-            env.gain.exponentialRampToValueAtTime(0.9, now + 0.25);
-            env.gain.setValueAtTime(0.9, now + dur - 0.4);
-            env.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-            const boost = c.createGain(); boost.gain.value = 3.5;
-            src.connect(lp); lp.connect(bp); bp.connect(am); am.connect(env); env.connect(boost); boost.connect(c.destination);
-            src.start(now); lfo.start(now); src.stop(now + dur + 0.05); lfo.stop(now + dur + 0.05);
+            const src = c.createBufferSource(); src.buffer = noiseBuf; src.loop = true; return src;
         }
-        function voiceMrrp(c) {
-            const now = c.currentTime, base = rnd(260, 340);
-            const o = c.createOscillator(); o.type = 'triangle';
-            o.frequency.setValueAtTime(base, now); o.frequency.linearRampToValueAtTime(base * rnd(1.4, 1.8), now + 0.12);
-            const lfo = c.createOscillator(); lfo.frequency.value = rnd(20, 28);
-            const lg = c.createGain(); lg.gain.value = base * 0.08; lfo.connect(lg); lg.connect(o.frequency);
+        function env(c, now, a, peak, hold, rel) {
             const g = c.createGain();
-            g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.2, now + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+            g.gain.setValueAtTime(0.0001, now);
+            g.gain.exponentialRampToValueAtTime(peak, now + a);
+            g.gain.setValueAtTime(peak, now + a + hold);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + a + hold + rel);
+            return g;
+        }
+        // A cute "mew": a soft voice that glides up then down, with vowel-like filters and a little breath.
+        function voiceMew(c, kind) {
+            const now = c.currentTime;
+            let base, dur, rise, fall;
+            if (kind === 'kitten') { base = rnd(820, 980); dur = rnd(0.22, 0.34); rise = 1.25; fall = 0.85; }
+            else if (kind === 'mrow') { base = rnd(430, 520); dur = rnd(0.55, 0.8); rise = 1.35; fall = 0.7; }
+            else { base = rnd(660, 780); dur = rnd(0.34, 0.5); rise = rnd(1.25, 1.4); fall = rnd(0.72, 0.85); }
+            const o1 = c.createOscillator(), o2 = c.createOscillator(); o1.type = 'sawtooth'; o2.type = 'triangle';
+            const lfo = c.createOscillator(); lfo.frequency.value = rnd(5.5, 7.5);
+            const lg = c.createGain(); lg.gain.value = base * 0.012; lfo.connect(lg);
+            [o1, o2].forEach(o => {
+                o.frequency.setValueAtTime(base * 0.88, now);
+                o.frequency.exponentialRampToValueAtTime(base * rise, now + dur * 0.28);
+                o.frequency.exponentialRampToValueAtTime(base * fall, now + dur);
+                lg.connect(o.frequency);
+            });
+            const g1 = c.createGain(); g1.gain.value = 0.55; const g2 = c.createGain(); g2.gain.value = 0.45;
+            o1.connect(g1); o2.connect(g2);
+            const f1 = c.createBiquadFilter(); f1.type = 'bandpass'; f1.Q.value = 5;
+            f1.frequency.setValueAtTime(850, now); f1.frequency.linearRampToValueAtTime(650, now + dur);
+            const f2 = c.createBiquadFilter(); f2.type = 'bandpass'; f2.Q.value = 6;
+            f2.frequency.setValueAtTime(2400, now); f2.frequency.linearRampToValueAtTime(1700, now + dur);
+            const f3 = c.createBiquadFilter(); f3.type = 'bandpass'; f3.frequency.value = 3300; f3.Q.value = 8;
+            const mix = env(c, now, 0.04, rnd(0.26, 0.32), dur * 0.5, dur * 0.5);
+            const soft = c.createBiquadFilter(); soft.type = 'lowpass'; soft.frequency.value = 6500;
+            [g1, g2].forEach(g => { g.connect(f1); g.connect(f2); g.connect(f3); });
+            const sum = c.createGain(); sum.gain.value = 0.7;
+            f1.connect(sum); f2.connect(sum); f3.connect(sum); sum.connect(mix); mix.connect(soft); soft.connect(c.destination);
+            const br = noise(c), hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3500;
+            const bg = env(c, now, 0.04, 0.03, dur * 0.3, dur * 0.6);
+            br.connect(hp); hp.connect(bg); bg.connect(c.destination);
+            o1.start(now); o2.start(now); lfo.start(now); br.start(now);
+            [o1, o2, lfo, br].forEach(n => n.stop(now + dur + 0.1));
+        }
+        function voiceChirp(c) {
+            const now = c.currentTime, base = rnd(900, 1100);
+            const o = c.createOscillator(); o.type = 'triangle';
+            o.frequency.setValueAtTime(base, now); o.frequency.linearRampToValueAtTime(base * rnd(1.4, 1.7), now + 0.16);
+            const lfo = c.createOscillator(); lfo.frequency.value = rnd(26, 32);
+            const lg = c.createGain(); lg.gain.value = base * 0.07; lfo.connect(lg); lg.connect(o.frequency);
+            const g = env(c, now, 0.02, 0.2, 0.06, 0.1);
             o.connect(g); g.connect(c.destination);
             o.start(now); lfo.start(now); o.stop(now + 0.25); lfo.stop(now + 0.25);
         }
+        // A purr: soft low rumble that pulses about 25 times a second, like a real cat.
+        function voicePurr(c, soft) {
+            const now = c.currentTime, dur = soft ? rnd(2.2, 3) : rnd(1.6, 2.6);
+            const lows = noise(c), mids = noise(c);
+            const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = rnd(450, 560);
+            const b1 = c.createBiquadFilter(); b1.type = 'bandpass'; b1.frequency.value = rnd(140, 180); b1.Q.value = 0.7;
+            const b2 = c.createBiquadFilter(); b2.type = 'bandpass'; b2.frequency.value = rnd(380, 460); b2.Q.value = 0.9;
+            const am = c.createGain(); am.gain.value = 0.35;
+            const lfo = c.createOscillator(); lfo.type = 'sawtooth';
+            const f0 = rnd(23, 28);
+            lfo.frequency.setValueAtTime(f0, now);
+            for (let k = 1; k < 6; k++) lfo.frequency.linearRampToValueAtTime(f0 + rnd(-2, 2), now + dur * k / 6);
+            const lg = c.createGain(); lg.gain.value = 0.3; lfo.connect(lg); lg.connect(am.gain);
+            const mid = c.createGain(); mid.gain.value = 0.45;
+            const e = env(c, now, 0.4, soft ? 0.7 : 1, dur - 0.9, 0.5);
+            const boost = c.createGain(); boost.gain.value = 4;
+            lows.connect(lp); lp.connect(b1); b1.connect(am);
+            mids.connect(b2); b2.connect(mid); mid.connect(am);
+            am.connect(e); e.connect(boost); boost.connect(c.destination);
+            lows.start(now); mids.start(now); lfo.start(now);
+            [lows, mids, lfo].forEach(n => n.stop(now + dur + 0.1));
+        }
+        function voiceBark(c, pup) {
+            const times = pup ? [0, 0.2] : [0];
+            times.forEach((dt, i) => {
+                const now = c.currentTime + dt, base = (pup ? rnd(420, 520) : rnd(240, 320)) * (1 + i * 0.08), dur = pup ? 0.12 : 0.17;
+                const o = c.createOscillator(); o.type = 'sawtooth';
+                o.frequency.setValueAtTime(base * 1.15, now); o.frequency.exponentialRampToValueAtTime(base * 0.7, now + dur);
+                const f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = rnd(650, 850); f.Q.value = 3;
+                const g = env(c, now, 0.01, 0.3, dur * 0.4, dur * 0.6);
+                o.connect(f); f.connect(g); g.connect(c.destination);
+                o.start(now); o.stop(now + dur + 0.1);
+            });
+        }
+        function voiceWhimper(c) {
+            const now = c.currentTime, o = c.createOscillator(); o.type = 'triangle';
+            o.frequency.setValueAtTime(rnd(600, 700), now); o.frequency.linearRampToValueAtTime(rnd(420, 500), now + 0.5);
+            const lfo = c.createOscillator(); lfo.frequency.value = 7; const lg = c.createGain(); lg.gain.value = 18; lfo.connect(lg); lg.connect(o.frequency);
+            const g = env(c, now, 0.08, 0.16, 0.25, 0.25);
+            o.connect(g); g.connect(c.destination);
+            o.start(now); lfo.start(now); o.stop(now + 0.7); lfo.stop(now + 0.7);
+        }
+        function voiceSqueak(c) {
+            const now = c.currentTime, o = c.createOscillator(); o.type = 'sine';
+            o.frequency.setValueAtTime(rnd(1400, 1600), now); o.frequency.linearRampToValueAtTime(rnd(1900, 2200), now + 0.05); o.frequency.linearRampToValueAtTime(rnd(1600, 1800), now + 0.11);
+            const g = env(c, now, 0.01, 0.12, 0.04, 0.07);
+            o.connect(g); g.connect(c.destination); o.start(now); o.stop(now + 0.2);
+        }
+        function voiceThump(c) {
+            const now = c.currentTime, o = c.createOscillator(); o.type = 'sine';
+            o.frequency.setValueAtTime(130, now); o.frequency.exponentialRampToValueAtTime(60, now + 0.09);
+            const g = env(c, now, 0.005, 0.5, 0.02, 0.1);
+            o.connect(g); g.connect(c.destination); o.start(now); o.stop(now + 0.2);
+            const n = noise(c), lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900;
+            const ng = env(c, now, 0.003, 0.12, 0.01, 0.04); n.connect(lp); lp.connect(ng); ng.connect(c.destination); n.start(now); n.stop(now + 0.1);
+        }
+        function voiceHiss(c) {
+            const now = c.currentTime, dur = rnd(0.6, 0.9), n = noise(c);
+            const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2500;
+            const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 6000; bp.Q.value = 0.8;
+            const g = env(c, now, 0.15, 0.22, dur * 0.4, dur * 0.45);
+            n.connect(hp); hp.connect(bp); bp.connect(g); g.connect(c.destination); n.start(now); n.stop(now + dur + 0.1);
+        }
+        const VOICES = {
+            cat:   { awake: ['mew', 'mew', 'kitten', 'mrow', 'purr', 'chirp'], asleep: ['purr', 'purr', 'chirp'] },
+            dog:   { awake: ['bark', 'bark2', 'whimper'], asleep: ['whimper'] },
+            bunny: { awake: ['squeak', 'thump', 'squeak'], asleep: ['squeak'] },
+            snake: { awake: ['hiss', 'hiss'], asleep: ['hiss'] }
+        };
         function catVoice(sleeping) {
             if (!soundOn) return;
             try {
                 const c = audioCtx(); if (!c) return;
-                const pool = sleeping ? ['purr', 'purr', 'mrrp'] : ['meow', 'meow', 'meow2', 'purr', 'mrrp'];
-                let v; do { v = pool[Math.floor(Math.random() * pool.length)]; } while (v === lastVoice);
+                const v0 = VOICES[state.previewAnimal || state.animal || 'cat'], pool = sleeping ? v0.asleep : v0.awake;
+                let v, guard = 0;
+                do { v = pool[Math.floor(Math.random() * pool.length)]; guard++; } while (v === lastVoice && pool.length > 1 && guard < 20);
                 lastVoice = v;
-                if (v === 'meow') voiceMeow(c, false); else if (v === 'meow2') voiceMeow(c, true);
-                else if (v === 'purr') voicePurr(c); else voiceMrrp(c);
+                const map = { mew: () => voiceMew(c, 'mew'), kitten: () => voiceMew(c, 'kitten'), mrow: () => voiceMew(c, 'mrow'), chirp: () => voiceChirp(c),
+                    purr: () => voicePurr(c, sleeping), bark: () => voiceBark(c, false), bark2: () => voiceBark(c, true), whimper: () => voiceWhimper(c),
+                    squeak: () => voiceSqueak(c), thump: () => voiceThump(c), hiss: () => voiceHiss(c) };
+                map[v]();
             } catch (e) {}
         }
         function setSound(on) {
@@ -2040,6 +2308,27 @@
             if (on) catVoice(false);
         }
 
+        const SCENE_LINES = {
+            meadow: ['The flowers smell so good 🌼', 'Is that a butterfly? 🦋', 'Sunshine on my fur ☀️', 'Nice breeze today 🍃', 'So many daisies!'],
+            stream: ['I can hear the stream 💧', 'Shh… listen to the forest', 'Leaves tickle my whiskers 🍃', 'So mossy and cosy here', 'Something rustled in the ferns 👀'],
+            galaxy: ['Look at all those stars ✨', 'Is that a shooting star? 🌠', 'So big and so quiet…', 'Make a wish! ⭐', 'The universe is cosy tonight'],
+            rain: ['Pitter-patter 🌧️', 'I love rainy days', 'Splash! 💦', 'Cosy weather for a nap', 'Keep my paws dry!'],
+            night: ['The fireflies are dancing ✨', 'What a bright moon 🌙', 'Shhh… everyone is sleeping', 'Moonlight is my favourite', 'Did you see that firefly?']
+        };
+        const SPECIES_LINES = {
+            dog: ['Woof! 🐶', 'Can we go for a walk?', 'Fetch? Fetch? Fetch?', 'Best human ever!', '*tail wagging*'],
+            bunny: ['Hop hop! 🐰', 'Carrots? 🥕', '*nose wiggle*', 'Binky time!', 'So fluffy, right?'],
+            snake: ['Sss… 🐍', 'Warm rocks are the best', 'Sssso relaxing', '*tongue flick*', 'Shy but friendly']
+        };
+        function pickFrom(a) { return a[Math.floor(Math.random() * a.length)]; }
+        function pickPetLine() {
+            if (state.battery < 20) return pickFrom(SLEEPY_LINES);
+            const sc = SCENES[sceneIdx] ? SCENES[sceneIdx].id : 'meadow', sp = state.previewAnimal || state.animal || 'cat', r = Math.random();
+            if (r < 0.45) return pickFrom(SCENE_LINES[sc] || SCENE_LINES.meadow);
+            if (sp !== 'cat' && r < 0.8) return pickFrom(SPECIES_LINES[sp]);
+            const pool = getActiveLines(false);
+            return pool[petLine++ % pool.length];
+        }
         function petMochi() {
             catVoice(state.battery < 20);
             state.boop = state.battery < 20 ? 14 : 34;
@@ -2049,8 +2338,7 @@
                 triggerCatJump();
                 return;
             }
-            const pool = getActiveLines(false);
-            say(pool[petLine++ % pool.length]);
+            say(pickPetLine());
             for (let i = 0; i < 3; i++) {
                 hearts.push({ x: 60 + i * 38 + Math.random() * 10, y: 30 + (i % 2) * 12, vy: 0.6 + Math.random() * 0.4, life: 45, c: i % 2 ? '#95D5B2' : '#FF758F' });
             }
@@ -2066,28 +2354,82 @@
                 b.title = locked ? 'Unlock for ' + cost + ' leaves' : '';
             });
         }
+        const ANIMALS = { cat: { n: 'Cat', e: '🐱', cost: 0 }, dog: { n: 'Dog', e: '🐶', cost: 400 }, bunny: { n: 'Bunny', e: '🐰', cost: 400 }, snake: { n: 'Snake', e: '🐍', cost: 600 } };
+        const OUTFIT_NAMES = { flower: 'Flower crown', hat: 'Sun hat' };
+        let previewing = null;
+        function itemInfo(it) { return it.kind === 'outfit' ? { name: OUTFIT_NAMES[it.id], cost: OUTFIT_COST[it.id] } : { name: ANIMALS[it.id].n, cost: ANIMALS[it.id].cost }; }
+        function showBuyBar() {
+            const b = document.getElementById('buyBar');
+            if (!b) return;
+            if (!previewing) { b.classList.add('hidden'); return; }
+            const info = itemInfo(previewing), can = state.leaves >= info.cost;
+            document.getElementById('buyName').textContent = 'Trying: ' + info.name;
+            document.getElementById('buySub').textContent = can ? 'Like it? Make it yours.' : 'You need ' + (info.cost - state.leaves) + ' more leaves';
+            const btn = document.getElementById('buyBtn');
+            btn.disabled = !can; btn.textContent = 'Buy · ' + info.cost + ' 🍃';
+            b.classList.remove('hidden');
+        }
+        function startPreview(kind, id) {
+            previewing = { kind, id };
+            if (kind === 'outfit') state.previewOutfit = id; else state.previewAnimal = id;
+            showBuyBar();
+        }
+        function cancelPreview() {
+            previewing = null; state.previewOutfit = null; state.previewAnimal = null;
+            showBuyBar();
+        }
+        function buyPreview() {
+            if (!previewing) return;
+            const info = itemInfo(previewing);
+            if (state.leaves < info.cost) return;
+            state.leaves -= info.cost;
+            game.owned = (game.owned || []).concat(previewing.id);
+            REWARDS.forEach(x => { if (state.leaves < x.cost) delete game.notified[x.id]; });
+            const it = previewing;
+            cancelPreview();
+            if (it.kind === 'outfit') applyOutfit(it.id); else equipAnimal(it.id, true);
+            saveGame(); updateLeaves(); updateOutfitLocks(); confetti(30); buzz([20, 30, 20]);
+        }
         function setOutfit(o) {
             const cost = OUTFIT_COST[o];
-            if (cost && !(game.owned || []).includes(o)) { openOutfitBuy(o); return; }
+            if (cost && !(game.owned || []).includes(o)) { startPreview('outfit', o); return; }
+            cancelPreview();
             applyOutfit(o);
         }
-        function openOutfitBuy(o) {
-            const cost = OUTFIT_COST[o], name = o === 'flower' ? 'Flower crown' : 'Sun hat';
-            const can = state.leaves >= cost;
-            openModal(`<div class="p-6 text-center">
-                <div class="text-4xl">${o === 'flower' ? '🌸' : '👒'}</div>
-                <h3 class="text-lg font-extrabold mt-3">${name} for Mochi</h3>
-                <p class="text-xs text-[#526B5A] mt-1">${can ? 'Yours to keep once unlocked.' : 'You need ' + (cost - state.leaves) + ' more leaves.'}</p>
-                <button type="button" ${can ? '' : 'disabled'} onclick="buyOutfit('${o}')" class="btn3d gold mt-5">Unlock for ${cost} 🍃</button>
-                <button type="button" onclick="closeModal()" class="mt-3 text-xs font-bold text-[#526B5A]">Not now</button></div>`);
+        function updateAnimalBtn() { const b = document.getElementById('animalBtn'); if (b) b.textContent = ANIMALS[state.animal || 'cat'].e; }
+        function equipAnimal(id, silent) {
+            game.animal = id; state.animal = id; saveGame(); updateAnimalBtn();
+            if (!silent) { closeModal(); cancelPreview(); }
+            tiredT = -1;
+            say(id === 'cat' ? 'Meow! Back to being a cat 🐱' : 'Hi! I\'m your new ' + ANIMALS[id].n.toLowerCase() + ' ' + ANIMALS[id].e);
         }
-        function buyOutfit(o) {
-            const cost = OUTFIT_COST[o];
-            if (!cost || state.leaves < cost) return;
-            state.leaves -= cost;
-            game.owned = (game.owned || []).concat(o);
-            REWARDS.forEach(x => { if (state.leaves < x.cost) delete game.notified[x.id]; });
-            saveGame(); updateLeaves(); updateOutfitLocks(); closeModal(); confetti(30); applyOutfit(o);
+        function pickAnimal(id) {
+            if (id === 'cat' || (game.owned || []).includes(id)) { equipAnimal(id); return; }
+            closeModal(); startPreview('animal', id);
+        }
+        function drawThumb(id) {
+            const cv = document.getElementById('thumb-' + id);
+            if (!cv) return;
+            const x = cv.getContext('2d'); x.clearRect(0, 0, 96, 84);
+            if (id === 'cat') drawCat(x, 3, 12, 9, 60, { boop: 0, jump: 0, outfit: 'none', sleepy: false, alert: false, showZzz: false });
+            else if (id === 'snake') drawSnake(x, 3, 60, { curl: 0, awake: true, boop: 0, outfit: 'none' });
+            else drawQuad(x, 3, 60, { species: id, curl: 0, awake: true, walk: false, boop: 0, outfit: 'none' });
+        }
+        function openAnimalPicker() {
+            const owned = game.owned || [], cur = state.animal || 'cat';
+            openModal(`<div class="p-5">
+                <h3 class="text-lg font-bold text-center">Choose your buddy</h3>
+                <p class="text-xs text-[#526B5A] text-center mt-1">Tap one to try it. Buy it if you love it.</p>
+                <div class="grid grid-cols-2 gap-3 mt-4">${Object.keys(ANIMALS).map(id => {
+                    const a = ANIMALS[id], has = id === 'cat' || owned.includes(id);
+                    const status = id === cur ? 'Equipped ✓' : (has ? 'Tap to switch' : a.cost + ' 🍃');
+                    return `<button type="button" onclick="pickAnimal('${id}')" class="rounded-2xl p-3 text-center transition active:scale-95 ${id === cur ? 'bg-[#DDF1E3] ring-2 ring-[#1F7A4D]/40' : 'bg-white border border-[#1F7A4D]/12 hover:bg-[#F0F7F2]'}">
+                        <canvas id="thumb-${id}" width="96" height="84" class="pixel mx-auto"></canvas>
+                        <p class="text-sm font-bold mt-1">${a.n}</p>
+                        <p class="text-[11px] font-bold ${has ? 'text-[#1F7A4D]' : 'text-[#B8710F]'}">${status}</p></button>`;
+                }).join('')}</div>
+                <button type="button" onclick="closeModal()" class="block mx-auto mt-4 text-xs font-bold text-[#526B5A]">Close</button></div>`);
+            Object.keys(ANIMALS).forEach(drawThumb);
         }
         function applyOutfit(o) {
             state.outfit = o;
@@ -2135,17 +2477,33 @@
         /* ============================================================
            SCENERY — real nature & space videos with live scene overlays
            ============================================================ */
-        // Competition rules ban stock footage. The built-in scenery is drawn in code (original).
-        // To use real video, film your own clips, save them as videos/own-meadow.mp4, own-stream.mp4,
-        // own-galaxy.mp4, own-rain.mp4, own-night.mp4, then set OWN_VIDEOS to true.
-        const OWN_VIDEOS = false;
+        // Live video scenery. Order of attempts: your own clips (videos/own-<scene>.mp4), then the online clips below.
+        // Online clips are Mixkit stock footage: check each clip's licence label (Free vs Restricted) before launch,
+        // and keep this switched off while recording the Nescafe entry video (stock footage is not allowed there).
+        const ONLINE_CLIPS = {
+            meadow: ['https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4', 'https://assets.mixkit.co/videos/1173/1173-720.mp4'],
+            stream: ['https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4', 'https://assets.mixkit.co/videos/529/529-720.mp4'],
+            galaxy: ['https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4', 'https://assets.mixkit.co/videos/1610/1610-720.mp4'],
+            rain:   ['https://assets.mixkit.co/videos/preview/mixkit-rain-falling-on-the-water-of-a-lake-seen-up-18312-large.mp4', 'https://assets.mixkit.co/videos/18312/18312-720.mp4'],
+            night:  ['https://assets.mixkit.co/videos/50869/50869-720.mp4']
+        };
+        let liveVideo = (function () { try { return localStorage.getItem('wattpet_video') !== '0'; } catch (e) { return true; } })();
         const SCENES = [
             { id: 'meadow', name: 'Sunny Meadow', icon: '🌼', pxIcon: 'flower', theme: 'meadow' },
             { id: 'stream', name: 'Forest Stream', icon: '🌿', pxIcon: 'leaf', theme: 'forest' },
             { id: 'galaxy', name: 'Milky Way', icon: '🌌', pxIcon: 'galaxy', theme: 'galaxy' },
             { id: 'rain', name: 'Rainy Leaves', icon: '🌧️', pxIcon: 'rain', theme: 'rain' },
             { id: 'night', name: 'Firefly Night', icon: '🌙', pxIcon: 'moon', theme: 'night' }
-        ].map(sc => Object.assign(sc, { src: OWN_VIDEOS ? ['videos/own-' + sc.id + '.mp4'] : [] }));
+        ];
+        function sceneSources(sc) {
+            if (!liveVideo) return [];
+            return ['videos/own-' + sc.id + '.mp4', 'videos/own-' + sc.id + '.webm'].concat(ONLINE_CLIPS[sc.id] || []);
+        }
+        function setLiveVideo(on) {
+            liveVideo = on;
+            try { localStorage.setItem('wattpet_video', on ? '1' : '0'); } catch (e) {}
+            loadScene(sceneIdx);
+        }
         let sceneIdx = 0;
         let sceneToken = 0;
         let videoReady = false;
@@ -2160,9 +2518,7 @@
             videoReady = false;
             video.style.opacity = 0;
             // Apply moonlit night forest color grade when Firefly Night uses forest footage
-            video.style.filter = sc.theme === 'night'
-                ? 'brightness(0.38) contrast(1.18) saturate(0.78) hue-rotate(185deg)'
-                : (sc.theme === 'galaxy' ? 'brightness(0.88) contrast(1.15) saturate(1.25)' : 'none');
+            video.style.filter = 'none';
             const scCanvas = document.getElementById('sceneIconCanvas');
             if (scCanvas) {
                 scCanvas.dataset.px = sc.pxIcon;
@@ -2170,11 +2526,12 @@
             }
             document.getElementById('sceneName').textContent = sc.name;
 
+            const srcs = sceneSources(sc);
             let k = 0;
             const tryNext = () => {
                 if (token !== sceneToken) return;
-                if (k >= sc.src.length) { video.removeAttribute('src'); return; }
-                video.src = sc.src[k++];
+                if (k >= srcs.length) { video.removeAttribute('src'); videoReady = false; video.style.opacity = 0; return; }
+                video.src = srcs[k++];
                 video.play().catch(() => {});
             };
             video.onerror = tryNext;
@@ -2230,7 +2587,13 @@
             renderAllPixelIcons(p);
         }
 
+        function initialScene() {
+            try { const v = localStorage.getItem('wattpet_scene'); if (v !== null && SCENES[+v]) return +v; } catch (e) {}
+            const h = new Date().getHours();
+            return (h >= 19 || h < 6) ? 4 : 0;
+        }
         function pickScene(i) {
+            try { localStorage.setItem('wattpet_scene', String(i)); } catch (e) {}
             loadScene(i);
             closeScenePicker();
             say(`Welcome to ${SCENES[i].name} ${SCENES[i].icon}`);
@@ -2477,6 +2840,34 @@
                     const px = ((i * 131) % 100) / 100 * W, py = H * (0.84 + ((i * 37) % 14) / 100), ph = (t * 0.03 + i * 0.7) % 1;
                     ctx.strokeStyle = `rgba(220,235,245,${(1 - ph) * 0.5})`; ctx.lineWidth = 1.2;
                     ctx.beginPath(); ctx.ellipse(px, py, ph * 14, ph * 5, 0, 0, 7); ctx.stroke();
+                }
+            }
+            // ambient life: birds and butterflies (meadow), drifting leaves (forest), a shooting star (night)
+            if (theme === 'meadow') {
+                ctx.lineCap = 'round'; ctx.lineWidth = 1.6; ctx.strokeStyle = 'rgba(40,50,70,0.7)';
+                for (let i = 0; i < 3; i++) {
+                    const bx = ((t * 0.25 + i * 300) % (W + 200)) - 100, by = H * (0.14 + i * 0.05) + Math.sin(t * 0.03 + i) * 6, f = Math.sin(t * 0.2 + i) * 4;
+                    ctx.beginPath(); ctx.moveTo(bx - 7, by + f * 0.3); ctx.quadraticCurveTo(bx - 3.5, by - f, bx, by); ctx.quadraticCurveTo(bx + 3.5, by - f, bx + 7, by + f * 0.3); ctx.stroke();
+                }
+                ['#F4A63B', '#E86A92', '#7FB5FF'].forEach((col, i) => {
+                    const bx = W * (0.2 + 0.3 * i) + Math.sin(t * 0.012 + i * 2) * W * 0.08 + Math.sin(t * 0.05 + i) * 10;
+                    const by = H * (0.72 + 0.06 * i) + Math.cos(t * 0.017 + i) * H * 0.04, fl = Math.abs(Math.sin(t * 0.25 + i));
+                    ctx.fillStyle = col; ctx.beginPath();
+                    ctx.ellipse(bx - 3, by, 3.2 * fl + 0.6, 4, -0.4, 0, 7); ctx.ellipse(bx + 3, by, 3.2 * fl + 0.6, 4, 0.4, 0, 7); ctx.fill();
+                });
+            } else if (theme === 'forest') {
+                for (let i = 0; i < 14; i++) {
+                    const lx = (((i * 97) % 100) / 100 * W + Math.sin(t * 0.02 + i) * 20 + t * 0.15) % (W + 20), ly = ((t * 0.35 + i * 53) % (H + 20)) - 10;
+                    ctx.fillStyle = i % 3 ? 'rgba(150,190,80,0.8)' : 'rgba(215,170,70,0.8)';
+                    ctx.beginPath(); ctx.ellipse(lx, ly, 4, 2, t * 0.03 + i, 0, 7); ctx.fill();
+                }
+            } else if (theme === 'night') {
+                const ph = (t % 900) / 900;
+                if (ph < 0.07) {
+                    const q = ph / 0.07, off = ((Math.floor(t / 900) * 137) % 40) / 100 * W;
+                    const x0 = W * 0.9 - off - W * 0.5 * q, y0 = H * (0.05 + 0.25 * q);
+                    ctx.strokeStyle = `rgba(255,255,255,${1 - q})`; ctx.lineWidth = 1.6;
+                    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0 + 60, y0 - 28); ctx.stroke();
                 }
             }
             const cols = GRASS[theme], n = Math.round(W / 9);
@@ -3088,6 +3479,8 @@
             if (!Array.isArray(game.coupons)) game.coupons = [];
             if (!Array.isArray(game.owned)) game.owned = [];
             if (!game.stats) game.stats = { pets: 0, unplugs: 0 };
+            if (!game.animal) game.animal = 'cat';
+            state.animal = game.animal;
             if (!game.badges) game.badges = {};
             rollDaily();
             state.leaves = game.leaves;
@@ -3733,9 +4126,19 @@
         }
 
         /* ---------- language: English / Bahasa Malaysia ---------- */
+        let themePref = (function () { try { return localStorage.getItem('wattpet_theme') || 'auto'; } catch (e) { return 'auto'; } })();
+        function applyTheme() {
+            const dark = themePref === 'dark' || (themePref === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.classList.toggle('dark', dark);
+            const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', dark ? '#0F1A14' : '#1F7A4D');
+            const on = 'bg-[#1F7A4D] text-white shadow-sm', off = 'text-[#526B5A]';
+            [['thAuto', 'auto'], ['thLight', 'light'], ['thDark', 'dark']].forEach(a => { const b = document.getElementById(a[0]); if (b) b.className = 'px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition ' + (themePref === a[1] ? on : off); });
+        }
+        function setTheme(t) { themePref = t; try { localStorage.setItem('wattpet_theme', t); } catch (e) {} applyTheme(); }
+        if (window.matchMedia) { try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (themePref === 'auto') applyTheme(); }); } catch (e) {} }
         const LANG_KEY = 'wattpet_lang';
         let lang = (function () { try { return localStorage.getItem(LANG_KEY) || 'en'; } catch (e) { return 'en'; } })();
-        const MS = {"Your savings": "Penjimatan anda", "Reminders, your battery, language and device.": "Peringatan, bateri, bahasa dan peranti anda.", "Install WattPet": "Pasang WattPet", "Install": "Pasang", "Get alerts and use it like a normal app.": "Dapatkan amaran dan guna seperti aplikasi biasa.", "Tap the Share button, then Add to Home Screen.": "Ketuk butang Kongsi, kemudian Tambah ke Skrin Utama.", "So sleepy… 😴": "Mengantuknya… 😴", "Mochi sounds": "Bunyi Mochi", "Meows and purrs when you pet": "Mengiau dan mendengkur apabila dibelai", "Your battery buddy": "Rakan bateri anda", "Home": "Utama", "Rewards": "Ganjaran", "Settings": "Tetapan", "Battery": "Bateri", "Update needed": "Perlu kemas kini", "CO₂ saved": "CO₂ dijimatkan", "Money saved": "Wang dijimatkan", "Treats worth": "Setara hidangan", "treats": "hidangan", "Tap to pet Mochi": "Ketuk untuk belai Mochi", "Next reward": "Ganjaran seterusnya", "View rewards →": "Lihat ganjaran →", "Healthy zone": "Zon sihat", "Healthy": "Sihat", "Charging gently": "Mengecas perlahan", "Charging": "Mengecas", "Running low": "Hampir habis", "Time to unplug": "Masa cabut pengecas", "Unplug now": "Cabut sekarang", "Over 80%": "Lebih 80%", "Low Battery": "Bateri rendah", "Mochi is content": "Mochi gembira", "Mochi is sleeping… 💤": "Mochi sedang tidur… 💤", "Mochi says: unplug me! 🔌": "Mochi kata: cabut saya! 🔌", "Plug in soon to prevent deep discharge": "Cas tidak lama lagi untuk elak bateri kosong sepenuhnya", "Unplug now to avoid top-off wear": "Cabut sekarang untuk elak kehausan bateri", "Charging inside the safe 20%–80% zone": "Mengecas dalam zon selamat 20%–80%", "Your week": "Minggu anda", "No data yet": "Belum ada data", "Keep WattPet open or synced and your week fills in here.": "Biarkan WattPet dibuka atau disegerak dan minggu anda akan muncul di sini.", "of the time WattPet could see your battery was in the healthy zone.": "daripada masa WattPet dapat melihat bateri anda berada dalam zon sihat.", "Mochi's tip of the day": "Petua Mochi hari ini", "Keeping your battery between 20% and 80% puts less strain on it than full charges.": "Mengekalkan bateri antara 20% dan 80% kurang membebankannya berbanding cas penuh.", "Heat is a battery's enemy. Take off thick cases while charging.": "Haba musuh bateri. Tanggalkan sarung tebal semasa mengecas.", "Plug in around 20% instead of letting the battery hit 0% again and again.": "Cas sekitar 20% dan jangan biarkan bateri sampai 0% berulang kali.", "If your device feels hot, let it cool down before you charge it.": "Jika peranti terasa panas, biarkan ia sejuk sebelum dicas.", "Lower screen brightness is the easiest way to stretch a charge.": "Mengurangkan kecerahan skrin ialah cara paling mudah untuk menjimatkan cas.", "Chargers still draw a little power when idle. Switch off at the wall when you are done.": "Pengecas masih menggunakan sedikit kuasa walaupun tidak digunakan. Matikan suis dinding apabila siap.", "Slow charging is gentler than fast charging when you are not in a hurry.": "Mengecas perlahan lebih lembut daripada mengecas pantas apabila anda tidak tergesa-gesa.", "Storing a device for months? Leave it at around 50% charge.": "Menyimpan peranti berbulan-bulan? Biarkan pada cas sekitar 50%.", "Keep your system and apps up to date. Updates often improve battery use.": "Kemas kini sistem dan aplikasi anda. Kemas kini sering memperbaiki penggunaan bateri.", "Turn off background refresh for apps you rarely open.": "Matikan muat semula latar belakang untuk aplikasi yang jarang dibuka.", "A battery lasts a set number of charge cycles. Fewer full cycles means a longer life.": "Bateri tahan bilangan kitaran cas yang tertentu. Kurang kitaran penuh bermaksud hayat lebih panjang.", "Use an official or certified charger. It protects your battery and your safety.": "Gunakan pengecas rasmi atau bersijil. Ia melindungi bateri dan keselamatan anda.", "Laptops that sit on the charger all week last longer with a charge limit switched on.": "Komputer riba yang sentiasa dicas tahan lebih lama dengan had cas diaktifkan.", "Dark mode can save battery on phones with OLED screens.": "Mod gelap boleh menjimatkan bateri pada telefon skrin OLED.", "Good battery habits, real perks": "Tabiat bateri yang baik, ganjaran sebenar", "Your leaves": "Daun anda", "Daily check-in": "Daftar masuk harian", "Claim today's leaves": "Tuntut daun hari ini", "Come back tomorrow": "Datang semula esok", "Today's quests": "Misi hari ini", "Pet Mochi": "Belai Mochi", "Stay in the healthy zone": "Kekal dalam zon sihat", "Unplug at about 80%": "Cabut pengecas sekitar 80%", "+5 per pet": "+5 setiap belaian", "+2 every 5 min": "+2 setiap 5 minit", "+15 each time": "+15 setiap kali", "My coupons": "Kupon saya", "Badges": "Lencana", "Reset rewards data": "Tetap semula data ganjaran", "Done ✓": "Selesai ✓", "Checked in today ✓": "Sudah daftar masuk hari ini ✓", "Keep your streak alive": "Kekalkan rentetan anda", "Start a streak": "Mulakan rentetan", "RM 3 off your drink": "Diskaun RM 3 untuk minuman anda", "Bring a reusable cup to a partner café.": "Bawa cawan guna semula ke kafe rakan kongsi.", "Plant a rainforest sapling": "Tanam anak pokok hutan hujan", "A native tree planted with local conservation partners.": "Pokok asli ditanam bersama rakan pemuliharaan tempatan.", "RM 15 device care voucher": "Baucar penjagaan peranti RM 15", "Port cleaning and battery check to keep your device going.": "Pembersihan port dan semakan bateri supaya peranti terus berfungsi.", "Café": "Kafe", "Nature": "Alam", "Repair": "Baiki", "Ready to redeem": "Sedia ditebus", "READY TO REDEEM": "SEDIA DITEBUS", "Redeem now": "Tebus sekarang", "Not yet": "Belum lagi", "Not now": "Bukan sekarang", "Cost": "Kos", "Balance after": "Baki selepas", "You got it! 🎉": "Anda dapat! 🎉", "Your code": "Kod anda", "Valid until": "Sah sehingga", "Redeemed on": "Ditebus pada", "Copy code": "Salin kod", "Mark as used": "Tandakan sudah guna", "Close": "Tutup", "Code copied": "Kod disalin", "No coupons yet": "Belum ada kupon", "Redeem a reward and your coupon will live here.": "Tebus ganjaran dan kupon anda akan disimpan di sini.", "Browse rewards": "Lihat ganjaran", "Used": "Telah guna", "Expired": "Tamat tempoh", "Last day": "Hari terakhir", "One use only.": "Sekali guna sahaja.", "Show this code at the counter of a WattPet partner café.": "Tunjukkan kod ini di kaunter kafe rakan kongsi WattPet.", "Show this code at a WattPet partner repair shop.": "Tunjukkan kod ini di kedai baiki rakan kongsi WattPet.", "Keep this code. Your sapling is planted in the next planting round.": "Simpan kod ini. Anak pokok anda ditanam pada pusingan penanaman seterusnya.", "Mark this coupon as used?": "Tandakan kupon ini sudah guna?", "Yes, mark as used": "Ya, tandakan sudah guna", "Back": "Kembali", "Do this after the shop has accepted your code. It can't be undone.": "Lakukan ini selepas kedai menerima kod anda. Ia tidak boleh dibatalkan.", "Meet Mochi": "Kenali Mochi", "Mochi is your battery buddy. Keep your charge between 20% and 80% and Mochi stays happy.": "Mochi ialah rakan bateri anda. Kekalkan cas antara 20% dan 80% dan Mochi akan gembira.", "Earn leaves": "Kumpul daun", "Pet Mochi, check in every day and unplug on time to collect leaves.": "Belai Mochi, daftar masuk setiap hari dan cabut pengecas tepat pada masanya untuk kumpul daun.", "Get real perks": "Dapatkan ganjaran sebenar", "Swap leaves for coupons from partners. Add WattPet to your Home Screen to get alerts.": "Tukar daun dengan kupon daripada rakan kongsi. Tambah WattPet ke Skrin Utama untuk terima amaran.", "Next": "Seterusnya", "Skip": "Langkau", "Let's go": "Jom mulakan", "What's your battery now?": "Berapa bateri anda sekarang?", "Looks right": "Nampak betul", "Later": "Nanti", "Charging right now": "Sedang mengecas", "Update battery now": "Kemas kini bateri sekarang", "Language": "Bahasa", "Reminders": "Peringatan", "80% charge reminder": "Peringatan cas 80%", "Nudge me to unplug at 80%": "Ingatkan saya cabut pengecas pada 80%", "Wall switch reminder": "Peringatan suis dinding", "Remind me to switch off the socket": "Ingatkan saya matikan soket", "Pause unused tabs": "Jeda tab yang tidak digunakan", "Pause tabs you aren't using": "Jeda tab yang tidak anda guna", "Show Mochi": "Tunjuk Mochi", "Turn off to see only the scenery": "Matikan untuk lihat pemandangan sahaja", "Send test notification": "Hantar notifikasi ujian", "Notifications": "Notifikasi", "Alerts appear while WattPet is open or running in the background.": "Amaran muncul semasa WattPet dibuka atau berjalan di latar belakang.", "Charger connected": "Pengecas disambung", "On battery": "Guna bateri", "Charging ⚡": "Mengecas ⚡", "My device": "Peranti saya", "Your device": "Peranti anda", "Auto-detected, or enter your model.": "Dikesan automatik, atau masukkan model anda.", "Checking your device…": "Menyemak peranti anda…", "Export my data": "Eksport data saya", "Download CSV": "Muat turun CSV", "Copy summary": "Salin ringkasan", "Share my impact card": "Kongsi kad impak saya", "How we estimate": "Cara kami menganggar", "Sources": "Sumber", "Scenery": "Pemandangan", "Use my own video": "Guna video saya sendiri", "Sunny Meadow": "Padang Cerah", "Forest Stream": "Anak Sungai Hutan", "Milky Way": "Bima Sakti", "Rainy Leaves": "Daun Berhujan", "Firefly Night": "Malam Kelip-kelip", "Active": "Aktif", "No match. We'll use a standard estimate.": "Tiada padanan. Kami guna anggaran standard.", "Set up auto sync with Shortcuts": "Sediakan segerak automatik dengan Shortcuts", "Copy plug-in link": "Salin pautan cabut-masuk", "Copy unplug link": "Salin pautan cabut", "Safari and Firefox can't read the battery. Use Chrome or Edge for automatic updates.": "Safari dan Firefox tidak boleh membaca bateri. Guna Chrome atau Edge untuk kemas kini automatik.", "Not updated yet": "Belum dikemas kini", "Updated just now": "Baru dikemas kini", "First pet": "Belaian pertama", "3-day streak": "Rentetan 3 hari", "7-day streak": "Rentetan 7 hari", "First coupon": "Kupon pertama", "Healthy week": "Minggu sihat", "Dress-up": "Bergaya", "Leaf collector": "Pengumpul daun", "Perfect unplug": "Cabut tepat", "Rewards reset": "Ganjaran ditetapkan semula", "Battery updated": "Bateri dikemas kini", "Image saved": "Imej disimpan", "Mochi is full of cuddles today. More leaves tomorrow!": "Mochi sudah puas dibelai hari ini. Lebih banyak daun esok!", "Apple does not let websites read the battery, so match the number on your screen.": "Apple tidak membenarkan laman web membaca bateri, jadi padankan nombor pada skrin anda.", "Match the number you see on your screen.": "Padankan nombor yang anda nampak pada skrin."};
+        const MS = {"Your savings": "Penjimatan anda", "Appearance": "Paparan", "Auto": "Auto", "Light": "Cerah", "Dark": "Gelap", "Live video scenery": "Pemandangan video langsung", "Turn off to save data, or before you record your video": "Matikan untuk jimat data, atau sebelum merakam video anda", "Reminders, your battery, language and device.": "Peringatan, bateri, bahasa dan peranti anda.", "Install WattPet": "Pasang WattPet", "Install": "Pasang", "Get alerts and use it like a normal app.": "Dapatkan amaran dan guna seperti aplikasi biasa.", "Tap the Share button, then Add to Home Screen.": "Ketuk butang Kongsi, kemudian Tambah ke Skrin Utama.", "So sleepy… 😴": "Mengantuknya… 😴", "Mochi sounds": "Bunyi Mochi", "Meows and purrs when you pet": "Mengiau dan mendengkur apabila dibelai", "Your battery buddy": "Rakan bateri anda", "Home": "Utama", "Rewards": "Ganjaran", "Settings": "Tetapan", "Battery": "Bateri", "Update needed": "Perlu kemas kini", "CO₂ saved": "CO₂ dijimatkan", "Money saved": "Wang dijimatkan", "Treats worth": "Setara hidangan", "treats": "hidangan", "Tap to pet Mochi": "Ketuk untuk belai Mochi", "Next reward": "Ganjaran seterusnya", "View rewards →": "Lihat ganjaran →", "Healthy zone": "Zon sihat", "Healthy": "Sihat", "Charging gently": "Mengecas perlahan", "Charging": "Mengecas", "Running low": "Hampir habis", "Time to unplug": "Masa cabut pengecas", "Unplug now": "Cabut sekarang", "Over 80%": "Lebih 80%", "Low Battery": "Bateri rendah", "Mochi is content": "Mochi gembira", "Mochi is sleeping… 💤": "Mochi sedang tidur… 💤", "Mochi says: unplug me! 🔌": "Mochi kata: cabut saya! 🔌", "Plug in soon to prevent deep discharge": "Cas tidak lama lagi untuk elak bateri kosong sepenuhnya", "Unplug now to avoid top-off wear": "Cabut sekarang untuk elak kehausan bateri", "Charging inside the safe 20%–80% zone": "Mengecas dalam zon selamat 20%–80%", "Your week": "Minggu anda", "No data yet": "Belum ada data", "Keep WattPet open or synced and your week fills in here.": "Biarkan WattPet dibuka atau disegerak dan minggu anda akan muncul di sini.", "of the time WattPet could see your battery was in the healthy zone.": "daripada masa WattPet dapat melihat bateri anda berada dalam zon sihat.", "Mochi's tip of the day": "Petua Mochi hari ini", "Keeping your battery between 20% and 80% puts less strain on it than full charges.": "Mengekalkan bateri antara 20% dan 80% kurang membebankannya berbanding cas penuh.", "Heat is a battery's enemy. Take off thick cases while charging.": "Haba musuh bateri. Tanggalkan sarung tebal semasa mengecas.", "Plug in around 20% instead of letting the battery hit 0% again and again.": "Cas sekitar 20% dan jangan biarkan bateri sampai 0% berulang kali.", "If your device feels hot, let it cool down before you charge it.": "Jika peranti terasa panas, biarkan ia sejuk sebelum dicas.", "Lower screen brightness is the easiest way to stretch a charge.": "Mengurangkan kecerahan skrin ialah cara paling mudah untuk menjimatkan cas.", "Chargers still draw a little power when idle. Switch off at the wall when you are done.": "Pengecas masih menggunakan sedikit kuasa walaupun tidak digunakan. Matikan suis dinding apabila siap.", "Slow charging is gentler than fast charging when you are not in a hurry.": "Mengecas perlahan lebih lembut daripada mengecas pantas apabila anda tidak tergesa-gesa.", "Storing a device for months? Leave it at around 50% charge.": "Menyimpan peranti berbulan-bulan? Biarkan pada cas sekitar 50%.", "Keep your system and apps up to date. Updates often improve battery use.": "Kemas kini sistem dan aplikasi anda. Kemas kini sering memperbaiki penggunaan bateri.", "Turn off background refresh for apps you rarely open.": "Matikan muat semula latar belakang untuk aplikasi yang jarang dibuka.", "A battery lasts a set number of charge cycles. Fewer full cycles means a longer life.": "Bateri tahan bilangan kitaran cas yang tertentu. Kurang kitaran penuh bermaksud hayat lebih panjang.", "Use an official or certified charger. It protects your battery and your safety.": "Gunakan pengecas rasmi atau bersijil. Ia melindungi bateri dan keselamatan anda.", "Laptops that sit on the charger all week last longer with a charge limit switched on.": "Komputer riba yang sentiasa dicas tahan lebih lama dengan had cas diaktifkan.", "Dark mode can save battery on phones with OLED screens.": "Mod gelap boleh menjimatkan bateri pada telefon skrin OLED.", "Good battery habits, real perks": "Tabiat bateri yang baik, ganjaran sebenar", "Your leaves": "Daun anda", "Daily check-in": "Daftar masuk harian", "Claim today's leaves": "Tuntut daun hari ini", "Come back tomorrow": "Datang semula esok", "Today's quests": "Misi hari ini", "Pet Mochi": "Belai Mochi", "Stay in the healthy zone": "Kekal dalam zon sihat", "Unplug at about 80%": "Cabut pengecas sekitar 80%", "+5 per pet": "+5 setiap belaian", "+2 every 5 min": "+2 setiap 5 minit", "+15 each time": "+15 setiap kali", "My coupons": "Kupon saya", "Badges": "Lencana", "Reset rewards data": "Tetap semula data ganjaran", "Done ✓": "Selesai ✓", "Checked in today ✓": "Sudah daftar masuk hari ini ✓", "Keep your streak alive": "Kekalkan rentetan anda", "Start a streak": "Mulakan rentetan", "RM 3 off your drink": "Diskaun RM 3 untuk minuman anda", "Bring a reusable cup to a partner café.": "Bawa cawan guna semula ke kafe rakan kongsi.", "Plant a rainforest sapling": "Tanam anak pokok hutan hujan", "A native tree planted with local conservation partners.": "Pokok asli ditanam bersama rakan pemuliharaan tempatan.", "RM 15 device care voucher": "Baucar penjagaan peranti RM 15", "Port cleaning and battery check to keep your device going.": "Pembersihan port dan semakan bateri supaya peranti terus berfungsi.", "Café": "Kafe", "Nature": "Alam", "Repair": "Baiki", "Ready to redeem": "Sedia ditebus", "READY TO REDEEM": "SEDIA DITEBUS", "Redeem now": "Tebus sekarang", "Not yet": "Belum lagi", "Not now": "Bukan sekarang", "Cost": "Kos", "Balance after": "Baki selepas", "You got it! 🎉": "Anda dapat! 🎉", "Your code": "Kod anda", "Valid until": "Sah sehingga", "Redeemed on": "Ditebus pada", "Copy code": "Salin kod", "Mark as used": "Tandakan sudah guna", "Close": "Tutup", "Code copied": "Kod disalin", "No coupons yet": "Belum ada kupon", "Redeem a reward and your coupon will live here.": "Tebus ganjaran dan kupon anda akan disimpan di sini.", "Browse rewards": "Lihat ganjaran", "Used": "Telah guna", "Expired": "Tamat tempoh", "Last day": "Hari terakhir", "One use only.": "Sekali guna sahaja.", "Show this code at the counter of a WattPet partner café.": "Tunjukkan kod ini di kaunter kafe rakan kongsi WattPet.", "Show this code at a WattPet partner repair shop.": "Tunjukkan kod ini di kedai baiki rakan kongsi WattPet.", "Keep this code. Your sapling is planted in the next planting round.": "Simpan kod ini. Anak pokok anda ditanam pada pusingan penanaman seterusnya.", "Mark this coupon as used?": "Tandakan kupon ini sudah guna?", "Yes, mark as used": "Ya, tandakan sudah guna", "Back": "Kembali", "Do this after the shop has accepted your code. It can't be undone.": "Lakukan ini selepas kedai menerima kod anda. Ia tidak boleh dibatalkan.", "Meet Mochi": "Kenali Mochi", "Mochi is your battery buddy. Keep your charge between 20% and 80% and Mochi stays happy.": "Mochi ialah rakan bateri anda. Kekalkan cas antara 20% dan 80% dan Mochi akan gembira.", "Earn leaves": "Kumpul daun", "Pet Mochi, check in every day and unplug on time to collect leaves.": "Belai Mochi, daftar masuk setiap hari dan cabut pengecas tepat pada masanya untuk kumpul daun.", "Get real perks": "Dapatkan ganjaran sebenar", "Swap leaves for coupons from partners. Add WattPet to your Home Screen to get alerts.": "Tukar daun dengan kupon daripada rakan kongsi. Tambah WattPet ke Skrin Utama untuk terima amaran.", "Next": "Seterusnya", "Skip": "Langkau", "Let's go": "Jom mulakan", "What's your battery now?": "Berapa bateri anda sekarang?", "Looks right": "Nampak betul", "Later": "Nanti", "Charging right now": "Sedang mengecas", "Update battery now": "Kemas kini bateri sekarang", "Language": "Bahasa", "Reminders": "Peringatan", "80% charge reminder": "Peringatan cas 80%", "Nudge me to unplug at 80%": "Ingatkan saya cabut pengecas pada 80%", "Wall switch reminder": "Peringatan suis dinding", "Remind me to switch off the socket": "Ingatkan saya matikan soket", "Pause unused tabs": "Jeda tab yang tidak digunakan", "Pause tabs you aren't using": "Jeda tab yang tidak anda guna", "Show Mochi": "Tunjuk Mochi", "Turn off to see only the scenery": "Matikan untuk lihat pemandangan sahaja", "Send test notification": "Hantar notifikasi ujian", "Notifications": "Notifikasi", "Alerts appear while WattPet is open or running in the background.": "Amaran muncul semasa WattPet dibuka atau berjalan di latar belakang.", "Charger connected": "Pengecas disambung", "On battery": "Guna bateri", "Charging ⚡": "Mengecas ⚡", "My device": "Peranti saya", "Your device": "Peranti anda", "Auto-detected, or enter your model.": "Dikesan automatik, atau masukkan model anda.", "Checking your device…": "Menyemak peranti anda…", "Export my data": "Eksport data saya", "Download CSV": "Muat turun CSV", "Copy summary": "Salin ringkasan", "Share my impact card": "Kongsi kad impak saya", "How we estimate": "Cara kami menganggar", "Sources": "Sumber", "Scenery": "Pemandangan", "Use my own video": "Guna video saya sendiri", "Sunny Meadow": "Padang Cerah", "Forest Stream": "Anak Sungai Hutan", "Milky Way": "Bima Sakti", "Rainy Leaves": "Daun Berhujan", "Firefly Night": "Malam Kelip-kelip", "Active": "Aktif", "No match. We'll use a standard estimate.": "Tiada padanan. Kami guna anggaran standard.", "Set up auto sync with Shortcuts": "Sediakan segerak automatik dengan Shortcuts", "Copy plug-in link": "Salin pautan cabut-masuk", "Copy unplug link": "Salin pautan cabut", "Safari and Firefox can't read the battery. Use Chrome or Edge for automatic updates.": "Safari dan Firefox tidak boleh membaca bateri. Guna Chrome atau Edge untuk kemas kini automatik.", "Not updated yet": "Belum dikemas kini", "Updated just now": "Baru dikemas kini", "First pet": "Belaian pertama", "3-day streak": "Rentetan 3 hari", "7-day streak": "Rentetan 7 hari", "First coupon": "Kupon pertama", "Healthy week": "Minggu sihat", "Dress-up": "Bergaya", "Leaf collector": "Pengumpul daun", "Perfect unplug": "Cabut tepat", "Rewards reset": "Ganjaran ditetapkan semula", "Battery updated": "Bateri dikemas kini", "Image saved": "Imej disimpan", "Mochi is full of cuddles today. More leaves tomorrow!": "Mochi sudah puas dibelai hari ini. Lebih banyak daun esok!", "Apple does not let websites read the battery, so match the number on your screen.": "Apple tidak membenarkan laman web membaca bateri, jadi padankan nombor pada skrin anda.", "Match the number you see on your screen.": "Padankan nombor yang anda nampak pada skrin."};
         const MS_PAT = [["^\\+(\\d+) leaves$", "+$1 daun"], ["^(\\d+) more leaves to unlock$", "$1 daun lagi untuk dibuka"], ["^You need (\\d+) more leaves$", "Anda perlukan $1 daun lagi"], ["^Redeem for (\\d+) 🍃$", "Tebus dengan $1 🍃"], ["^Unlock for (\\d+) 🍃$", "Buka dengan $1 🍃"], ["^Valid (\\d+) days after redeeming$", "Sah $1 hari selepas ditebus"], ["^Valid for (\\d+) days after redeeming\\.$", "Sah selama $1 hari selepas ditebus."], ["^(\\d+) days? left$", "$1 hari lagi"], ["^(\\d+)d left$", "$1h lagi"], ["^Updated (\\d+) min ago$", "Dikemas kini $1 minit lalu"], ["^Updated (\\d+) h ago$", "Dikemas kini $1 jam lalu"], ["^(🔥 )?(\\d+) day streak$", "$1Rentetan $2 hari"], ["^(🌱|🌿|🌳|🏞️) Sprout$", "$1 Pucuk"], ["^(🌱|🌿|🌳|🏞️) Sapling$", "$1 Anak pokok"], ["^(🌱|🌿|🌳|🏞️) Tree$", "$1 Pokok"], ["^(🌱|🌿|🌳|🏞️) Forest$", "$1 Hutan"], ["^(Sprout|Sapling|Tree|Forest) tier$", "Peringkat $1"], ["^(\\d+) / (\\d+) to (Sprout|Sapling|Tree|Forest)$", "$1 / $2 ke $3"], ["^(\\d+) / (\\d+) leaves$", "$1 / $2 daun"], ["^Day (\\d+)$", "Hari $1"], ["^Day (\\d+) check-in: \\+(\\d+) leaves$", "Daftar masuk hari $1: +$2 daun"], ["^Perfect unplug \\+(\\d+) leaves$", "Cabut tepat +$1 daun"], ["^Reward unlocked: (.+)$", "Ganjaran dibuka: $1"], ["^Badge unlocked: (.+)$", "Lencana dibuka: $1"], ["^Unlock for (\\d+) 🍃$", "Buka dengan $1 🍃"], ["^(\\d+) \\/ (\\d+)$", "$1 / $2"]].map(p => [new RegExp(p[0]), p[1]]);
         const trOrig = new WeakMap();
         let trObs = null;
@@ -3825,7 +4228,7 @@
                 const d = new Date(Date.now() - i * 864e5), k = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
                 const st = stats[k], pct = st && st.t >= 5 * 60000 ? Math.round(st.h / st.t * 100) : null;
                 if (st) { H += st.h; T += st.t; }
-                const col = pct === null ? '#E5EFE7' : pct >= 70 ? '#2E9A63' : pct >= 40 ? '#F5A524' : '#E07A5F';
+                const col = pct === null ? 'rgba(127,160,140,0.28)' : pct >= 70 ? '#2E9A63' : pct >= 40 ? '#F5A524' : '#E07A5F';
                 html += `<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end"><div class="w-full max-w-[34px] rounded-lg transition-all duration-500" style="height:${pct === null ? 6 : Math.max(8, pct)}%;background:${col}"></div><span class="text-[10px] font-bold ${i === 0 ? 'text-[#172B1E]' : 'text-[#7C9283]'}">${names[d.getDay()]}</span></div>`;
             }
             box.innerHTML = html;
@@ -3876,7 +4279,10 @@
             setTimeout(checkExpiringCoupons, 2500);
             handleDeepLink(location.hash);
             updateOutfitLocks();
+            updateAnimalBtn();
+            applyTheme();
             const so = document.getElementById('optSound'); if (so) so.checked = soundOn;
+            const ov = document.getElementById('optVideo'); if (ov) ov.checked = liveVideo;
             hidePetHint();
             setLang(lang, true);
             try {
@@ -3937,7 +4343,9 @@
         function loop(now) {
             requestAnimationFrame(loop);
             // Eco rendering: only draw while Home is on screen, and slow down when the battery is low.
-            if (document.hidden || state.page !== 'sanctuary') { lastFrameAt = 0; return; }
+            const vid = document.getElementById('sceneVideo');
+            if (document.hidden || state.page !== 'sanctuary') { lastFrameAt = 0; if (vid && !vid.paused) vid.pause(); return; }
+            if (vid && videoReady && vid.paused) vid.play().catch(() => {});
             now = now || performance.now();
             const gap = (state.battery < 20 && !state.charging) ? 48 : 30;
             if (lastFrameAt && now - lastFrameAt < gap) return;
@@ -3951,8 +4359,9 @@
                 // Rare ~1/100 interaction where Mochi jumps when within the 20-80% healthy zone
                 if (state.t % 60 === 0 && state.jump === 0 && state.battery >= 20 && state.battery <= 80 && Math.random() < 0.01) triggerCatJump();
                 if (state.t % 3000 === 1500) {
-                    const pool = getActiveLines(true);
-                    say(pool[Math.floor(Math.random() * pool.length)]);
+                    const sc = SCENES[sceneIdx] ? SCENES[sceneIdx].id : 'meadow';
+                    if (state.battery >= 20 && Math.random() < 0.6) say(pickFrom(SCENE_LINES[sc] || SCENE_LINES.meadow));
+                    else { const pool = getActiveLines(true); say(pool[Math.floor(Math.random() * pool.length)]); }
                 }
             }
             renderCats();
@@ -3971,7 +4380,7 @@
             autoDetectDeviceSpecs(false);
             setOutfit('sprout');
             initGame();
-            loadScene(0);
+            loadScene(initialScene());
             initBattery();
             initStickyBar();
             updateNotificationStatusBadge();
