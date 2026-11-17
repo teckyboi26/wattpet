@@ -5,15 +5,15 @@
     <meta charset="UTF-8" />
     <script>(function(){try{var t=localStorage.getItem('wattpet_theme')||'auto';var d=t==='dark'||(t==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>WattPet: Your battery buddy</title>
+    <title>Eighty: Your 80% battery buddy</title>
     <meta name="theme-color" content="#1F7A4D" />
-    <meta name="description" content="Mochi the pixel cat rewards healthy battery habits." />
+    <meta name="description" content="Eighty helps you stop at 80%. Mochi rewards healthy battery habits." />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/png" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="WattPet" />
+    <meta name="apple-mobile-web-app-title" content="Eighty" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
     <!-- Tailwind (falls back to a mirror if the main CDN is blocked) -->
@@ -72,6 +72,10 @@
         #stickyBar { display: none !important; }
         h1, h2, h3, .num, .btn3d, .chip { font-family: 'Fredoka', 'Nunito', sans-serif; letter-spacing: 0.005em; }
         .main-nav:active { transform: scale(0.94); }
+        @keyframes arcGlow { 0%, 100% { filter: drop-shadow(0 0 2px rgba(255,224,138,0.4)); } 50% { filter: drop-shadow(0 0 10px rgba(255,224,138,0.95)); } }
+        .arc-glow #stageArcFill { animation: arcGlow 1.6s infinite; stroke: #FFD166 !important; }
+        @keyframes arcPop { 0% { transform: translate(-50%,-50%) scale(1); } 35% { transform: translate(-50%,-50%) scale(1.07); } 100% { transform: translate(-50%,-50%) scale(1); } }
+        .arc-pop { animation: arcPop 1.2s ease-out; }
         @keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
         .page-in { animation: pageIn .35s cubic-bezier(.22,1,.36,1); }
         @keyframes dotPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
@@ -225,7 +229,7 @@
             </div>
             <div class="flex-1 min-w-0 pr-1">
                 <div class="flex items-center justify-between text-[10px] font-bold text-[#A7D7B5]">
-                    <span class="uppercase tracking-wider">WattPet · Device Notification</span>
+                    <span class="uppercase tracking-wider">Eighty · Device Notification</span>
                     <span id="notifTime">now</span>
                 </div>
                 <h4 id="notifTitle" class="text-xs sm:text-sm font-black text-white mt-0.5 leading-snug">Healthy Zone Reminder</h4>
@@ -269,18 +273,19 @@
              ========================================================= -->
         <header id="mainHeader" class="flex items-center justify-between gap-3 px-1">
             <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#74C69D] to-[#1F7A4D] flex items-center justify-center shadow-sm flex-shrink-0">
+                <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-[#74C69D] to-[#1F7A4D] flex items-center justify-center shadow-sm flex-shrink-0">
                     <canvas id="logoCatCanvas" width="60" height="52" class="pixel w-[32px] h-[28px]"></canvas>
+                    <span class="absolute -bottom-1.5 -right-1.5 px-1.5 rounded-md bg-[#F5A524] text-[9px] font-black text-white leading-4 shadow border border-white/80">80</span>
                 </div>
                 <div class="min-w-0">
-                    <h1 class="text-xl font-bold tracking-tight leading-none text-[#172B1E]">WattPet</h1>
-                    <p class="text-[11px] font-bold text-[#526B5A] mt-1">Your battery buddy</p>
+                    <h1 class="text-xl font-bold tracking-tight leading-none text-[#172B1E]">Eighty</h1>
+                    <p class="text-[11px] font-bold text-[#526B5A] mt-1">Your 80% battery buddy</p>
                 </div>
             </div>
             <button type="button" onclick="switchPage('rewards', true)" class="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/85 border border-[#1F7A4D]/15 shadow-sm text-sm font-bold text-[#172B1E] active:scale-95 transition" aria-label="Open rewards">
-                <span>🍃 <span id="hdrLeaves" class="num inline-block">300</span></span>
+                <span class="flex items-center gap-1"><canvas data-px="leaf" width="28" height="28" class="pixel w-4 h-4"></canvas><span id="hdrLeaves" class="num inline-block">300</span></span>
                 <span class="w-px h-4 bg-[#1F7A4D]/20"></span>
-                <span>🔥 <span id="hdrStreak" class="num">0</span></span>
+                <span class="flex items-center gap-1"><canvas data-px="flame" width="28" height="28" class="pixel w-4 h-4"></canvas><span id="hdrStreak" class="num">0</span></span>
             </button>
         </header>
 
@@ -333,6 +338,7 @@
                                 </div>
                                 <span id="battStatusBadge" onclick="openQuickSync()" class="cursor-pointer text-[9px] font-black px-2 py-0.5 rounded-full bg-white/90 border border-[#1F7A4D]/15 text-[#92400E]">Update needed</span>
                             </div>
+                            <p id="chargeAge" class="hidden text-[11px] font-bold mb-1"></p>
 
                             <!-- 3-Zone Bar (display only) -->
                             <div id="zoneBarContainer" class="relative mt-1.5 mb-0.5 select-none py-1">
@@ -400,6 +406,14 @@
 
                 <!-- Cat -->
                 <div id="catStageWrap" class="relative z-10 flex flex-col items-center justify-center">
+                    <svg id="stageArc" viewBox="0 0 300 300" class="absolute pointer-events-none" style="left:50%;top:50%;width:280px;height:280px;transform:translate(-50%,-50%);overflow:visible" aria-hidden="true">
+                        <path d="M82.5 266.9A135 135 0 1 1 217.5 266.9" fill="none" stroke="rgba(255,255,255,0.24)" stroke-width="7" stroke-linecap="round"/>
+                        <path id="stageArcFill" d="M82.5 266.9A135 135 0 1 1 217.5 266.9" fill="none" stroke="#3FB37F" stroke-width="7" stroke-linecap="round" stroke-dasharray="706.9" stroke-dashoffset="226.2" style="transition:stroke-dashoffset .8s ease, stroke .4s ease;filter:drop-shadow(0 0 5px rgba(0,0,0,0.35))"/>
+                        <line x1="266" y1="150" x2="296" y2="150" stroke="#FFE08A" stroke-width="3" stroke-linecap="round"/>
+                        <text x="258" y="155" text-anchor="end" font-size="13" font-weight="800" fill="#FFE08A" font-family="Fredoka,sans-serif" style="paint-order:stroke;stroke:rgba(0,0,0,0.35);stroke-width:2px">80</text>
+                        <line x1="4" y1="150" x2="22" y2="150" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round"/>
+                        <text x="30" y="154" font-size="10" font-weight="700" fill="rgba(255,255,255,0.75)" font-family="Fredoka,sans-serif">20</text>
+                    </svg>
                     <canvas id="catCanvas" width="224" height="196" class="pixel w-[200px] h-[175px] sm:w-[240px] sm:h-[210px]"></canvas>
                     <div id="catShadow" class="w-40 h-5 rounded-[50%] bg-black/30 blur-[8px] -mt-5 transition-transform duration-150"></div>
                     <div id="petHint" class="mt-3 glass-dark px-4 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-2 transition-opacity duration-700">
@@ -449,7 +463,7 @@
             <section class="lg:col-span-12 card rounded-[28px] p-5">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-10">
                     <div class="sm:w-56 flex-shrink-0">
-                        <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#7C9283]">Your week</p>
+                        <p class="text-[11px] font-extrabold uppercase tracking-wider text-[#7C9283]">Your Eighty Score</p>
                         <p id="weekScore" class="num text-3xl font-bold text-[#1F7A4D] mt-1 leading-none">No data yet</p>
                         <p id="weekNote" class="text-[11px] text-[#526B5A] mt-2 leading-snug"></p>
                     </div>
@@ -534,7 +548,7 @@
                 <div class="flex items-center gap-3 min-w-0">
                     <img src="/icons/icon-192.png" alt="" class="w-12 h-12 rounded-2xl flex-shrink-0" />
                     <div class="min-w-0">
-                        <p class="text-sm font-bold">Install WattPet</p>
+                        <p class="text-sm font-bold">Install Eighty</p>
                         <p id="installText" class="text-[11px] text-[#526B5A] mt-0.5"></p>
                     </div>
                 </div>
@@ -602,7 +616,7 @@
                         </div>
                         <div class="flex items-center justify-between gap-3 pt-3">
                             <div class="flex items-center gap-3">
-                                <span class="w-10 h-10 rounded-2xl bg-[#E8F1FF] border border-[#4A7BD0]/20 flex items-center justify-center shadow-xs flex-shrink-0 text-lg">🎬</span>
+                                <span class="w-10 h-10 rounded-2xl bg-[#E8F1FF] border border-[#4A7BD0]/20 flex items-center justify-center shadow-xs flex-shrink-0"><canvas data-px="film" width="28" height="28" class="pixel w-5 h-5"></canvas></span>
                                 <div>
                                     <p class="text-sm font-bold">Live video scenery</p>
                                     <p class="text-[11px] text-[#526B5A]">Turn off to save data, or before you record your video</p>
@@ -612,7 +626,7 @@
                         </div>
                         <div class="flex items-center justify-between gap-3 pt-3">
                             <div class="flex items-center gap-3">
-                                <span class="w-10 h-10 rounded-2xl bg-[#E8F1FF] border border-[#4A7BD0]/20 flex items-center justify-center shadow-xs flex-shrink-0 text-lg">🔊</span>
+                                <span class="w-10 h-10 rounded-2xl bg-[#E8F1FF] border border-[#4A7BD0]/20 flex items-center justify-center shadow-xs flex-shrink-0"><canvas data-px="speaker" width="28" height="28" class="pixel w-5 h-5"></canvas></span>
                                 <div>
                                     <p class="text-sm font-bold">Mochi sounds</p>
                                     <p class="text-[11px] text-[#526B5A]">Meows and purrs when you pet</p>
@@ -632,7 +646,7 @@
                             <span class="font-medium">Notifications</span>
                             <span id="notifStatusText" class="font-extrabold text-[#1F7A4D]">Checking…</span>
                         </div>
-                        <p class="mt-2 text-[11px] text-[#526B5A]">Alerts appear while WattPet is open or running in the background.</p>
+                        <p class="mt-2 text-[11px] text-[#526B5A]">Alerts appear while Eighty is open or running in the background.</p>
                     </div>
                 </section>
 
@@ -815,7 +829,7 @@
         </main>
 
         <footer class="text-center text-[11px] text-[#526B5A] pb-2 flex items-center justify-center gap-1.5">
-            <span>WattPet · made with</span>
+            <span>Eighty · made with</span>
             <canvas data-px="leaf" width="14" height="14" class="pixel w-3.5 h-3.5 inline-block"></canvas>
             <span>for healthier batteries</span>
         </footer>
@@ -882,6 +896,9 @@
         };
 
         const PIXEL_SPRITES = {
+            flame: ["......R.......", ".....RRR......", "....RRRO......", "....RROOR.....", "...RROOYOR....", "..RROOYYOR....", "..RROYYYOOR...", ".RROYYWYYOR...", ".RROYYWYYOR...", ".RROYYYYOOR...", "..RROOYOORR...", "..RRROOORR....", "...RRRRRR.....", "....RRRR......"],
+            speaker: ["..............", "......K.......", ".....KU.......", "..KKKKU..K....", "..KUUKU...K...", "..KUUKU.K.K...", "..KUUKU.K.K...", "..KUUKU.K.K...", "..KUUKU...K...", "..KKKKU..K....", ".....KU.......", "......K.......", "..............", ".............."],
+            film: ["..............", "..KKKKKKKKKK..", "..KWKWKWKWKK..", "..KKKKKKKKKK..", "..KUUUUUUUUK..", "..KUUWWUUUUK..", "..KUUWWWUUUK..", "..KUUWWUUUUK..", "..KUUUUUUUUK..", "..KKKKKKKKKK..", "..............", "..............", "..............", ".............."],
             leaf: [
                 ".......GGGG...",
                 ".....GGMMMMG..",
@@ -1759,6 +1776,7 @@
             const curPageEl = document.getElementById('page-' + page);
             if (curPageEl) renderAllPixelIcons(curPageEl);
             if (typeof cancelPreview === 'function') cancelPreview();
+            if (page === 'sanctuary') requestAnimationFrame(() => { try { renderStageArc(); } catch (e) {} });
             if (page === 'sanctuary' && typeof renderWeek === 'function') renderWeek();
             { const pe = document.getElementById('page-' + page); if (pe) { pe.classList.remove('page-in'); void pe.offsetWidth; pe.classList.add('page-in'); } }
             if (scrollTop) window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2169,124 +2187,182 @@
         }
         function env(c, now, a, peak, hold, rel) {
             const g = c.createGain();
+            g.gain.value = 0.0001;
             g.gain.setValueAtTime(0.0001, now);
             g.gain.exponentialRampToValueAtTime(peak, now + a);
             g.gain.setValueAtTime(peak, now + a + hold);
             g.gain.exponentialRampToValueAtTime(0.0001, now + a + hold + rel);
             return g;
         }
-        // A cute "mew": a soft voice that glides up then down, with vowel-like filters and a little breath.
+        // A one-second loop of short, decaying noise bursts: the grainy pulse train behind purrs and tooth-purrs.
+        function pulseBuffer(c, rate, burstMs, decayMs) {
+            const sr = c.sampleRate, len = sr, buf = c.createBuffer(1, len, sr), d = buf.getChannelData(0), period = sr / rate;
+            let pos = 0;
+            while (pos < len) {
+                const n = Math.floor(sr * burstMs / 1000), amp = 0.7 + Math.random() * 0.3, pol = Math.random() < 0.5 ? -1 : 1;
+                for (let i = 0; i < n && pos + i < len; i++) d[pos + i] += pol * amp * (Math.random() * 2 - 1) * Math.exp(-i / (sr * decayMs / 1000));
+                pos += Math.floor(period * (0.92 + Math.random() * 0.16));
+            }
+            return buf;
+        }
+        function out(c, level) { const g = c.createGain(); g.gain.value = level; g.connect(c.destination); return g; }
+        function bandpass(c, f0, q) { const f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = f0; f.Q.value = q; return f; }
+        // A cute "mew": closed-mouth "m", then a vowel that opens and closes, with vibrato and a little roughness.
         function voiceMew(c, kind) {
-            const now = c.currentTime;
+            const O = out(c, kind === 'kitten' ? 2.7 : (kind === 'mrow' ? 2.3 : 1.2));
+            const now = c.currentTime, nasal = 0.07;
             let base, dur, rise, fall;
-            if (kind === 'kitten') { base = rnd(820, 980); dur = rnd(0.22, 0.34); rise = 1.25; fall = 0.85; }
-            else if (kind === 'mrow') { base = rnd(430, 520); dur = rnd(0.55, 0.8); rise = 1.35; fall = 0.7; }
-            else { base = rnd(660, 780); dur = rnd(0.34, 0.5); rise = rnd(1.25, 1.4); fall = rnd(0.72, 0.85); }
-            const o1 = c.createOscillator(), o2 = c.createOscillator(); o1.type = 'sawtooth'; o2.type = 'triangle';
-            const lfo = c.createOscillator(); lfo.frequency.value = rnd(5.5, 7.5);
-            const lg = c.createGain(); lg.gain.value = base * 0.012; lfo.connect(lg);
-            [o1, o2].forEach(o => {
-                o.frequency.setValueAtTime(base * 0.88, now);
-                o.frequency.exponentialRampToValueAtTime(base * rise, now + dur * 0.28);
-                o.frequency.exponentialRampToValueAtTime(base * fall, now + dur);
-                lg.connect(o.frequency);
-            });
-            const g1 = c.createGain(); g1.gain.value = 0.55; const g2 = c.createGain(); g2.gain.value = 0.45;
-            o1.connect(g1); o2.connect(g2);
-            const f1 = c.createBiquadFilter(); f1.type = 'bandpass'; f1.Q.value = 5;
-            f1.frequency.setValueAtTime(850, now); f1.frequency.linearRampToValueAtTime(650, now + dur);
-            const f2 = c.createBiquadFilter(); f2.type = 'bandpass'; f2.Q.value = 6;
-            f2.frequency.setValueAtTime(2400, now); f2.frequency.linearRampToValueAtTime(1700, now + dur);
-            const f3 = c.createBiquadFilter(); f3.type = 'bandpass'; f3.frequency.value = 3300; f3.Q.value = 8;
-            const mix = env(c, now, 0.04, rnd(0.26, 0.32), dur * 0.5, dur * 0.5);
-            const soft = c.createBiquadFilter(); soft.type = 'lowpass'; soft.frequency.value = 6500;
-            [g1, g2].forEach(g => { g.connect(f1); g.connect(f2); g.connect(f3); });
-            const sum = c.createGain(); sum.gain.value = 0.7;
-            f1.connect(sum); f2.connect(sum); f3.connect(sum); sum.connect(mix); mix.connect(soft); soft.connect(c.destination);
+            if (kind === 'kitten') { base = rnd(820, 980); dur = rnd(0.24, 0.36); rise = 1.25; fall = 0.85; }
+            else if (kind === 'mrow') { base = rnd(430, 520); dur = rnd(0.6, 0.85); rise = 1.35; fall = 0.7; }
+            else { base = rnd(640, 760); dur = rnd(0.36, 0.52); rise = rnd(1.25, 1.4); fall = rnd(0.72, 0.85); }
+            const o = c.createOscillator(); o.type = 'sawtooth';
+            o.frequency.setValueAtTime(base * 0.8, now);
+            o.frequency.linearRampToValueAtTime(base * 0.88, now + nasal);
+            o.frequency.exponentialRampToValueAtTime(base * rise, now + dur * 0.3);
+            o.frequency.exponentialRampToValueAtTime(base * fall, now + dur);
+            const vib = c.createOscillator(); vib.frequency.value = rnd(5.5, 7.5);
+            const vg = c.createGain(); vg.gain.value = base * 0.014; vib.connect(vg); vg.connect(o.frequency);
+            const jit = c.createOscillator(); jit.type = 'sawtooth'; jit.frequency.value = rnd(55, 80);
+            const jg = c.createGain(); jg.gain.value = base * 0.008; jit.connect(jg); jg.connect(o.frequency);
+            const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 0.7;
+            lp.frequency.setValueAtTime(450, now); lp.frequency.exponentialRampToValueAtTime(7000, now + nasal + 0.05);
+            o.connect(lp);
+            const sum = c.createGain(); sum.gain.value = 1.1;
+            const sweep = (f, a0, a1, a2, q, g) => {
+                const b = bandpass(c, a0, q); b.frequency.setValueAtTime(a0, now);
+                b.frequency.linearRampToValueAtTime(a1, now + dur * 0.35); b.frequency.linearRampToValueAtTime(a2, now + dur);
+                const gg = c.createGain(); gg.gain.value = g; lp.connect(b); b.connect(gg); gg.connect(sum);
+            };
+            sweep(0, 450, 880, 620, 9, 1.0);    // first vowel sound: "ee" opens to "ow"
+            sweep(1, 2500, 1800, 1100, 10, 0.9); // second vowel sound
+            sweep(2, 3300, 3300, 3000, 12, 0.35);
+            const mix = env(c, now, 0.05, rnd(0.3, 0.36), dur * 0.45, dur * 0.5);
+            const soft = c.createBiquadFilter(); soft.type = 'lowpass'; soft.frequency.value = 7000;
+            sum.connect(mix); mix.connect(soft); soft.connect(O);
             const br = noise(c), hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3500;
-            const bg = env(c, now, 0.04, 0.03, dur * 0.3, dur * 0.6);
-            br.connect(hp); hp.connect(bg); bg.connect(c.destination);
-            o1.start(now); o2.start(now); lfo.start(now); br.start(now);
-            [o1, o2, lfo, br].forEach(n => n.stop(now + dur + 0.1));
+            const bg = env(c, now + nasal, 0.04, 0.03, dur * 0.3, dur * 0.55);
+            br.connect(hp); hp.connect(bg); bg.connect(O);
+            [o, vib, jit, br].forEach(n => n.start(now));
+            [o, vib, jit, br].forEach(n => n.stop(now + dur + 0.15));
         }
         function voiceChirp(c) {
+            const O = out(c, 1.0);
             const now = c.currentTime, base = rnd(900, 1100);
             const o = c.createOscillator(); o.type = 'triangle';
             o.frequency.setValueAtTime(base, now); o.frequency.linearRampToValueAtTime(base * rnd(1.4, 1.7), now + 0.16);
             const lfo = c.createOscillator(); lfo.frequency.value = rnd(26, 32);
             const lg = c.createGain(); lg.gain.value = base * 0.07; lfo.connect(lg); lg.connect(o.frequency);
             const g = env(c, now, 0.02, 0.2, 0.06, 0.1);
-            o.connect(g); g.connect(c.destination);
+            o.connect(g); g.connect(O);
             o.start(now); lfo.start(now); o.stop(now + 0.25); lfo.stop(now + 0.25);
         }
-        // A purr: soft low rumble that pulses about 25 times a second, like a real cat.
+        // A real purr: about 25 pulses a second, each a tiny decaying rumble, rising and falling with the breath.
         function voicePurr(c, soft) {
-            const now = c.currentTime, dur = soft ? rnd(2.2, 3) : rnd(1.6, 2.6);
-            const lows = noise(c), mids = noise(c);
-            const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = rnd(450, 560);
-            const b1 = c.createBiquadFilter(); b1.type = 'bandpass'; b1.frequency.value = rnd(140, 180); b1.Q.value = 0.7;
-            const b2 = c.createBiquadFilter(); b2.type = 'bandpass'; b2.frequency.value = rnd(380, 460); b2.Q.value = 0.9;
-            const am = c.createGain(); am.gain.value = 0.35;
-            const lfo = c.createOscillator(); lfo.type = 'sawtooth';
-            const f0 = rnd(23, 28);
-            lfo.frequency.setValueAtTime(f0, now);
-            for (let k = 1; k < 6; k++) lfo.frequency.linearRampToValueAtTime(f0 + rnd(-2, 2), now + dur * k / 6);
-            const lg = c.createGain(); lg.gain.value = 0.3; lfo.connect(lg); lg.connect(am.gain);
-            const mid = c.createGain(); mid.gain.value = 0.45;
-            const e = env(c, now, 0.4, soft ? 0.7 : 1, dur - 0.9, 0.5);
-            const boost = c.createGain(); boost.gain.value = 4;
-            lows.connect(lp); lp.connect(b1); b1.connect(am);
-            mids.connect(b2); b2.connect(mid); mid.connect(am);
-            am.connect(e); e.connect(boost); boost.connect(c.destination);
-            lows.start(now); mids.start(now); lfo.start(now);
-            [lows, mids, lfo].forEach(n => n.stop(now + dur + 0.1));
+            const O = out(c, 0.8);
+            const now = c.currentTime, dur = soft ? rnd(2.2, 3) : rnd(1.8, 2.8);
+            const src = c.createBufferSource(); src.buffer = pulseBuffer(c, rnd(23, 27), 24, 7); src.loop = true;
+            src.playbackRate.setValueAtTime(rnd(0.96, 1.0), now); src.playbackRate.linearRampToValueAtTime(rnd(1.0, 1.05), now + dur);
+            const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 70;
+            const low = bandpass(c, rnd(140, 180), 0.9), mid = bandpass(c, rnd(420, 520), 1.1), lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1100;
+            const lg = c.createGain(); lg.gain.value = 1.0; const mg = c.createGain(); mg.gain.value = 0.55;
+            const breath = c.createGain(); const peak = soft ? 0.7 : 1;
+            breath.gain.setValueAtTime(0.0001, now); breath.gain.exponentialRampToValueAtTime(peak, now + 0.4);
+            for (let k = 0.95; k < dur - 0.5; k += 0.55) {
+                breath.gain.linearRampToValueAtTime(peak * 0.62, now + k);
+                breath.gain.linearRampToValueAtTime(peak, now + Math.min(k + 0.5, dur - 0.5));
+            }
+            breath.gain.setValueAtTime(peak, now + dur - 0.5); breath.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+            const boost = c.createGain(); boost.gain.value = 3.2;
+            src.connect(hp); hp.connect(low); hp.connect(mid); low.connect(lg); mid.connect(mg); lg.connect(lp); mg.connect(lp);
+            lp.connect(breath); breath.connect(boost); boost.connect(O);
+            src.start(now); src.stop(now + dur + 0.1);
         }
-        function voiceBark(c, pup) {
-            const times = pup ? [0, 0.2] : [0];
-            times.forEach((dt, i) => {
-                const now = c.currentTime + dt, base = (pup ? rnd(420, 520) : rnd(240, 320)) * (1 + i * 0.08), dur = pup ? 0.12 : 0.17;
+        // A bark: a quick, rough, falling voice with a puff of air at the start. size: 'big', 'mid' or 'small'.
+        function voiceBark(c, size, count) {
+            const O = out(c, size === 'small' ? 1.0 : 1.9);
+            const f = size === 'small' ? [520, 640] : size === 'mid' ? [330, 420] : [190, 250];
+            for (let i = 0; i < count; i++) {
+                const now = c.currentTime + i * rnd(0.24, 0.3), base = rnd(f[0], f[1]) * (1 - i * 0.04), dur = size === 'small' ? rnd(0.12, 0.16) : rnd(0.17, 0.24), vol = 0.34 - i * 0.04;
                 const o = c.createOscillator(); o.type = 'sawtooth';
-                o.frequency.setValueAtTime(base * 1.15, now); o.frequency.exponentialRampToValueAtTime(base * 0.7, now + dur);
-                const f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = rnd(650, 850); f.Q.value = 3;
-                const g = env(c, now, 0.01, 0.3, dur * 0.4, dur * 0.6);
-                o.connect(f); f.connect(g); g.connect(c.destination);
-                o.start(now); o.stop(now + dur + 0.1);
-            });
+                o.frequency.setValueAtTime(base * 1.25, now); o.frequency.exponentialRampToValueAtTime(base * 0.82, now + dur * 0.5); o.frequency.exponentialRampToValueAtTime(base * 0.7, now + dur);
+                const jit = c.createOscillator(); jit.type = 'square'; jit.frequency.value = rnd(60, 90);
+                const jg = c.createGain(); jg.gain.value = base * 0.03; jit.connect(jg); jg.connect(o.frequency);
+                const shaper = c.createWaveShaper(), curve = new Float32Array(256);
+                for (let k = 0; k < 256; k++) { const x = k / 128 - 1; curve[k] = Math.tanh(x * 2.6); }
+                shaper.curve = curve;
+                const sum = c.createGain(); sum.gain.value = 1;
+                [[700, 520, 4, 1], [1250, 950, 5, 0.8], [2600, 2300, 6, 0.3]].forEach(a => {
+                    const b = bandpass(c, a[0], a[2]); b.frequency.setValueAtTime(a[0], now); b.frequency.linearRampToValueAtTime(a[1], now + dur);
+                    const g = c.createGain(); g.gain.value = a[3]; shaper.connect(b); b.connect(g); g.connect(sum);
+                });
+                o.connect(shaper);
+                const e = env(c, now, 0.006, vol, dur * 0.35, dur * 0.65);
+                sum.connect(e); e.connect(O);
+                const n = noise(c), nb = bandpass(c, 2200, 0.8), ng = env(c, now, 0.003, 0.09, 0.015, 0.05);
+                n.connect(nb); nb.connect(ng); ng.connect(O);
+                [o, jit, n].forEach(x => x.start(now)); [o, jit, n].forEach(x => x.stop(now + dur + 0.1));
+            }
         }
         function voiceWhimper(c) {
-            const now = c.currentTime, o = c.createOscillator(); o.type = 'triangle';
-            o.frequency.setValueAtTime(rnd(600, 700), now); o.frequency.linearRampToValueAtTime(rnd(420, 500), now + 0.5);
-            const lfo = c.createOscillator(); lfo.frequency.value = 7; const lg = c.createGain(); lg.gain.value = 18; lfo.connect(lg); lg.connect(o.frequency);
-            const g = env(c, now, 0.08, 0.16, 0.25, 0.25);
-            o.connect(g); g.connect(c.destination);
-            o.start(now); lfo.start(now); o.stop(now + 0.7); lfo.stop(now + 0.7);
+            const O = out(c, 3.0);
+            const now = c.currentTime, dur = rnd(0.55, 0.75), base = rnd(620, 720);
+            const o = c.createOscillator(); o.type = 'sawtooth';
+            o.frequency.setValueAtTime(base * 0.85, now); o.frequency.linearRampToValueAtTime(base * 1.15, now + dur * 0.35); o.frequency.linearRampToValueAtTime(base * 0.62, now + dur);
+            const vib = c.createOscillator(); vib.frequency.value = 7; const vg = c.createGain(); vg.gain.value = base * 0.03; vib.connect(vg); vg.connect(o.frequency);
+            const b1 = bandpass(c, 650, 5), b2 = bandpass(c, 1800, 6), sum = c.createGain(); sum.gain.value = 1;
+            o.connect(b1); o.connect(b2); b1.connect(sum); b2.connect(sum);
+            const e = env(c, now, 0.1, 0.22, dur * 0.4, dur * 0.4); sum.connect(e); e.connect(O);
+            o.start(now); vib.start(now); o.stop(now + dur + 0.2); vib.stop(now + dur + 0.2);
         }
-        function voiceSqueak(c) {
-            const now = c.currentTime, o = c.createOscillator(); o.type = 'sine';
-            o.frequency.setValueAtTime(rnd(1400, 1600), now); o.frequency.linearRampToValueAtTime(rnd(1900, 2200), now + 0.05); o.frequency.linearRampToValueAtTime(rnd(1600, 1800), now + 0.11);
-            const g = env(c, now, 0.01, 0.12, 0.04, 0.07);
-            o.connect(g); g.connect(c.destination); o.start(now); o.stop(now + 0.2);
+        // Rabbits "tooth purr" when happy: a soft, fast chatter made by grinding their teeth.
+        function voiceToothPurr(c) {
+            const O = out(c, 0.3);
+            const now = c.currentTime, dur = rnd(0.9, 1.4);
+            const src = c.createBufferSource(); src.buffer = pulseBuffer(c, rnd(13, 17), 7, 2.2); src.loop = true;
+            const bp = bandpass(c, 1900, 1.1), lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 4200;
+            const e = env(c, now, 0.15, 0.7, dur * 0.5, dur * 0.4), boost = c.createGain(); boost.gain.value = 2.2;
+            src.connect(bp); bp.connect(lp); lp.connect(e); e.connect(boost); boost.connect(O);
+            src.start(now); src.stop(now + dur + 0.2);
+        }
+        function voiceSniff(c) {
+            const O = out(c, 2.5);
+            const k = 2 + Math.floor(Math.random() * 2);
+            for (let i = 0; i < k; i++) {
+                const now = c.currentTime + i * rnd(0.12, 0.16), n = noise(c), hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1800;
+                const bp = bandpass(c, 3600, 0.7), g = env(c, now, 0.03, 0.11, 0.02, 0.05);
+                n.connect(hp); hp.connect(bp); bp.connect(g); g.connect(O); n.start(now); n.stop(now + 0.15);
+            }
         }
         function voiceThump(c) {
+            const O = out(c, 0.8);
             const now = c.currentTime, o = c.createOscillator(); o.type = 'sine';
-            o.frequency.setValueAtTime(130, now); o.frequency.exponentialRampToValueAtTime(60, now + 0.09);
-            const g = env(c, now, 0.005, 0.5, 0.02, 0.1);
-            o.connect(g); g.connect(c.destination); o.start(now); o.stop(now + 0.2);
-            const n = noise(c), lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900;
-            const ng = env(c, now, 0.003, 0.12, 0.01, 0.04); n.connect(lp); lp.connect(ng); ng.connect(c.destination); n.start(now); n.stop(now + 0.1);
+            o.frequency.setValueAtTime(140, now); o.frequency.exponentialRampToValueAtTime(55, now + 0.08);
+            const g = env(c, now, 0.004, 0.55, 0.02, 0.11);
+            o.connect(g); g.connect(O); o.start(now); o.stop(now + 0.2);
+            const n = noise(c), lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 500;
+            const ng = env(c, now, 0.002, 0.18, 0.01, 0.05); n.connect(lp); lp.connect(ng); ng.connect(O); n.start(now); n.stop(now + 0.12);
         }
+        // A snake's hiss: a long, airy "sss" with a flutter in it.
         function voiceHiss(c) {
-            const now = c.currentTime, dur = rnd(0.6, 0.9), n = noise(c);
-            const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2500;
-            const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 6000; bp.Q.value = 0.8;
-            const g = env(c, now, 0.15, 0.22, dur * 0.4, dur * 0.45);
-            n.connect(hp); hp.connect(bp); bp.connect(g); g.connect(c.destination); n.start(now); n.stop(now + dur + 0.1);
+            const O = out(c, 0.6);
+            const now = c.currentTime, dur = rnd(0.9, 1.4), n = noise(c);
+            const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2800;
+            const pk = c.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 6500; pk.Q.value = 0.9; pk.gain.value = 8;
+            const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 11000;
+            const am = c.createGain(); am.gain.value = 0.8;
+            const fl = c.createOscillator(); fl.frequency.value = rnd(24, 34); const fg = c.createGain(); fg.gain.value = 0.22; fl.connect(fg); fg.connect(am.gain);
+            const g = env(c, now, 0.12, 0.2, dur * 0.5, dur * 0.4);
+            n.connect(hp); hp.connect(pk); pk.connect(lp); lp.connect(am); am.connect(g); g.connect(O);
+            const pn = noise(c), plp = c.createBiquadFilter(); plp.type = 'lowpass'; plp.frequency.value = 350;
+            const pg = env(c, now, 0.03, 0.06, 0.05, 0.1); pn.connect(plp); plp.connect(pg); pg.connect(O);
+            [n, fl, pn].forEach(x => x.start(now)); [n, fl, pn].forEach(x => x.stop(now + dur + 0.2));
         }
+
         const VOICES = {
             cat:   { awake: ['mew', 'mew', 'kitten', 'mrow', 'purr', 'chirp'], asleep: ['purr', 'purr', 'chirp'] },
-            dog:   { awake: ['bark', 'bark2', 'whimper'], asleep: ['whimper'] },
-            bunny: { awake: ['squeak', 'thump', 'squeak'], asleep: ['squeak'] },
-            snake: { awake: ['hiss', 'hiss'], asleep: ['hiss'] }
+            dog:   { awake: ['woof', 'yap', 'woof', 'whimper'], asleep: ['whimper'] },
+            bunny: { awake: ['toothpurr', 'sniff', 'thump', 'toothpurr'], asleep: ['toothpurr'] },
+            snake: { awake: ['hiss'], asleep: ['hiss'] }
         };
         function catVoice(sleeping) {
             if (!soundOn) return;
@@ -2296,9 +2372,13 @@
                 let v, guard = 0;
                 do { v = pool[Math.floor(Math.random() * pool.length)]; guard++; } while (v === lastVoice && pool.length > 1 && guard < 20);
                 lastVoice = v;
-                const map = { mew: () => voiceMew(c, 'mew'), kitten: () => voiceMew(c, 'kitten'), mrow: () => voiceMew(c, 'mrow'), chirp: () => voiceChirp(c),
-                    purr: () => voicePurr(c, sleeping), bark: () => voiceBark(c, false), bark2: () => voiceBark(c, true), whimper: () => voiceWhimper(c),
-                    squeak: () => voiceSqueak(c), thump: () => voiceThump(c), hiss: () => voiceHiss(c) };
+                const map = {
+                    mew: () => voiceMew(c, 'mew'), kitten: () => voiceMew(c, 'kitten'), mrow: () => voiceMew(c, 'mrow'), chirp: () => voiceChirp(c),
+                    purr: () => voicePurr(c, sleeping),
+                    woof: () => voiceBark(c, 'big', 1 + Math.floor(Math.random() * 2)), yap: () => voiceBark(c, 'small', 2 + Math.floor(Math.random() * 2)), whimper: () => voiceWhimper(c),
+                    toothpurr: () => voiceToothPurr(c), sniff: () => voiceSniff(c), thump: () => voiceThump(c),
+                    hiss: () => voiceHiss(c)
+                };
                 map[v]();
             } catch (e) {}
         }
@@ -3034,7 +3114,7 @@
             if (el('settingsBattVal')) el('settingsBattVal').textContent = state.battery + '%';
             if (el('settingsBattSlider')) el('settingsBattSlider').value = state.battery;
             if (el('settingsChargeToggle')) el('settingsChargeToggle').checked = state.charging;
-            if (el('settingsChargeLabel')) el('settingsChargeLabel').textContent = state.charging ? 'Charging ⚡' : 'On battery';
+            if (el('settingsChargeLabel')) { const ci = chargeInfo(); el('settingsChargeLabel').textContent = state.charging ? (lang === 'ms' ? 'Mengecas ⚡' : 'Charging ⚡') + (ci ? ' · ' + ci.text : '') : 'On battery'; }
 
             show('manualControls', !live);
             show('manualStep', !live);
@@ -3082,9 +3162,10 @@
             if (typeof isCharging === 'boolean') {
                 state.charging = isCharging;
             }
+            trackCharge();
             if (wasCharging && !state.charging && clamped >= 75 && clamped <= 88 && typeof earn === 'function') {
                 const gained = earn('unplug', 15);
-                if (gained) { if (game.stats) game.stats.unplugs++; showToast('Perfect unplug +' + gained + ' leaves'); }
+                if (gained) { if (game.stats) game.stats.unplugs++; showToast('Perfect unplug +' + gained + ' leaves'); eightyMoment(); }
             }
             state.syncSource = source;
             state.lastSync = Date.now();
@@ -3160,7 +3241,28 @@
             }, 30000);
         }
 
+        const ARC_LEN = 706.86;
+        function renderStageArc() {
+            const svg = document.getElementById('stageArc'), cv = document.getElementById('catCanvas'), hero = document.getElementById('heroStage');
+            if (!svg || !cv || !hero || !cv.offsetHeight) return;
+            const sz = Math.max(210, Math.min(300, hero.clientHeight - 120));
+            svg.style.width = sz + 'px'; svg.style.height = sz + 'px';
+            svg.style.top = (cv.offsetTop + cv.offsetHeight / 2) + 'px';
+            const fill = document.getElementById('stageArcFill');
+            fill.style.strokeDashoffset = ARC_LEN * (1 - Math.max(0, Math.min(100, state.battery)) / 100);
+            fill.style.stroke = state.battery < 20 ? '#EF6F7B' : (state.battery > 80 ? '#F5B942' : '#3FB37F');
+            svg.classList.toggle('arc-glow', !!(state.charging && state.battery >= 78 && state.battery <= 82));
+        }
+        function eightyMoment() {
+            const svg = document.getElementById('stageArc');
+            if (svg) { svg.classList.remove('arc-pop'); void svg.getBoundingClientRect(); svg.classList.add('arc-pop'); }
+            say('Eighty! Perfect unplug 🎯');
+            buzz([20, 30, 20]);
+        }
+        window.addEventListener('resize', () => { try { renderStageArc(); } catch (e) {} });
         function renderBattery() {
+            renderStageArc();
+            renderChargeAge();
             const lvl = state.battery;
             const ch = state.charging;
             let title, mood, moodDot, ringA, ringB, mini, badgeText, subText;
@@ -3400,7 +3502,7 @@
 
         async function triggerDeviceNotification(isManual = false) {
             playNotificationChime();
-            const title = 'WattPet · Time to unplug';
+            const title = 'Eighty · Time to unplug';
             const body = isManual
                 ? 'Test alert. This is how Mochi will nudge you at 80%.'
                 : `Battery is at ${state.battery}%. Unplug now to protect its lifespan.`;
@@ -3435,11 +3537,11 @@
            ============================================================ */
         const REWARDS = [
             { id: 'kopi', short: 'KOPI', title: 'RM 3 off your drink', desc: 'Bring a reusable cup to a partner café.', cost: 300, validDays: 14, tagLabel: 'Café', pxIcon: 'kopi', theme: 'meadow',
-              how: 'Show this code at the counter of a WattPet partner café.', },
+              how: 'Show this code at the counter of a Eighty partner café.', },
             { id: 'tree', short: 'TREE', title: 'Plant a rainforest sapling', desc: 'A native tree planted with local conservation partners.', cost: 500, validDays: 60, tagLabel: 'Nature', pxIcon: 'tree', theme: 'forest',
               how: 'Keep this code. Your sapling is planted in the next planting round.', },
             { id: 'repair', short: 'CARE', title: 'RM 15 device care voucher', desc: 'Port cleaning and battery check to keep your device going.', cost: 650, validDays: 30, tagLabel: 'Repair', pxIcon: 'wrench', theme: 'galaxy',
-              how: 'Show this code at a WattPet partner repair shop.', }
+              how: 'Show this code at a Eighty partner repair shop.', }
         ];
 
         const TIERS = [
@@ -3933,9 +4035,10 @@
         }
 
         const ONBOARD = [
+            { e: '🎯', t: 'Welcome to Eighty', d: 'Charging to about 80% is kinder to your battery. Mochi helps you stay in the sweet spot.' },
             { e: '🐱', t: 'Meet Mochi', d: 'Mochi is your battery buddy. Keep your charge between 20% and 80% and Mochi stays happy.' },
             { e: '🍃', t: 'Earn leaves', d: 'Pet Mochi, check in every day and unplug on time to collect leaves.' },
-            { e: '🎟️', t: 'Get real perks', d: 'Swap leaves for coupons from partners. Add WattPet to your Home Screen to get alerts.' }
+            { e: '🎟️', t: 'Get real perks', d: 'Swap leaves for coupons from partners. Add Eighty to your Home Screen to get alerts.' }
         ];
         function showOnboarding(i) {
             const o = ONBOARD[i], last = i === ONBOARD.length - 1;
@@ -3964,7 +4067,7 @@
             x.fillStyle = 'rgba(255,255,255,0.06)';
             [[180, 300, 260], [900, 1500, 340], [820, 420, 160]].forEach(a => { x.beginPath(); x.arc(a[0], a[1], a[2], 0, 7); x.fill(); });
             x.textAlign = 'center'; x.fillStyle = '#fff'; x.font = '800 88px sans-serif';
-            x.fillText('WattPet', W / 2, 220);
+            x.fillText('Eighty', W / 2, 220);
             try {
                 const src = logoCtx.canvas; x.imageSmoothingEnabled = false;
                 const w = 440, h = w * src.height / src.width;
@@ -3979,32 +4082,34 @@
             x.fillStyle = '#D8F3DC'; x.font = '600 38px sans-serif';
             x.fillText('per year, estimated', W / 2, 1320);
             x.fillStyle = 'rgba(255,255,255,0.18)'; x.fillRect(W / 2 - 330, 1400, 660, 96);
+            const es = weekPctNow();
+            if (es !== null) { x.fillStyle = '#FDE68A'; x.font = '800 64px sans-serif'; x.fillText('Eighty Score ' + Math.round(es), W / 2, 1620); }
             x.fillStyle = '#fff'; x.font = '800 48px sans-serif';
             x.fillText(tier.e + ' ' + tier.n + '   🔥 ' + streakNow() + ' day streak', W / 2, 1465);
             x.fillStyle = '#1B4332'; x.font = '800 54px sans-serif';
-            x.fillText('Try WattPet: ' + location.host, W / 2, 1740);
+            x.fillText('Try Eighty: ' + location.host, W / 2, 1740);
             x.font = '600 28px sans-serif'; x.fillText('Estimates use typical device and Malaysian grid values', W / 2, 1810);
             return c;
         }
         function showShareCard() {
             const c = drawShareCard();
             openModal(`<div class="p-4 text-center">
-                <img src="${c.toDataURL('image/png')}" alt="My WattPet impact" class="mx-auto rounded-2xl shadow-lg max-h-[62dvh]" />
+                <img src="${c.toDataURL('image/png')}" alt="My Eighty impact" class="mx-auto rounded-2xl shadow-lg max-h-[62dvh]" />
                 <button type="button" onclick="shareImpact()" class="btn3d gold mt-4">Share</button>
                 <button type="button" onclick="closeModal()" class="mt-3 text-xs font-bold text-[#526B5A]">Close</button></div>`);
         }
         function shareImpact() {
             drawShareCard().toBlob(async (b) => {
                 if (!b) return;
-                const file = new File([b], 'wattpet-impact.png', { type: 'image/png' });
+                const file = new File([b], 'eighty-impact.png', { type: 'image/png' });
                 try {
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({ files: [file], text: 'My WattPet impact. Try it: ' + location.origin });
+                        await navigator.share({ files: [file], text: 'My Eighty impact. Try it: ' + location.origin });
                         return;
                     }
                 } catch (e) { if (e && e.name === 'AbortError') return; }
                 const a = document.createElement('a');
-                a.href = URL.createObjectURL(b); a.download = 'wattpet-impact.png'; a.click();
+                a.href = URL.createObjectURL(b); a.download = 'eighty-impact.png'; a.click();
                 showToast('Image saved');
             }, 'image/png');
         }
@@ -4026,11 +4131,19 @@
             'Dark mode can save battery on phones with OLED screens.'
         ];
         function buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p || 12); } catch (e) {} }
+        function countTo(el, to) {
+            if (!el) return;
+            const from = parseInt(el.textContent, 10);
+            if (isNaN(from) || from === to || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) { el.textContent = to; return; }
+            const t0 = performance.now();
+            const step = (n) => { const k = Math.min(1, (n - t0) / 450); el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+            requestAnimationFrame(step);
+        }
         function updateHeaderStats() {
             const l = document.getElementById('hdrLeaves'), st = document.getElementById('hdrStreak');
             if (l) {
                 const prev = parseInt(l.textContent, 10);
-                l.textContent = state.leaves;
+                countTo(l, state.leaves);
                 if (state.leaves > prev) { l.classList.remove('pop'); void l.offsetWidth; l.classList.add('pop'); }
             }
             if (st) st.textContent = streakNow();
@@ -4138,7 +4251,7 @@
         if (window.matchMedia) { try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (themePref === 'auto') applyTheme(); }); } catch (e) {} }
         const LANG_KEY = 'wattpet_lang';
         let lang = (function () { try { return localStorage.getItem(LANG_KEY) || 'en'; } catch (e) { return 'en'; } })();
-        const MS = {"Your savings": "Penjimatan anda", "Appearance": "Paparan", "Auto": "Auto", "Light": "Cerah", "Dark": "Gelap", "Live video scenery": "Pemandangan video langsung", "Turn off to save data, or before you record your video": "Matikan untuk jimat data, atau sebelum merakam video anda", "Reminders, your battery, language and device.": "Peringatan, bateri, bahasa dan peranti anda.", "Install WattPet": "Pasang WattPet", "Install": "Pasang", "Get alerts and use it like a normal app.": "Dapatkan amaran dan guna seperti aplikasi biasa.", "Tap the Share button, then Add to Home Screen.": "Ketuk butang Kongsi, kemudian Tambah ke Skrin Utama.", "So sleepy… 😴": "Mengantuknya… 😴", "Mochi sounds": "Bunyi Mochi", "Meows and purrs when you pet": "Mengiau dan mendengkur apabila dibelai", "Your battery buddy": "Rakan bateri anda", "Home": "Utama", "Rewards": "Ganjaran", "Settings": "Tetapan", "Battery": "Bateri", "Update needed": "Perlu kemas kini", "CO₂ saved": "CO₂ dijimatkan", "Money saved": "Wang dijimatkan", "Treats worth": "Setara hidangan", "treats": "hidangan", "Tap to pet Mochi": "Ketuk untuk belai Mochi", "Next reward": "Ganjaran seterusnya", "View rewards →": "Lihat ganjaran →", "Healthy zone": "Zon sihat", "Healthy": "Sihat", "Charging gently": "Mengecas perlahan", "Charging": "Mengecas", "Running low": "Hampir habis", "Time to unplug": "Masa cabut pengecas", "Unplug now": "Cabut sekarang", "Over 80%": "Lebih 80%", "Low Battery": "Bateri rendah", "Mochi is content": "Mochi gembira", "Mochi is sleeping… 💤": "Mochi sedang tidur… 💤", "Mochi says: unplug me! 🔌": "Mochi kata: cabut saya! 🔌", "Plug in soon to prevent deep discharge": "Cas tidak lama lagi untuk elak bateri kosong sepenuhnya", "Unplug now to avoid top-off wear": "Cabut sekarang untuk elak kehausan bateri", "Charging inside the safe 20%–80% zone": "Mengecas dalam zon selamat 20%–80%", "Your week": "Minggu anda", "No data yet": "Belum ada data", "Keep WattPet open or synced and your week fills in here.": "Biarkan WattPet dibuka atau disegerak dan minggu anda akan muncul di sini.", "of the time WattPet could see your battery was in the healthy zone.": "daripada masa WattPet dapat melihat bateri anda berada dalam zon sihat.", "Mochi's tip of the day": "Petua Mochi hari ini", "Keeping your battery between 20% and 80% puts less strain on it than full charges.": "Mengekalkan bateri antara 20% dan 80% kurang membebankannya berbanding cas penuh.", "Heat is a battery's enemy. Take off thick cases while charging.": "Haba musuh bateri. Tanggalkan sarung tebal semasa mengecas.", "Plug in around 20% instead of letting the battery hit 0% again and again.": "Cas sekitar 20% dan jangan biarkan bateri sampai 0% berulang kali.", "If your device feels hot, let it cool down before you charge it.": "Jika peranti terasa panas, biarkan ia sejuk sebelum dicas.", "Lower screen brightness is the easiest way to stretch a charge.": "Mengurangkan kecerahan skrin ialah cara paling mudah untuk menjimatkan cas.", "Chargers still draw a little power when idle. Switch off at the wall when you are done.": "Pengecas masih menggunakan sedikit kuasa walaupun tidak digunakan. Matikan suis dinding apabila siap.", "Slow charging is gentler than fast charging when you are not in a hurry.": "Mengecas perlahan lebih lembut daripada mengecas pantas apabila anda tidak tergesa-gesa.", "Storing a device for months? Leave it at around 50% charge.": "Menyimpan peranti berbulan-bulan? Biarkan pada cas sekitar 50%.", "Keep your system and apps up to date. Updates often improve battery use.": "Kemas kini sistem dan aplikasi anda. Kemas kini sering memperbaiki penggunaan bateri.", "Turn off background refresh for apps you rarely open.": "Matikan muat semula latar belakang untuk aplikasi yang jarang dibuka.", "A battery lasts a set number of charge cycles. Fewer full cycles means a longer life.": "Bateri tahan bilangan kitaran cas yang tertentu. Kurang kitaran penuh bermaksud hayat lebih panjang.", "Use an official or certified charger. It protects your battery and your safety.": "Gunakan pengecas rasmi atau bersijil. Ia melindungi bateri dan keselamatan anda.", "Laptops that sit on the charger all week last longer with a charge limit switched on.": "Komputer riba yang sentiasa dicas tahan lebih lama dengan had cas diaktifkan.", "Dark mode can save battery on phones with OLED screens.": "Mod gelap boleh menjimatkan bateri pada telefon skrin OLED.", "Good battery habits, real perks": "Tabiat bateri yang baik, ganjaran sebenar", "Your leaves": "Daun anda", "Daily check-in": "Daftar masuk harian", "Claim today's leaves": "Tuntut daun hari ini", "Come back tomorrow": "Datang semula esok", "Today's quests": "Misi hari ini", "Pet Mochi": "Belai Mochi", "Stay in the healthy zone": "Kekal dalam zon sihat", "Unplug at about 80%": "Cabut pengecas sekitar 80%", "+5 per pet": "+5 setiap belaian", "+2 every 5 min": "+2 setiap 5 minit", "+15 each time": "+15 setiap kali", "My coupons": "Kupon saya", "Badges": "Lencana", "Reset rewards data": "Tetap semula data ganjaran", "Done ✓": "Selesai ✓", "Checked in today ✓": "Sudah daftar masuk hari ini ✓", "Keep your streak alive": "Kekalkan rentetan anda", "Start a streak": "Mulakan rentetan", "RM 3 off your drink": "Diskaun RM 3 untuk minuman anda", "Bring a reusable cup to a partner café.": "Bawa cawan guna semula ke kafe rakan kongsi.", "Plant a rainforest sapling": "Tanam anak pokok hutan hujan", "A native tree planted with local conservation partners.": "Pokok asli ditanam bersama rakan pemuliharaan tempatan.", "RM 15 device care voucher": "Baucar penjagaan peranti RM 15", "Port cleaning and battery check to keep your device going.": "Pembersihan port dan semakan bateri supaya peranti terus berfungsi.", "Café": "Kafe", "Nature": "Alam", "Repair": "Baiki", "Ready to redeem": "Sedia ditebus", "READY TO REDEEM": "SEDIA DITEBUS", "Redeem now": "Tebus sekarang", "Not yet": "Belum lagi", "Not now": "Bukan sekarang", "Cost": "Kos", "Balance after": "Baki selepas", "You got it! 🎉": "Anda dapat! 🎉", "Your code": "Kod anda", "Valid until": "Sah sehingga", "Redeemed on": "Ditebus pada", "Copy code": "Salin kod", "Mark as used": "Tandakan sudah guna", "Close": "Tutup", "Code copied": "Kod disalin", "No coupons yet": "Belum ada kupon", "Redeem a reward and your coupon will live here.": "Tebus ganjaran dan kupon anda akan disimpan di sini.", "Browse rewards": "Lihat ganjaran", "Used": "Telah guna", "Expired": "Tamat tempoh", "Last day": "Hari terakhir", "One use only.": "Sekali guna sahaja.", "Show this code at the counter of a WattPet partner café.": "Tunjukkan kod ini di kaunter kafe rakan kongsi WattPet.", "Show this code at a WattPet partner repair shop.": "Tunjukkan kod ini di kedai baiki rakan kongsi WattPet.", "Keep this code. Your sapling is planted in the next planting round.": "Simpan kod ini. Anak pokok anda ditanam pada pusingan penanaman seterusnya.", "Mark this coupon as used?": "Tandakan kupon ini sudah guna?", "Yes, mark as used": "Ya, tandakan sudah guna", "Back": "Kembali", "Do this after the shop has accepted your code. It can't be undone.": "Lakukan ini selepas kedai menerima kod anda. Ia tidak boleh dibatalkan.", "Meet Mochi": "Kenali Mochi", "Mochi is your battery buddy. Keep your charge between 20% and 80% and Mochi stays happy.": "Mochi ialah rakan bateri anda. Kekalkan cas antara 20% dan 80% dan Mochi akan gembira.", "Earn leaves": "Kumpul daun", "Pet Mochi, check in every day and unplug on time to collect leaves.": "Belai Mochi, daftar masuk setiap hari dan cabut pengecas tepat pada masanya untuk kumpul daun.", "Get real perks": "Dapatkan ganjaran sebenar", "Swap leaves for coupons from partners. Add WattPet to your Home Screen to get alerts.": "Tukar daun dengan kupon daripada rakan kongsi. Tambah WattPet ke Skrin Utama untuk terima amaran.", "Next": "Seterusnya", "Skip": "Langkau", "Let's go": "Jom mulakan", "What's your battery now?": "Berapa bateri anda sekarang?", "Looks right": "Nampak betul", "Later": "Nanti", "Charging right now": "Sedang mengecas", "Update battery now": "Kemas kini bateri sekarang", "Language": "Bahasa", "Reminders": "Peringatan", "80% charge reminder": "Peringatan cas 80%", "Nudge me to unplug at 80%": "Ingatkan saya cabut pengecas pada 80%", "Wall switch reminder": "Peringatan suis dinding", "Remind me to switch off the socket": "Ingatkan saya matikan soket", "Pause unused tabs": "Jeda tab yang tidak digunakan", "Pause tabs you aren't using": "Jeda tab yang tidak anda guna", "Show Mochi": "Tunjuk Mochi", "Turn off to see only the scenery": "Matikan untuk lihat pemandangan sahaja", "Send test notification": "Hantar notifikasi ujian", "Notifications": "Notifikasi", "Alerts appear while WattPet is open or running in the background.": "Amaran muncul semasa WattPet dibuka atau berjalan di latar belakang.", "Charger connected": "Pengecas disambung", "On battery": "Guna bateri", "Charging ⚡": "Mengecas ⚡", "My device": "Peranti saya", "Your device": "Peranti anda", "Auto-detected, or enter your model.": "Dikesan automatik, atau masukkan model anda.", "Checking your device…": "Menyemak peranti anda…", "Export my data": "Eksport data saya", "Download CSV": "Muat turun CSV", "Copy summary": "Salin ringkasan", "Share my impact card": "Kongsi kad impak saya", "How we estimate": "Cara kami menganggar", "Sources": "Sumber", "Scenery": "Pemandangan", "Use my own video": "Guna video saya sendiri", "Sunny Meadow": "Padang Cerah", "Forest Stream": "Anak Sungai Hutan", "Milky Way": "Bima Sakti", "Rainy Leaves": "Daun Berhujan", "Firefly Night": "Malam Kelip-kelip", "Active": "Aktif", "No match. We'll use a standard estimate.": "Tiada padanan. Kami guna anggaran standard.", "Set up auto sync with Shortcuts": "Sediakan segerak automatik dengan Shortcuts", "Copy plug-in link": "Salin pautan cabut-masuk", "Copy unplug link": "Salin pautan cabut", "Safari and Firefox can't read the battery. Use Chrome or Edge for automatic updates.": "Safari dan Firefox tidak boleh membaca bateri. Guna Chrome atau Edge untuk kemas kini automatik.", "Not updated yet": "Belum dikemas kini", "Updated just now": "Baru dikemas kini", "First pet": "Belaian pertama", "3-day streak": "Rentetan 3 hari", "7-day streak": "Rentetan 7 hari", "First coupon": "Kupon pertama", "Healthy week": "Minggu sihat", "Dress-up": "Bergaya", "Leaf collector": "Pengumpul daun", "Perfect unplug": "Cabut tepat", "Rewards reset": "Ganjaran ditetapkan semula", "Battery updated": "Bateri dikemas kini", "Image saved": "Imej disimpan", "Mochi is full of cuddles today. More leaves tomorrow!": "Mochi sudah puas dibelai hari ini. Lebih banyak daun esok!", "Apple does not let websites read the battery, so match the number on your screen.": "Apple tidak membenarkan laman web membaca bateri, jadi padankan nombor pada skrin anda.", "Match the number you see on your screen.": "Padankan nombor yang anda nampak pada skrin."};
+        const MS = {"Welcome to Eighty": "Selamat datang ke Eighty", "Charging to about 80% is kinder to your battery. Mochi helps you stay in the sweet spot.": "Mengecas sehingga sekitar 80% lebih lembut untuk bateri anda. Mochi membantu anda kekal di zon terbaik.", "You're offline. Eighty still works.": "Anda di luar talian. Eighty masih berfungsi.", "Back online": "Kembali dalam talian", "Your savings": "Penjimatan anda", "Appearance": "Paparan", "Auto": "Auto", "Light": "Cerah", "Dark": "Gelap", "Live video scenery": "Pemandangan video langsung", "Turn off to save data, or before you record your video": "Matikan untuk jimat data, atau sebelum merakam video anda", "Reminders, your battery, language and device.": "Peringatan, bateri, bahasa dan peranti anda.", "Install Eighty": "Pasang Eighty", "Install": "Pasang", "Get alerts and use it like a normal app.": "Dapatkan amaran dan guna seperti aplikasi biasa.", "Tap the Share button, then Add to Home Screen.": "Ketuk butang Kongsi, kemudian Tambah ke Skrin Utama.", "So sleepy… 😴": "Mengantuknya… 😴", "Mochi sounds": "Bunyi Mochi", "Meows and purrs when you pet": "Mengiau dan mendengkur apabila dibelai", "Your 80% battery buddy": "Rakan bateri 80% anda", "Home": "Utama", "Rewards": "Ganjaran", "Settings": "Tetapan", "Battery": "Bateri", "Update needed": "Perlu kemas kini", "CO₂ saved": "CO₂ dijimatkan", "Money saved": "Wang dijimatkan", "Treats worth": "Setara hidangan", "treats": "hidangan", "Tap to pet Mochi": "Ketuk untuk belai Mochi", "Next reward": "Ganjaran seterusnya", "View rewards →": "Lihat ganjaran →", "Healthy zone": "Zon sihat", "Healthy": "Sihat", "Charging gently": "Mengecas perlahan", "Charging": "Mengecas", "Running low": "Hampir habis", "Time to unplug": "Masa cabut pengecas", "Unplug now": "Cabut sekarang", "Over 80%": "Lebih 80%", "Low Battery": "Bateri rendah", "Mochi is content": "Mochi gembira", "Mochi is sleeping… 💤": "Mochi sedang tidur… 💤", "Mochi says: unplug me! 🔌": "Mochi kata: cabut saya! 🔌", "Plug in soon to prevent deep discharge": "Cas tidak lama lagi untuk elak bateri kosong sepenuhnya", "Unplug now to avoid top-off wear": "Cabut sekarang untuk elak kehausan bateri", "Charging inside the safe 20%–80% zone": "Mengecas dalam zon selamat 20%–80%", "Your Eighty Score": "Skor Eighty anda", "No data yet": "Belum ada data", "Keep Eighty open or synced and your week fills in here.": "Biarkan Eighty dibuka atau disegerak dan minggu anda akan muncul di sini.", "of the time Eighty could see your battery was in the healthy zone.": "daripada masa Eighty dapat melihat bateri anda berada dalam zon sihat.", "Mochi's tip of the day": "Petua Mochi hari ini", "Keeping your battery between 20% and 80% puts less strain on it than full charges.": "Mengekalkan bateri antara 20% dan 80% kurang membebankannya berbanding cas penuh.", "Heat is a battery's enemy. Take off thick cases while charging.": "Haba musuh bateri. Tanggalkan sarung tebal semasa mengecas.", "Plug in around 20% instead of letting the battery hit 0% again and again.": "Cas sekitar 20% dan jangan biarkan bateri sampai 0% berulang kali.", "If your device feels hot, let it cool down before you charge it.": "Jika peranti terasa panas, biarkan ia sejuk sebelum dicas.", "Lower screen brightness is the easiest way to stretch a charge.": "Mengurangkan kecerahan skrin ialah cara paling mudah untuk menjimatkan cas.", "Chargers still draw a little power when idle. Switch off at the wall when you are done.": "Pengecas masih menggunakan sedikit kuasa walaupun tidak digunakan. Matikan suis dinding apabila siap.", "Slow charging is gentler than fast charging when you are not in a hurry.": "Mengecas perlahan lebih lembut daripada mengecas pantas apabila anda tidak tergesa-gesa.", "Storing a device for months? Leave it at around 50% charge.": "Menyimpan peranti berbulan-bulan? Biarkan pada cas sekitar 50%.", "Keep your system and apps up to date. Updates often improve battery use.": "Kemas kini sistem dan aplikasi anda. Kemas kini sering memperbaiki penggunaan bateri.", "Turn off background refresh for apps you rarely open.": "Matikan muat semula latar belakang untuk aplikasi yang jarang dibuka.", "A battery lasts a set number of charge cycles. Fewer full cycles means a longer life.": "Bateri tahan bilangan kitaran cas yang tertentu. Kurang kitaran penuh bermaksud hayat lebih panjang.", "Use an official or certified charger. It protects your battery and your safety.": "Gunakan pengecas rasmi atau bersijil. Ia melindungi bateri dan keselamatan anda.", "Laptops that sit on the charger all week last longer with a charge limit switched on.": "Komputer riba yang sentiasa dicas tahan lebih lama dengan had cas diaktifkan.", "Dark mode can save battery on phones with OLED screens.": "Mod gelap boleh menjimatkan bateri pada telefon skrin OLED.", "Good battery habits, real perks": "Tabiat bateri yang baik, ganjaran sebenar", "Your leaves": "Daun anda", "Daily check-in": "Daftar masuk harian", "Claim today's leaves": "Tuntut daun hari ini", "Come back tomorrow": "Datang semula esok", "Today's quests": "Misi hari ini", "Pet Mochi": "Belai Mochi", "Stay in the healthy zone": "Kekal dalam zon sihat", "Unplug at about 80%": "Cabut pengecas sekitar 80%", "+5 per pet": "+5 setiap belaian", "+2 every 5 min": "+2 setiap 5 minit", "+15 each time": "+15 setiap kali", "My coupons": "Kupon saya", "Badges": "Lencana", "Reset rewards data": "Tetap semula data ganjaran", "Done ✓": "Selesai ✓", "Checked in today ✓": "Sudah daftar masuk hari ini ✓", "Keep your streak alive": "Kekalkan rentetan anda", "Start a streak": "Mulakan rentetan", "RM 3 off your drink": "Diskaun RM 3 untuk minuman anda", "Bring a reusable cup to a partner café.": "Bawa cawan guna semula ke kafe rakan kongsi.", "Plant a rainforest sapling": "Tanam anak pokok hutan hujan", "A native tree planted with local conservation partners.": "Pokok asli ditanam bersama rakan pemuliharaan tempatan.", "RM 15 device care voucher": "Baucar penjagaan peranti RM 15", "Port cleaning and battery check to keep your device going.": "Pembersihan port dan semakan bateri supaya peranti terus berfungsi.", "Café": "Kafe", "Nature": "Alam", "Repair": "Baiki", "Ready to redeem": "Sedia ditebus", "READY TO REDEEM": "SEDIA DITEBUS", "Redeem now": "Tebus sekarang", "Not yet": "Belum lagi", "Not now": "Bukan sekarang", "Cost": "Kos", "Balance after": "Baki selepas", "You got it! 🎉": "Anda dapat! 🎉", "Your code": "Kod anda", "Valid until": "Sah sehingga", "Redeemed on": "Ditebus pada", "Copy code": "Salin kod", "Mark as used": "Tandakan sudah guna", "Close": "Tutup", "Code copied": "Kod disalin", "No coupons yet": "Belum ada kupon", "Redeem a reward and your coupon will live here.": "Tebus ganjaran dan kupon anda akan disimpan di sini.", "Browse rewards": "Lihat ganjaran", "Used": "Telah guna", "Expired": "Tamat tempoh", "Last day": "Hari terakhir", "One use only.": "Sekali guna sahaja.", "Show this code at the counter of a Eighty partner café.": "Tunjukkan kod ini di kaunter kafe rakan kongsi Eighty.", "Show this code at a Eighty partner repair shop.": "Tunjukkan kod ini di kedai baiki rakan kongsi Eighty.", "Keep this code. Your sapling is planted in the next planting round.": "Simpan kod ini. Anak pokok anda ditanam pada pusingan penanaman seterusnya.", "Mark this coupon as used?": "Tandakan kupon ini sudah guna?", "Yes, mark as used": "Ya, tandakan sudah guna", "Back": "Kembali", "Do this after the shop has accepted your code. It can't be undone.": "Lakukan ini selepas kedai menerima kod anda. Ia tidak boleh dibatalkan.", "Meet Mochi": "Kenali Mochi", "Mochi is your battery buddy. Keep your charge between 20% and 80% and Mochi stays happy.": "Mochi ialah rakan bateri anda. Kekalkan cas antara 20% dan 80% dan Mochi akan gembira.", "Earn leaves": "Kumpul daun", "Pet Mochi, check in every day and unplug on time to collect leaves.": "Belai Mochi, daftar masuk setiap hari dan cabut pengecas tepat pada masanya untuk kumpul daun.", "Get real perks": "Dapatkan ganjaran sebenar", "Swap leaves for coupons from partners. Add Eighty to your Home Screen to get alerts.": "Tukar daun dengan kupon daripada rakan kongsi. Tambah Eighty ke Skrin Utama untuk terima amaran.", "Next": "Seterusnya", "Skip": "Langkau", "Let's go": "Jom mulakan", "What's your battery now?": "Berapa bateri anda sekarang?", "Looks right": "Nampak betul", "Later": "Nanti", "Charging right now": "Sedang mengecas", "Update battery now": "Kemas kini bateri sekarang", "Language": "Bahasa", "Reminders": "Peringatan", "80% charge reminder": "Peringatan cas 80%", "Nudge me to unplug at 80%": "Ingatkan saya cabut pengecas pada 80%", "Wall switch reminder": "Peringatan suis dinding", "Remind me to switch off the socket": "Ingatkan saya matikan soket", "Pause unused tabs": "Jeda tab yang tidak digunakan", "Pause tabs you aren't using": "Jeda tab yang tidak anda guna", "Show Mochi": "Tunjuk Mochi", "Turn off to see only the scenery": "Matikan untuk lihat pemandangan sahaja", "Send test notification": "Hantar notifikasi ujian", "Notifications": "Notifikasi", "Alerts appear while Eighty is open or running in the background.": "Amaran muncul semasa Eighty dibuka atau berjalan di latar belakang.", "Charger connected": "Pengecas disambung", "On battery": "Guna bateri", "Charging ⚡": "Mengecas ⚡", "My device": "Peranti saya", "Your device": "Peranti anda", "Auto-detected, or enter your model.": "Dikesan automatik, atau masukkan model anda.", "Checking your device…": "Menyemak peranti anda…", "Export my data": "Eksport data saya", "Download CSV": "Muat turun CSV", "Copy summary": "Salin ringkasan", "Share my impact card": "Kongsi kad impak saya", "How we estimate": "Cara kami menganggar", "Sources": "Sumber", "Scenery": "Pemandangan", "Use my own video": "Guna video saya sendiri", "Sunny Meadow": "Padang Cerah", "Forest Stream": "Anak Sungai Hutan", "Milky Way": "Bima Sakti", "Rainy Leaves": "Daun Berhujan", "Firefly Night": "Malam Kelip-kelip", "Active": "Aktif", "No match. We'll use a standard estimate.": "Tiada padanan. Kami guna anggaran standard.", "Set up auto sync with Shortcuts": "Sediakan segerak automatik dengan Shortcuts", "Copy plug-in link": "Salin pautan cabut-masuk", "Copy unplug link": "Salin pautan cabut", "Safari and Firefox can't read the battery. Use Chrome or Edge for automatic updates.": "Safari dan Firefox tidak boleh membaca bateri. Guna Chrome atau Edge untuk kemas kini automatik.", "Not updated yet": "Belum dikemas kini", "Updated just now": "Baru dikemas kini", "First pet": "Belaian pertama", "3-day streak": "Rentetan 3 hari", "7-day streak": "Rentetan 7 hari", "First coupon": "Kupon pertama", "Healthy week": "Minggu sihat", "Dress-up": "Bergaya", "Leaf collector": "Pengumpul daun", "Perfect unplug": "Cabut tepat", "Rewards reset": "Ganjaran ditetapkan semula", "Battery updated": "Bateri dikemas kini", "Image saved": "Imej disimpan", "Mochi is full of cuddles today. More leaves tomorrow!": "Mochi sudah puas dibelai hari ini. Lebih banyak daun esok!", "Apple does not let websites read the battery, so match the number on your screen.": "Apple tidak membenarkan laman web membaca bateri, jadi padankan nombor pada skrin anda.", "Match the number you see on your screen.": "Padankan nombor yang anda nampak pada skrin."};
         const MS_PAT = [["^\\+(\\d+) leaves$", "+$1 daun"], ["^(\\d+) more leaves to unlock$", "$1 daun lagi untuk dibuka"], ["^You need (\\d+) more leaves$", "Anda perlukan $1 daun lagi"], ["^Redeem for (\\d+) 🍃$", "Tebus dengan $1 🍃"], ["^Unlock for (\\d+) 🍃$", "Buka dengan $1 🍃"], ["^Valid (\\d+) days after redeeming$", "Sah $1 hari selepas ditebus"], ["^Valid for (\\d+) days after redeeming\\.$", "Sah selama $1 hari selepas ditebus."], ["^(\\d+) days? left$", "$1 hari lagi"], ["^(\\d+)d left$", "$1h lagi"], ["^Updated (\\d+) min ago$", "Dikemas kini $1 minit lalu"], ["^Updated (\\d+) h ago$", "Dikemas kini $1 jam lalu"], ["^(🔥 )?(\\d+) day streak$", "$1Rentetan $2 hari"], ["^(🌱|🌿|🌳|🏞️) Sprout$", "$1 Pucuk"], ["^(🌱|🌿|🌳|🏞️) Sapling$", "$1 Anak pokok"], ["^(🌱|🌿|🌳|🏞️) Tree$", "$1 Pokok"], ["^(🌱|🌿|🌳|🏞️) Forest$", "$1 Hutan"], ["^(Sprout|Sapling|Tree|Forest) tier$", "Peringkat $1"], ["^(\\d+) / (\\d+) to (Sprout|Sapling|Tree|Forest)$", "$1 / $2 ke $3"], ["^(\\d+) / (\\d+) leaves$", "$1 / $2 daun"], ["^Day (\\d+)$", "Hari $1"], ["^Day (\\d+) check-in: \\+(\\d+) leaves$", "Daftar masuk hari $1: +$2 daun"], ["^Perfect unplug \\+(\\d+) leaves$", "Cabut tepat +$1 daun"], ["^Reward unlocked: (.+)$", "Ganjaran dibuka: $1"], ["^Badge unlocked: (.+)$", "Lencana dibuka: $1"], ["^Unlock for (\\d+) 🍃$", "Buka dengan $1 🍃"], ["^(\\d+) \\/ (\\d+)$", "$1 / $2"]].map(p => [new RegExp(p[0]), p[1]]);
         const trOrig = new WeakMap();
         let trObs = null;
@@ -4195,7 +4308,7 @@
             if (!silent) showToast(l === 'ms' ? 'Bahasa Malaysia' : 'English');
         }
 
-        /* ---------- weekly habits (from battery readings WattPet could see) ---------- */
+        /* ---------- weekly habits (from battery readings Eighty could see) ---------- */
         const LOG_KEY = 'wattpet_log_v1';
         let battLog = [];
         function loadLog() { try { battLog = JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch (e) { battLog = []; } }
@@ -4233,10 +4346,48 @@
             }
             box.innerHTML = html;
             const enough = T >= 30 * 60000, pct = enough ? Math.round(H / T * 100) : null;
-            document.getElementById('weekScore').textContent = enough ? pct + '%' : 'No data yet';
+            document.getElementById('weekScore').innerHTML = enough ? pct + '<span class="text-base font-bold text-[#7C9283]">/100</span>' : 'No data yet';
             document.getElementById('weekNote').textContent = enough
-                ? 'of the time WattPet could see your battery was in the healthy zone.'
-                : 'Keep WattPet open or synced and your week fills in here.';
+                ? 'of the time Eighty could see your battery was in the healthy zone.'
+                : 'Keep Eighty open or synced and your week fills in here.';
+        }
+
+        /* ---------- how long the battery has been charging ---------- */
+        function trackCharge() {
+            if (typeof game !== 'object' || !game) return;
+            const c = game.charge || (game.charge = { since: null, full: null }), now = Date.now();
+            const before = JSON.stringify(c);
+            if (state.charging) {
+                if (!c.since) c.since = now;
+                if (state.battery >= 100) { if (!c.full) c.full = now; } else c.full = null;
+            } else { c.since = null; c.full = null; }
+            if (JSON.stringify(c) !== before) saveGame();
+        }
+        function fmtDuration(ms) {
+            const m = Math.floor(ms / 60000), h = Math.floor(m / 60), my = lang === 'ms';
+            if (h < 1) return m + ' min';
+            if (h < 10) return h + (my ? ' jam ' : ' hr ') + (m % 60) + ' min';
+            if (h < 100) return h + (my ? ' jam' : ' hrs');
+            return Math.floor(h / 24) + (my ? ' hari ' : ' days ') + (h % 24) + (my ? ' jam' : ' hrs');
+        }
+        function chargeInfo() {
+            const c = game && game.charge;
+            if (!state.charging || !c || !c.since) return null;
+            const now = Date.now(), my = lang === 'ms', full = state.battery >= 100 && c.full, ms = now - (full || c.since);
+            let text;
+            if (ms < 60000) text = full ? (my ? 'Baru sampai 100%' : 'Just reached 100%') : (my ? 'Baru dicas' : 'Just plugged in');
+            else text = (full ? (my ? 'Penuh 100% selama ' : 'At 100% for ') : (my ? 'Dicas selama ' : 'Plugged in for ')) + fmtDuration(ms);
+            return { text, hrs: ms / 36e5, full: !!full };
+        }
+        function renderChargeAge() {
+            const el = document.getElementById('chargeAge');
+            if (!el) return;
+            const info = chargeInfo();
+            if (!info) { el.classList.add('hidden'); return; }
+            const tone = info.full && info.hrs >= 72 ? 'text-[#C94A29]' : (info.full && info.hrs >= 24 ? 'text-[#92400E]' : 'text-[#526B5A]');
+            el.className = 'text-[11px] font-bold mb-1 ' + tone;
+            el.textContent = '⚡ ' + info.text;
+            el.title = 'Counted from when Eighty first saw your device plugged in.';
         }
 
         let installEvt = null;
@@ -4278,6 +4429,12 @@
             }, 60000);
             setTimeout(checkExpiringCoupons, 2500);
             handleDeepLink(location.hash);
+            try {
+                const q = new URLSearchParams(location.search);
+                if (q.get('action') === 'update') { history.replaceState(null, '', location.pathname + location.hash); setTimeout(openQuickSync, 600); }
+            } catch (e) {}
+            window.addEventListener('offline', () => showToast("You're offline. Eighty still works."));
+            window.addEventListener('online', () => showToast('Back online'));
             updateOutfitLocks();
             updateAnimalBtn();
             applyTheme();
@@ -4323,7 +4480,7 @@
 
         function copySummary() {
             const y = computeImpact(365);
-            const text = `My WattPet year (${state.modelName}): ${y.co2.toFixed(2)} kg CO₂ prevented, RM ${y.rm.toFixed(2)} saved (about ${Math.round(y.kopi)} treats) 🌿🐱`;
+            const text = `My Eighty year (${state.modelName}): ${y.co2.toFixed(2)} kg CO₂ prevented, RM ${y.rm.toFixed(2)} saved (about ${Math.round(y.kopi)} treats) 🌿🐱`;
             if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
             showExportToast('✓ Summary copied');
         }

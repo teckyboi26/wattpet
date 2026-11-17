@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>WattPet Partner: Coupon checker</title>
+<title>Eighty Partner: Coupon checker</title>
 <meta name="theme-color" content="#2D6A4F" />
 <link rel="icon" type="image/png" href="/icons/icon-192.png" />
 <script src="https://cdn.tailwindcss.com"></script>
@@ -25,7 +25,7 @@
   <header class="flex items-center gap-3">
     <img src="/icons/icon-192.png" alt="" class="w-12 h-12 rounded-2xl" />
     <div>
-      <h1 class="text-xl font-bold leading-none">WattPet Partner</h1>
+      <h1 class="text-xl font-bold leading-none">Eighty Partner</h1>
       <p class="text-[11px] font-bold text-[#526B5A] mt-1">Check and accept customer coupons</p>
     </div>
   </header>
@@ -54,7 +54,7 @@
       </div>
     </div>
     <div class="mt-3 rounded-2xl bg-[#EAF6EC] px-4 py-3 flex items-center justify-between">
-      <span class="text-xs font-bold text-[#3F5446]">Estimated fee owed to WattPet</span>
+      <span class="text-xs font-bold text-[#3F5446]">Estimated fee owed to Eighty</span>
       <span id="owed" class="num text-lg font-bold text-[#1B4332]">RM 0.00</span>
     </div>
     <ul id="ledger" class="mt-3 divide-y divide-[#2D6A4F]/10 text-sm"></ul>
@@ -67,7 +67,7 @@
   <p class="text-[11px] text-[#526B5A] leading-relaxed px-1">
     Pilot checker. It confirms the code format and expiry date, and stops the same code being accepted twice on this device. A secure server will replace this in the full launch.
   </p>
-  <a href="/" class="text-center text-xs font-bold text-[#2D6A4F] underline underline-offset-2">Back to WattPet</a>
+  <a href="/" class="text-center text-xs font-bold text-[#2D6A4F] underline underline-offset-2">Back to Eighty</a>
 </div>
 
 <script>
@@ -91,7 +91,7 @@ function verify(raw) {
   let c = String(raw || '').toUpperCase().replace(/\s+/g, '');
   if (c.indexOf('WATTPET|') === 0) c = c.slice(8);
   const m = /^WP-(KOPI|TREE|CARE)-([A-Z0-9]{4})-([A-Z0-9]{4})$/.exec(c);
-  if (!m) return { ok: false, why: 'This is not a WattPet code. Check the spelling.' };
+  if (!m) return { ok: false, why: 'This is not a Eighty code. Check the spelling.' };
   const type = m[1], x = m[2], ee = m[3].slice(0, 2), kk = m[3].slice(2);
   const i0 = ALPHA.indexOf(ee[0]), i1 = ALPHA.indexOf(ee[1]);
   if (i0 < 0 || i1 < 0 || ALPHA.indexOf(x[0]) < 0) return { ok: false, why: 'This code looks wrong. Ask the customer to show it again.' };
@@ -144,7 +144,7 @@ function csv() {
     return [d.toISOString().slice(0, 10), d.toTimeString().slice(0, 5), prefs.name, l.code, l.title, fee];
   }));
   const blob = new Blob([rows.map((r) => r.map((c) => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n')], { type: 'text/csv' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'wattpet-partner-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'eighty-partner-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click();
 }
 
 $('bizName').value = prefs.name; $('fee').value = prefs.fee;
