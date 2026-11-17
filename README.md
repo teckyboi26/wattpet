@@ -1,4 +1,4 @@
-# wattpet
-WattPet cozy battery companion web app
+# Eighty
+Eighty companion battery app
 
-Personal project for my competitions
+Personal project
